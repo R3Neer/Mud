@@ -18,6 +18,12 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-178
+  - D-177
+  - D-176
+  - D-175
+  - D-174
+  - D-173
   - D-164
   - D-172
   - D-171
@@ -225,7 +231,7 @@ destroy Alexandria
 
 ### Stored field initialisation
 
-A newly declared stored field requires `let name: Type = value-body`, optionally with `mut`. Inherited fields need no repeated declaration. Alias components without explicit defaults are required in constructed values. Family data require an explicit schema default or an assignment in every member. Type annotations do not supply values. Intrinsic metadata and explicit parameter defaults retain their individual contracts.
+A newly declared concrete stored field requires `let name: Type = value-body`, or its mut form. An abstract thing may omit the initializer when its complete effective type is explicit; every concrete descendant must resolve all deferred initializers. Inherited fields need no repeated declaration. Alias components without explicit defaults are required in constructed values. Family data require an explicit schema default or an assignment in every member. Type annotations do not supply values. Intrinsic metadata and explicit parameter defaults retain their individual contracts.
 
 ### `thing` initialisers
 
@@ -426,6 +432,12 @@ citizens: Person [0..*, unique, ordered, mut]
 contacts: Person [0..* unique by email]
 ```
 
+Bare `ordered` establishes historical occurrence order for ordinary collections. An explicit
+`ordered by value` selects a member named value when available, otherwise the
+complete element's total comparator, under [[16-collections]]. The source
+remains a CollectionKeyPath; typed elaboration determines that interpretation.
+Functional FirstMatch and exact-dictionary ordering retain their separate rules.
+
 `unique` and `unique by path` are alternative forms of one uniqueness modifier. More than one uniqueness form in the same collection specification is rejected before AST construction. The keyed path is non-empty, is interpreted from each member and must be singular and transitively stable. Its final value needs semantic equality but not a total order; `ordered by` retains the stronger total-order requirement.
 
 A trailing comma is not permitted. In an immutable stored field with an initialiser, an omitted cardinality remains omitted in the AST and is inferred as the initial value's exact outer cardinality:
@@ -539,8 +551,8 @@ left ^ right   # AKey -> 1, CKey -> 3
 A functional dictionary is a pure case-defined policy.
 
 A functional branch has a pure selector and a ValueBlock result. Its input
-is the implicit immutable ordinary variable `value`, visible in its selector
-and result scopes. It is not a reserved or contextually classified word. Normal lookup,
+is the implicit immutable variable denoted contextually by `value`, visible in
+its selector and result scopes. This spelling is not globally reserved. Normal lookup,
 duplicate-name and no-shadowing rules apply; neither result nor selector may
 redeclare it. Direct selector-preamble bindings are visible in their own result;
 nested locals retain their inner scopes. Exact associations
@@ -600,7 +612,7 @@ A nominal named product cannot be opened with that positional binding; access
 its named components instead. Structural input identity and once-only input
 evaluation retain the ordinary contextual-construction rules.
 
-Coverage is universal over the admitted input contract and applicable views,
+When application cardinality excludes zero, coverage is universal over the admitted input contract and applicable views,
 not a check of one current world or runtime sample. State-dependent guards
 require fallback unless the version's finite static certificate procedure
 proves coverage independently of that sample. Finite family enumeration,
@@ -608,14 +620,11 @@ nominal inclusion/exclusion, static domain coverage and propositional Boolean
 certificates use the existing static proof rules. No general theorem solver
 or type-based nominal guessing is introduced.
 
-Each dictionary must cover every input admitted by its complete input contract.
-Coverage must be proved from declared family members, nominal alternatives,
-admitted interval/domain relations, ordinary supported Boolean facts or a
-residual `_`. Unproved coverage is static rejection, including for a dictionary
-with an empty-admitting output. Arbitrary predicates need a fallback when the
-supported proof procedure cannot establish coverage. Closed-family members
-can be enumerated; union coverage respects overlapping ancestry and exact iis
-tests rather than treating every nominal type as a disjoint variant.
+A positive application-result minimum requires universal input coverage from
+declared finite families, nominal alternatives, admitted domains, supported
+Boolean facts or fallback. A zero-admitting application may be uncovered and
+returns ordinary empty when no branch applies. Unknown positive coverage is a
+static error; an inferred result cannot be guessed optional to avoid that error.
 
 Fallback is unique and last. It applies only when no ordinary selector applies.
 A selected result yielding empty has handled that input and does not trigger
@@ -624,7 +633,7 @@ is valid when the output admits absence. Selected computing faults propagate;
 they do not retry another branch or fallback. Ordered FirstMatch chooses the
 first applicable selector; unordered AllMatches evaluates all ordinary selectors
 in one snapshot and produces all applicable results. Coverage is required in
-both modes; unreachable/redundant cases are diagnosed when provable.
+both modes only when their application minimum is positive; unreachable/redundant cases are diagnosed when provable.
 
 Input and output types may be inferred only with unique evidence/context.
 `_ --> .name` alone does not establish an input type. An explicit input with
@@ -634,7 +643,7 @@ covered FirstMatch returning optional values can still produce empty.
 
 ### `FirstMatch`, `AllMatches`, fallback and cardinality
 
-In a functional `[ordered]` dictionary, ordinary `unique` and `unique by path` are valid but redundant and trigger a suggestion to remove the uniqueness modifier. Input coverage is mandatory with or without fallback. Result cardinality follows all reachable branch result contracts, including explicit empty results; fallback does not by itself establish presence.
+In a functional `[ordered]` dictionary, ordinary `unique` and `unique by path` are valid but redundant and trigger a suggestion to remove the uniqueness modifier. A positive application minimum requires input coverage; a zero-admitting application may return empty when no branch matches. Result cardinality follows all reachable branch result contracts, including explicit empty results; fallback does not by itself establish presence.
 
 In an unordered functional dictionary, each matching ordinary branch contributes at most one result. With `n` potentially matching branches, the conservative cardinality is `[0..n]`; a fallback establishes coverage; the lower bound is 1 only when every reachable branch result guarantees a singleton value. `unique` deduplicates equal whole-value results from different branches. `unique by path` deduplicates equal projected result keys and retains the first result by stable occurrence provenance. Neither changes which branches applied.
 
@@ -694,7 +703,7 @@ let raw: (Num, Num) = (1, 2)
 let nominal: Coordinate = (x = 1, y = 2)
 ```
 
-`raw` and `nominal` are not interchangeable without an explicit nominal conversion. Anonymous-product compatibility requires the same arity, compatible component names where present, and component-by-component correspondence.
+`raw` and `nominal` are not generally interchangeable without an explicit nominal conversion. An anonymous dictionary input tuple separately admits positional projection of an alias's identical complete stored component contracts, ignoring its source names and applying the target tuple names. Ordinary anonymous-product compatibility retains its name/arity rules. Dictionary-boundary alias projection is specified in [[17-dictionaries#Anonymous tuple input projection]].
 
 `ordered by path` applies to collections whose members expose a fixed path of fields, components or associated data. Every intermediate access must be unique and the final value must have a total semantic order:
 
@@ -1420,7 +1429,7 @@ A source with its own enumeration order does not need `by`. For sequence-based e
 
 ### Selection and quantifiers
 
-Selections and `exists`, `forall`, `count`, `min` and `max` accept `by` when the source defines a progression, and retain `:` even when the body uses braces. All use `ExpressionBlock`: the block contains `:=` premises followed by a final Boolean expression. For `min` and `max`, that predicate filters witnesses and the operation returns the first or last respectively in the source's semantic order; an `ordered` source without an explicit key is also valid. A source without usable order is rejected, and no accepted witness produces `empty`. `sum` is not part of the language.
+Selections and `exists`, `forall`, `count`, `min` and `max` accept `by` when the source defines a progression, and retain `:` even when the body uses braces. All use `ExpressionBlock`: the block contains `:=` premises followed by a final Boolean expression. For `min` and `max`, that predicate filters witnesses and the operation returns the least/greatest accepted witness by an explicit source ordering key, otherwise its witness type's total comparator. A bare sequence is not a comparator. Without explicit compatible key order all required predicate candidates are examined; with it, directional short circuit applies under chapter 22. A source lacking a required comparator is rejected, and no accepted witness produces `empty`. `sum` is not part of the language.
 
 A selection produces a collection and therefore does not consume a bare domain directly: if the conceptual source is a domain `D`, it must be written `all D`. Iterations and quantifiers that do not produce a collection may consume a finite, countable domain directly.
 
@@ -1897,7 +1906,7 @@ Configurable `~...` elements appear before ordinary content. Fields, components 
 
 Boolean membership uses `container has value` and `container has not value`. `in` is not a Boolean membership operator. `value in Domain` locally restricts or filters the value; `binding in source : predicate` remains a selection.
 
-A collection may be transformed locally with `values [unique]`, `values [unique by email]`, `values [ordered]`, `values [ordered by score]` or `values [1..10, unique, ordered]`. This form does not support `mut`. Elaboration normalises domain, uniqueness, order and cardinality. `[n]` remains indexing; an exact local cardinality without other modifiers is written `[n..n]`.
+A collection may be transformed locally with `values [unique]`, `values [unique by email]`, `values [ordered]` or `values [ordered by score]`. Only the specified property axes are replaced. Local suffixes admit neither mut nor cardinality contracts. Range indexing is a positional slice. Explicit derived declaration contracts retain filtering, deduplication, ordering and upper-bound truncation before lower-bound checking.
 
 ## Foreign language blocks
 
@@ -1971,3 +1980,12 @@ These are alternative forms of the same illustrative declaration, not two declar
 `raise value-body` is an expression form and may stand as a value/effect statement. Its payload and normal-result/error contracts follow [[21-expressions#9. Blocks and error recovery]]. It is not a declaration or a general escape from typing. Preserve the existing nearest-completed-block attachment rule for otherwise; braces distinguish a payload's recovery from recovery of the containing raised computation. A direct raise in an effect statement projects to RaiseEffect, not ActionCallCandidateEffect; a direct raise in a value statement projects to RaiseValueStatement.
 
 Rum literal decimal decoding, binary64 rounding and constant evaluation follow MUD-TYPE-038 in [[11-type-system]]. The lexical r distinction and established Rum-unit context remain unchanged.
+
+The cardinality spelling [?] normalizes to [0..1]. Postfix C[?] is optional
+member extraction with omission, not a cardinality transform; C[*] is last
+position access. Both produce SpecialIndexExpr; ordinary tuple component
+indexing uses IndexExpr. [[21-expressions#Optional extraction and omission]]
+defines their demand and result boundaries. A possibly multi-member C[?] is
+invalid. Anonymous tuple components require statically known in-range indices.
+Nat List(args) folds as (Nat List)(args); postfix application is preferred in
+examples, without new constructor inference.

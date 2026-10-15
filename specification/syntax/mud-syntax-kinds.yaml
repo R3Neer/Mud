@@ -31,6 +31,7 @@ synthetic_token_origins:
 - ImplicitTextEnd
 - MissingForRecovery
 fixed_tokens:
+- spelling: '?'
 - spelling: '!=='
 - spelling: ===
 - spelling: submessage
@@ -381,9 +382,7 @@ lexical_forms:
     rhs: '"true" | "false" | "empty" | "all" | "_"'
     references: []
   contextual-word:
-    rhs: "\"abstract\" | \"part\" | \"only\" | \"uses\" | \"always\" | \"start\"\n      | \"mud\"\n    \
-      \  | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\"\
-      \ | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
+    rhs: "\"abstract\" | \"part\" | \"only\" | \"uses\" | \"always\" | \"start\" | \"value\"\n      | \"mud\"\n      | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
     references: []
   identifier:
     rhs: "contextual-word\n      | identifier-form"
@@ -432,7 +431,7 @@ lexical_forms:
     rhs: '"[" | "]"'
     references: []
   punctuation-token:
-    rhs: '"," | "." | ":" | ";"'
+    rhs: '"," | "." | ":" | ";" | "?"'
     references: []
 syntax_nodes:
   behaviour-preamble-statement:
@@ -1169,7 +1168,8 @@ syntax_nodes:
     - stored-field-declaration
   stored-field-declaration:
     kind: StoredFieldDeclarationSyntax
-    rhs: "( \"let\" | \"mut\" ) , field-name , [ stored-value-shape ]\n        , \"=\" , descriptor-value-body"
+    rhs: "( \"let\" | \"mut\" ) , field-name , [ stored-value-shape ]
+        , [ \"=\" , descriptor-value-body ]"
     references:
     - descriptor-value-body
     - field-name
@@ -1311,7 +1311,9 @@ syntax_nodes:
     - optional-comma
   cardinality:
     kind: CardinalitySyntax
-    rhs: "cardinality-bound\n      | cardinality-bound , \"..\" , cardinality-bound"
+    rhs: "\"?\"
+      | cardinality-bound
+      | cardinality-bound , \"..\" , cardinality-bound"
     references:
     - cardinality-bound
   cardinality-bound:
@@ -1824,12 +1826,8 @@ syntax_nodes:
     - local-collection-transform
   local-collection-transform:
     kind: LocalCollectionTransformSyntax
-    rhs: "cardinality-bound , \"..\" , cardinality-bound\n        , [ optional-comma , local-collection-modifier\
-      \ , { optional-comma , local-collection-modifier } ]\n      | cardinality-bound , optional-comma ,\
-      \ local-collection-modifier , { optional-comma , local-collection-modifier }\n      | local-collection-modifier\
-      \ , { optional-comma , local-collection-modifier }"
+    rhs: local-collection-modifier , { optional-comma , local-collection-modifier }
     references:
-    - cardinality-bound
     - local-collection-modifier
     - optional-comma
   local-collection-modifier:
@@ -1905,7 +1903,7 @@ syntax_nodes:
     - metadata-name
   index-access:
     kind: IndexAccessSyntax
-    rhs: '"[" , expression , { "," , expression } , "]"'
+    rhs: '"[" , ( expression , { "," , expression } | "*" | "?" ) , "]"'
     references:
     - expression
   call-arguments:

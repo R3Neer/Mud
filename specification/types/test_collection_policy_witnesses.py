@@ -1,7 +1,7 @@
 """Finite contrast cases for selector coverage and per-occurrence results."""
 import unittest
 from collection_policy_witnesses import (
-    covers, apply_first, apply_all, comprehension, interval_member,
+    covers, apply_first, apply_all, comprehension, interval_member, coverage_admitted,
 )
 
 
@@ -14,6 +14,14 @@ class CollectionPolicyWitnesses(unittest.TestCase):
         tests.append(lambda x: x == 'High')
         self.assertTrue(covers(members, tests))
         self.assertFalse(covers(members + ['Critical'], tests))
+
+    def test_uncovered_zero_admitting_application_is_normal_empty(self):
+        selectors = [lambda x: x > 0]
+        self.assertTrue(coverage_admitted([-1, 0, 1], selectors, 0))
+        self.assertFalse(coverage_admitted([-1, 0, 1], selectors, 1))
+        branches = [(selectors[0], lambda x: x)]
+        self.assertEqual(apply_first(-1, branches), [])
+        self.assertEqual(apply_all(-1, branches), [])
 
     def test_empty_is_handled_and_never_retries_fallback(self):
         def forbidden(_):

@@ -28,6 +28,12 @@ affects:
 - Documents affected: future `16-collections.md`, future `17-dictionaries.md`, future `22-quantifiers-and-iteration.md`
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
+- Amended by: [[ADR-173-sequence-order-and-contextual-value|D-173]].
+
+- Amended by: [[ADR-174-value-extrema-and-association-sequences|D-174]].
+
+- Amended by: [[ADR-175-historical-order-and-local-collection-properties|D-175]].
+
 ## Decision
 
 ### Collections
@@ -57,16 +63,18 @@ let pair: Person [2 unique] = [Alice, Alice]     # error; normalisation leaves o
 let contacts: Person [* unique by email] = [Alice, Bob]  # if the e-mails are provably equal, warning; retains Alice
 ```
 
-Initial sources of information:
+Collection order:
 
-- When the type The whole possesses an intrinsic semantic order, `ordered` Use that order. This includes the orders defined for basic items, `Char`, `ordered family` and aliases where applicable.
-- When the type The complete version does not have a common overall comparator, `ordered` use the provenance a stable record of occurrences; collections of `thing` are the usual cases.
-- `Char` use value ascending Unicode scale and does not support `ordered by`.
-- You don’t invent a comparator between branches of a union by means of text position, tags, proper nouns or identity implementation.
-
-In a collection values with associated fields, components or data, `ordered by ruta` may replace the standard sort order with a key derived from unique accesses from each member. The key must have full semantic order and the entire path must be transitively stable. A `thing` It is not a sortable primary key. Keys that are equal retain the relative order of provenance stable. In a purely sequential narrative, this provenance corresponds to the order of insertion. This order of collection it does not alter the intrinsic comparison between its members.
-
-When the type or `ordered by path` determines the main order, a literal written in a different order is normalised and produces a non-blocking warning. Among identical keys, provenance remains stable; in a sequentially written literal, the writing order conveys that provenance. This notice does not apply to a `thing [ordered]` collection whose ordinary order derives entirely from its own values.
+Bare `ordered` establishes historical insertion/provenance order for every member type, including after key sorting. Literal order is
+written order; copying and filtering retain it; sequential insertion appends.
+Explicit `ordered by path` establishes a stable total key order. The single
+component `value` selects a member named value when available and otherwise
+uses the complete element's established total order. A present invalid member
+is an error; interpretation is uniform over the static input alternatives.
+No implicit comparator is invented for things or heterogeneous unions.
+Char retains its scalar comparator for explicit value ordering, while bare
+ordered restores historical occurrence order. Equal keys retain stable provenance.
+Literals contrary to an explicit key order normalize with a warning.
 
 ### Set Algebra
 
@@ -143,7 +151,7 @@ For `mut`, the table refers exclusively to the internal load-bearing capacity of
 
 For `ordered`, if only the intersection preserves the order, the ordered operand is filtered; the difference `--` filters the left-hand operand. Union and mixed symmetric differences are unordered because they may contain elements that are exclusive to the unordered operand.
 
-When both operands are `ordered`, must use compatible sort criteria. If their sort keys or sort modes are incompatible, the operation is a error static. An order by type or by the same one path `ordered by` normalises the result based on that criterion and preserves provenance stable amongst ties. When the operation retains a sequence constructed by composing the operands rather than replacing it with one of those criteria, the result it is stable with respect to the left-hand operand:
+When both operands are `ordered`, must use compatible sort criteria. If their sort keys or sort modes are incompatible, the operation is a error static. An order by the same explicit `ordered by` criterion normalises the result by that key and preserves stable provenance among ties. When the operation retains a sequence constructed by composing the operands rather than replacing it with one of those criteria, the result it is stable with respect to the left-hand operand:
 
 - The union go through first $A$ and then adds, in the order of $B$, only the additional occurrences required to achieve each maximum multiplicity.
 - The intersection and the difference `--` leak $A$ without rearranging it.
@@ -193,7 +201,7 @@ When exact indexing is an intermediate step in a path allocable that passes thro
 
 ### Order and iteration
 
-A dictionary `ordered` It iterates through keys in their canonical order. It can be iterated through by keys or by pairs `(key, value)`.
+Bare ordered on an exact dictionary restores historical association order, including after explicit key ordering. New sequential keys append; replacing an existing value preserves position; deleting and reinserting creates a new position. It can be traversed by keys or key/value bindings. Explicit key ordering is separate; physical hash order is never semantic order.
 
 A structural alias it can act as a single composite key and use the sugar defined in D-033:
 
@@ -229,7 +237,7 @@ The general rule is that absence of a uniqueness mode retains multiplicity. Ordi
 
 1. Cardinality omitted and `empty`.
 2. Duplicates and keyed collisions, normalisation, warning, first-survivor provenance and idempotence of both uniqueness modes.
-3. Intrinsic semantic order, by provenance stable and `ordered by`, including one path stable on associated data and ties by provenance.
+3. Sequence order independent of intrinsic comparability and explicit `ordered by`, including one path stable on associated data and ties by provenance.
 4. Missing reading such as `empty`, writing and retrieval of a missing password, and associated-value uniqueness criteria.
 5. Equality irrespective of internal representation.
 6. Key alias plain and sweetened.

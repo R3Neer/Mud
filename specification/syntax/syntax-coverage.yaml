@@ -540,7 +540,7 @@ productions:
     ast:
       disposition: constructor
       target: StoredFieldDecl
-      reason: requires an explicit initializer normalized to a mandatory ValueBlock
+      reason: retains an optional initializer; typing restricts omission to complete abstract schema obligations
   calculated-field-declaration:
     cst: CalculatedFieldDeclarationSyntax
     ast:
@@ -1099,6 +1099,7 @@ productions:
     ast:
       disposition: normalized
       target: IndexExpr
+      reason: ordinary access uses IndexExpr; [*]/[?] use SpecialIndexExpr with neutral kind
   call-arguments:
     cst: CallArgumentsSyntax
     ast:

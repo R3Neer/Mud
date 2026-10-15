@@ -29,6 +29,23 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
                 tokens.append('IDENTIFIER')
         return recognises(self.bnf, start, tokens)
 
+    def test_optional_and_last_access_keep_receiver_syntax(self):
+        for source in ('items[?]', 'items[*]', 'pair[1]', 'optional[?][1]', 'items[ordered]', 'items[unique]'):
+            self.assertTrue(self.accepts('postfix-expression', source), source)
+        for source in ('items[mut]', 'items[1..3 unique]', 'items[..*]', 'items[*..]'):
+            self.assertFalse(self.accepts('postfix-expression', source), source)
+
+    def test_optional_cardinality_and_abstract_field_syntax(self):
+        self.assertTrue(self.accepts('type-expression', 'Int [?]'))
+        self.assertTrue(self.accepts('thing-declaration', 'abstract thing Base { mut size: Nat }'))
+        # AST syntax retains omission; typing rejects it for concrete owners.
+        self.assertTrue(self.accepts('thing-declaration', 'thing Bad { mut size: Nat }'))
+        self.assertFalse(self.accepts('value-statement', 'let missing: Nat'))
+
+    def test_postfix_generic_construction_needs_no_grouping(self):
+        for source in ('Nat List([1,2])', 'Nat List([1,2]).items', '(Nat List)([1,2])'):
+            self.assertTrue(self.accepts('postfix-expression', source), source)
+
     def test_constructor_calls_keep_ordinary_argument_syntax(self):
         for source in ('Vector2(1, 2)', 'Vector2(x = 1, y = 2)', 'Defaults()',
                        '(Pair with Num)(1, 2)'):
@@ -85,11 +102,13 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
                 self.assertTrue(self.accepts('mapping-expression', source))
         self.assertFalse(self.accepts('comparison-expression', '== expected'))
 
-    def test_input_is_not_a_contextual_token(self):
+    def test_value_is_contextual_but_not_hard_reserved(self):
         lex = (ROOT / 'specification/grammar/mud-lexico.ebnf').read_text(encoding='utf-8')
         contextual = lex.split('contextual-word\n    ::=')[1].split(';')[0]
-        self.assertNotIn('"value"', contextual)
-        self.assertNotIn('"each"', lex.split('keyword-word\n    ::=')[1].split(';')[0])
+        self.assertIn('"value"', contextual)
+        keywords = lex.split('keyword-word\n    ::=')[1].split(';')[0]
+        self.assertNotIn('"value"', keywords)
+        self.assertNotIn('"each"', keywords)
 
 
 if __name__ == '__main__':

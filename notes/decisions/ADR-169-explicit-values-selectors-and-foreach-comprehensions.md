@@ -21,12 +21,18 @@ affects:
 
 # ADR-169 — Explicit value declarations, exhaustive selector shorthand and foreach comprehensions
 
+- Amended by: [[ADR-178-structural-tuple-inputs-and-postfix-generics|D-178]].
+
 ## Context
 
 The author accepts explicit let/mut markers to distinguish declarations from
 assignment while keeping stored = captures separate from live := derivations.
 Functional policies need concise selectors and exhaustive treatment; collection
 transformations should not require a hand-written private accumulator.
+
+- Amended by: [[ADR-173-sequence-order-and-contextual-value|D-173]].
+
+- Amended by: [[ADR-176-optional-extraction-and-positional-access|D-176]] and [[ADR-178-structural-tuple-inputs-and-postfix-generics|D-178]].
 
 ## Decision
 
@@ -41,17 +47,18 @@ Stored domain-only annotations constrain admission and never filter their values
 Functional selectors retain complete Bool predicates and add ordinary-value
 equality, abbreviated comparisons, nominal type tests, interval/domain membership,
 selector negation and logical combinations. Bool operands remain predicates;
-explicit == compares Bool/interval values. value becomes an implicit ordinary
-immutable input variable; .member abbreviates its member access. Exact dictionaries
+explicit == compares Bool/interval values. value contextually denotes the implicit
+immutable input variable; outside that context it remains an ordinary name.
+.member abbreviates its member access. Exact dictionaries
 do not inject it. No as input binding, structural patterns or additional guard
 syntax is accepted. D-172 extends each result scope with its own direct selector-preamble bindings
 and requires demand-preserving per-application reuse of unchanged derivations.
-All policies require proven input coverage or a fallback;
+Policies with positive application-result minimum require proven coverage or a fallback; zero-admitting applications may be uncovered;
 explicit empty output handles a case and does not invoke fallback.
 
 foreach replaces the separated traversal spelling everywhere. foreach with :
 executes the existing short/braced body; foreach with --> produces one complete
-body result per accepted occurrence. It is pure, finite, snapshot-based and uses
+normal body result per accepted occurrence; an explicit optional omission skips that emission. It is pure, finite, snapshot-based and uses
 the existing optional by/if headers and positional patterns. Multiplicity/order
 are retained; output uniqueness needs proof and collection results stay nested.
 

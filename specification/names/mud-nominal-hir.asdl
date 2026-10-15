@@ -1,9 +1,15 @@
+-- Optional extraction, tuple input projection and deferred schema defaults retain
+-- source references. Typing supplies their omission/shape/completeness facts;
+-- no implicit tuple locals, renamed alias fields or HIR semantic payloads arise.
 -- Explicit alias construction retains CallExpr SurfaceRef provenance and an
 -- ordinary ResolvedReference role construction-target to its source alias.
 -- Static application references remain ordinary bindings. Effective schema,
 -- defaults and construction checking belong to typing; no callable or anchor
 -- is created by this expression.
--- Functional branches share one implicit ordinary LocalSymbol kind functional-input
+-- Contextual value references keep the same implicit LocalSymbol kind functional-input.
+-- OrderedBy([value]) needs typed member-versus-whole resolution, not a synthetic
+-- nominal field, anchor or HIR type payload.
+-- Functional branches share one implicit immutable LocalSymbol kind functional-input
 -- named value in a branch input scope. Its result scope extends the completed
 -- direct selector-preamble scope; nested RHS scopes and other branches remain
 -- separate. Binding availability and per-application reuse are later facts, not

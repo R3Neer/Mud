@@ -15,6 +15,9 @@ depends-on:
 questions:
   - Q-032
 decisions:
+  - D-175
+  - D-176
+  - D-174
   - D-169
   - D-167
   - D-168
@@ -44,7 +47,8 @@ confined private traversal; its colon is mandatory and its body may be short
 or braced. The separated spelling for plus each is not traversal syntax.
 Selection retains `binding in source : predicate` and returns surviving source
 occurrences, not predicate results. A comprehension instead emits one complete
-body result per accepted occurrence.
+normal body result per accepted occurrence; explicit optional omission skips
+only that emission under [[21-expressions#Optional extraction and omission]].
 
 ```mud
 let doubles := foreach number in numbers --> number * 2
@@ -142,15 +146,19 @@ results are:
 | exists | True exactly when some occurrence satisfies p; empty source yields false. |
 | forall | True exactly when every occurrence satisfies p; empty source yields true. |
 | count | Nat number of accepted occurrences, retaining source multiplicity; empty yields zero. |
-| min | First accepted source witness in its usable semantic order, or empty. |
-| max | Last accepted source witness in that order, or empty. |
+| min | Least accepted witness by the applicable total criterion, or empty. |
+| max | Greatest accepted witness by that criterion, or empty. |
 
 exists/forall yield Bool [1]; count yields Nat [1] bounded by source size.
 min/max yield the source member contract with [0..1], narrowable to [1] only
 with accepted-witness evidence. No accepted witness is ordinary absence,
 not an aggregation error. A later `[1]` context still checks that absence.
-An unordered source without usable semantic order cannot supply extrema.
-Progression generation direction does not redefine the source's semantic order.
+The criterion is the source's explicit ordered-by key when present, otherwise
+the witness type's established total comparator. For exact dictionaries, the
+ordinary witness is its key. A sequence alone supplies no comparator for things
+or other unordered member types. No total comparison is invented from source
+positions or type names. With source [3,1,2] and predicate true, min returns 1
+and max returns 3. Progression direction does not redefine value comparison.
 
 Predicate computing faults enter the producing block's error channel and do
 not become false, zero or absence. Static validation of source, body, step,
@@ -159,9 +167,17 @@ bindings and required proofs remains mandatory even for an empty source.
 ## Predicate demand
 
 > [!rule] MUD-ITER-004 — Semantic-order predicate demand
-> Ordered exists tests from the first semantic position until true; ordered forall until false. Unordered exists/forall evaluate every predicate in the same view, preserving independent faults. Count examines all. Min searches from the first semantic end and max from the last in reverse, stopping at their first accepted witness. Source production, capture/validation and step computation remain required before this search.
+> Ordered exists tests from the first semantic position until true; ordered forall until false. Unordered exists/forall evaluate every predicate in the same view, preserving independent faults. Count examines all. Min/max examine all required predicate candidates unless the source has explicit ordered-by ordering compatible with the selected criterion. With that explicit order, min searches from the first end and max from the last in reverse, stopping at the first accepted witness. Source production, capture/key validation and step computation remain required.
 
-Skipped predicate instances contribute no reads or faults. A demanded fault stops dependent ordered evaluation and propagates; unordered independent computations combine their error occurrences without using technical enumeration order to skip work. Ordinary source/result admission and static checking of every predicate remain mandatory. Source errors cannot be skipped by a witness, and establishing source order can still require examining/sorting the complete input. These extrema filter an already ordered source; they do not compute arbitrary minima of an unsorted collection without that work.
+Skipped predicate instances contribute no reads or faults. A demanded fault stops
+dependent ordered evaluation and propagates; unordered independent computations
+combine errors without using technical enumeration order to skip work. Without
+the explicit compatible key order, a bare ordered sequence does not permit
+extremum short circuit, even if its current values happen to be sorted. An
+implementation cannot change fault demand by sorting it internally. Ordinary
+source/result admission and static checking remain mandatory. Source/key faults
+cannot be hidden by a witness. First/last are not additional core quantifiers;
+positional access and library conveniences are separate from extrema.
 
 ## Inactive-rule pruning in predicates
 
@@ -232,3 +248,7 @@ admission, empty results, pattern projections and erasure boundaries. Source
 AST/grammar coverage retains ExpressionBlock predicates, mandatory separators
 and LocalForEach/ForEachEffect. [[effects/README]] covers private/sequential
 and simultaneous composition; it does not execute general source traversal.
+
+A potentially omitted emission contributes zero to the lower result bound;
+stored destinations must still prove their required cardinality. Computing
+faults remain faults and ordinary empty collection members remain members.

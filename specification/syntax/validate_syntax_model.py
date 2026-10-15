@@ -329,8 +329,8 @@ def recovery_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
     if re.search(r"\bAllowedQuery\b", ast):
         problems.append("the speculative AST operator must be ImagineQuery")
     field = re.search(r"stored_field_data\s*=\s*\(([^()]*)\)", ast, re.S)
-    if not field or "value_block default_value" not in field.group(1) or "value_block? default_value" in field.group(1):
-        problems.append("new stored fields require an explicit value")
+    if not field or "value_block? default_value" not in field.group(1):
+        problems.append("stored fields must retain optional abstract schema defaults")
     for name in ("thing-body", "metadata-body", "alias-definition", "structural-alias-body", "family-declaration", "family-member-body", "magnitude-body", "derived-unit-body", "point-magnitude-body", "unit-body", "local-statement-block"):
         found = re.search(rf"(?m)^{name}\s*::=\s*(.*?)\s*;", code, re.S)
         if found and "otherwise-clause" in found.group(1):

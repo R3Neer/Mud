@@ -17,6 +17,8 @@ affects:
 - Extends: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
 - Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
+- Amended by: [[ADR-174-value-extrema-and-association-sequences|D-174]].
+
 ## Context
 
 D-047 referred `min` and `max` over an empty source to a supposed special empty-aggregation error that was never defined. MUD already uses `empty` to represent partial queries without turning absence into an immediate failure.
@@ -53,4 +55,4 @@ Static cardinality may be narrowed when the compiler proves that at least one ca
 
 ## Predicate demand
 
-D-164 fixes semantic-order short circuit for exists/forall, complete common-view unordered evaluation, all-predicate count and first-end min/last-end reverse max search. Source production/validation and demanded faults are preserved. This operates on an already ordered witness source, not a numeric minimization body.
+D-164 fixes semantic-order short circuit for exists/forall, complete common-view unordered evaluation, all-predicate count and first-end min/last-end reverse max search. Source production/validation and demanded faults are preserved. This operates on witness filtering, not a numeric minimization body. Directional short circuit requires explicit compatible key ordering; otherwise min/max evaluate every required predicate and compare accepted witnesses by their defined criterion.

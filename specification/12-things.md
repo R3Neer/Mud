@@ -11,6 +11,7 @@ depends-on:
   - "[[15-fields-and-mutability]]"
 questions: []
 decisions:
+  - D-177
   - D-169
   - D-014
   - D-015
@@ -126,8 +127,11 @@ substitutability rules in [[11-type-system]] and [[15-fields-and-mutability]];
 ancestor order never resolves a conflict. Externally writable stored contracts
 are invariant. Initialisers select values and cannot create declarations.
 
-Every newly declared stored field has an explicit, statically admissible
-initialiser. A declaration `let field: Type = value` is one declaration, not a
+A concrete newly declared stored field has an explicit statically admissible
+initializer. An abstract thing may instead retain a complete explicit field
+contract without an initializer. Abstract descendants may defer that obligation;
+every concrete effective schema must resolve all such obligations before
+materialization, under ordinary inherited-origin/conflict rules. A declaration `let field: Type = value` is one declaration, not a
 separate assignment. `field = value` in a thing body must resolve to an inherited
 stored field. Declaring that field locally and assigning it separately in the
 same definition is invalid. Types supply no implicit initial value.

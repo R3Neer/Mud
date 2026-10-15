@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-178
   - D-171
   - D-170
   - D-169
@@ -131,7 +132,7 @@ look Example {
 ```
 
 The target may be a qualified alias reference or a fully resolved admitted
-static generic application, for example `(Pair with Num)(1, 2)`. An unapplied
+static generic application, for example `Num Pair(1, 2)`. An unapplied
 generic alias supplies no constructor; this form adds no constructor-specific
 argument inference. Ordinary lexical/nominal ambiguity is diagnosed before
 construction. Representation aliases, abstract aliases, things, families,
@@ -335,3 +336,8 @@ exact graph equality, variance, alias/operator identity and signature selection.
 [[types/test_declaration_witnesses.py]] distinguishes origins and ancestry.
 Write-back and missing-key effect certificates are in [[effects/README]].
 These are scoped evidence, not a complete source compiler or normative proof solver.
+
+An anonymous dictionary input tuple separately admits the positional projection
+specified in [[17-dictionaries#Anonymous tuple input projection]], using target
+labels and discarding no stored components. This does not make two nominal
+aliases interchangeable or extend tuple component indexing to aliases.

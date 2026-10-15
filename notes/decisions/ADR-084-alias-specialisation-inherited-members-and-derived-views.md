@@ -25,6 +25,8 @@ affects:
 - Affected documents: grammar, superficial and resolved AST, names and anchors, mathematical model and derived-collection semantics.
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
+- Amended by: [[ADR-175-historical-order-and-local-collection-properties|D-175]].
+
 ## Context
 
 Aliases were already nominal and immutable types, but it was not fixed how to specialise them, combine inherited representations or inherit a structural form. Derived fields also could not uniformly declare a collection contract with its own inner capability. In addition, the syntax required a `thing` body even when it was empty.
@@ -49,7 +51,7 @@ Members belong to the alias's nominal type. A bare structure does not obtain the
 
 ### Derived fields and collections
 
-A structural alias may declare derived fields with `:=`. They are pure, unstored and not assignable. The explicit nominal or structural type is checked statically. Domain, cardinality, uniqueness and order declared in the derived form, whether or not an explicit type exists, are coercive over the result and follow local-transformation normalisation. `[mut]` acts as a capability requirement on immediate `thing` members: it may retain source authority when semantic identity is preserved, but cannot manufacture it.
+A structural alias may declare derived fields with `:=`. They are pure, unstored and not assignable. The explicit nominal or structural type is checked statically. Domain, cardinality, uniqueness and order declared in the derived form, whether or not an explicit type exists, are coercive over the result. Local suffixes transform uniqueness/order only; explicit derived cardinality retains upper-bound truncation followed by lower-bound checking. `[mut]` acts as a capability requirement on immediate `thing` members: it may retain source authority when semantic identity is preserved, but cannot manufacture it.
 
 Selection remains fixed during an evaluation snapshot. After effects are consolidated, the view is recomputed over the new state and its contracts are validated; a violation produces `Errors` and rollback. A stored collection does not self-prune or recompute its membership.
 

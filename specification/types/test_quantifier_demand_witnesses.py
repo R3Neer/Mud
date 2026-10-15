@@ -2,9 +2,9 @@
 import unittest
 
 
-def supplied_demand(kind, labels, ordered=True):
+def supplied_demand(kind, labels, ordered=True, compatible_key_order=False):
     """Labels are externally supplied true/false/fault outcomes in semantic order."""
-    if not ordered:
+    if not ordered or (kind in ('min', 'max') and not compatible_key_order):
         visited = list(range(len(labels)))
         return visited, "fault" if "fault" in labels else "normal"
     indices = list(range(len(labels)))
@@ -34,10 +34,15 @@ class QuantifierDemandWitnesses(unittest.TestCase):
 
     def test_extremum_direction_and_empty_demand(self):
         outcomes = [False, "fault", True]
-        self.assertEqual(supplied_demand("min", outcomes), ([0, 1], "fault"))
-        self.assertEqual(supplied_demand("max", outcomes), ([2], "normal"))
+        self.assertEqual(supplied_demand("min", outcomes, compatible_key_order=True), ([0, 1], "fault"))
+        self.assertEqual(supplied_demand("max", outcomes, compatible_key_order=True), ([2], "normal"))
         for kind in ("exists", "forall", "count", "min", "max"):
             self.assertEqual(supplied_demand(kind, []), ([], "normal"))
+
+    def test_bare_sequence_does_not_allow_extremum_short_circuit(self):
+        for kind in ('min', 'max'):
+            self.assertEqual(supplied_demand(kind, [True, 'fault', False]),
+                             ([0, 1, 2], 'fault'))
 
 
 if __name__ == "__main__":

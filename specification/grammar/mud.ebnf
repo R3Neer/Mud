@@ -429,7 +429,7 @@ field-declaration
 
 stored-field-declaration
     ::= ( "let" | "mut" ) , field-name , [ stored-value-shape ]
-        , "=" , descriptor-value-body ;
+        , [ "=" , descriptor-value-body ] ;
 
 calculated-field-declaration
     ::= "let" , field-name , [ derived-value-shape ] , ":=" , descriptor-value-body ;
@@ -636,7 +636,8 @@ collection-specification
         ;
 
 cardinality
-    ::= cardinality-bound
+    ::= "?"
+      | cardinality-bound
       | cardinality-bound , ".." , cardinality-bound
       ;
 
@@ -1255,10 +1256,7 @@ collection-transform-suffix
     ::= "[" , local-collection-transform , "]" ;
 
 local-collection-transform
-    ::= cardinality-bound , ".." , cardinality-bound
-        , [ optional-comma , local-collection-modifier , { optional-comma , local-collection-modifier } ]
-      | cardinality-bound , optional-comma , local-collection-modifier , { optional-comma , local-collection-modifier }
-      | local-collection-modifier , { optional-comma , local-collection-modifier }
+    ::= local-collection-modifier , { optional-comma , local-collection-modifier }
       ;
 
 local-collection-modifier
@@ -1273,7 +1271,7 @@ metadata-access
     ::= "~" , metadata-name ;
 
 index-access
-    ::= "[" , expression , { "," , expression } , "]" ;
+    ::= "[" , ( expression , { "," , expression } | "*" | "?" ) , "]" ;
 
 call-arguments
     ::= "(" , [ call-argument , { "," , call-argument } ] , ")" ;

@@ -28,11 +28,17 @@ affects:
 
 MUD favours rules that name the world's concepts. If a criterion requires a calculation, that calculation must first be declared as a field or computed datum, and the collection is then ordered by that name.
 
+- Amended by: [[ADR-173-sequence-order-and-contextual-value|D-173]].
+
 ## Decision
 
 ### Key form
 
-`ordered by` accepts only a non-empty path of fields, components or associated data:
+`ordered by` accepts a non-empty stable member path or the single-component
+contextual `value` criterion. That spelling selects a member named value when
+present, otherwise the complete element. A present invalid field is an error;
+all remaining static alternatives require the same interpretation. Longer paths
+remain ordinary member paths. Examples:
 
 ```mud
 route: Terrain [* ordered by movementCost]

@@ -19,6 +19,8 @@ affects:
 - Modifies: [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-080-higher-order-collection-algebra-and-updates|D-080]], [[ADR-081-collection-filtering-take-and-indexing|D-081]], [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]], [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]] and [[ADR-102-complete-form-of-computed-family-data|D-102]].
 - Related question: [[../questions/Q-006-c-conflicts|Q-006]].
 
+- Amended by: [[ADR-175-historical-order-and-local-collection-properties|D-175]].
+
 ## Context
 
 MUD already distinguishes multiplicity from ordinary `unique`, retains stable provenance for occurrences and uses a stable member path for `ordered by`. Some models need a stronger invariant: several distinct values may be permitted in general, but only one may survive for each stable semantic key such as an e-mail address, external identifier or owning `thing`.
@@ -72,7 +74,7 @@ For compatible concurrent insertions, semantically equal values may first merge 
 domain restriction -> uniqueness -> order -> cardinality
 ```
 
-A local keyed transformation therefore removes later equal-key occurrences before any `ordered` or `ordered by` transformation and before upper-cardinality truncation.
+A keyed transformation removes later equal-key occurrences before an admitted order transformation. Derived declarations additionally apply upper-cardinality truncation afterward; local property suffixes contain no cardinality bound.
 
 Filtering, selection, `take`, ordered indexing and other operations that return a subset of existing occurrences preserve the exact uniqueness criterion because they cannot introduce a new key collision and preserve the surviving occurrences' provenance.
 

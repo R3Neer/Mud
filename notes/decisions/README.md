@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 167.
-- Current: 163.
+- Total: 173.
+- Current: 169.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -186,6 +186,12 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-170 | current | 2026-10-14 | [[notes/decisions/ADR-170-uniform-immutable-alias-component-markers|Uniform immutable alias component markers]] |
 | D-171 | current | 2026-10-14 | [[notes/decisions/ADR-171-explicit-structural-alias-construction|Explicit structural alias construction and readability suggestions]] |
 | D-172 | current | 2026-10-14 | [[notes/decisions/ADR-172-shared-functional-selector-locals-and-reuse|Shared functional selector locals and demand-preserving reuse]] |
+| D-173 | current | 2026-10-15 | [[notes/decisions/ADR-173-sequence-order-and-contextual-value|Sequence order and contextual value ordering]] |
+| D-174 | current | 2026-10-15 | [[notes/decisions/ADR-174-value-extrema-and-association-sequences|Value extrema and exact-dictionary association sequences]] |
+| D-175 | current | 2026-10-15 | [[notes/decisions/ADR-175-historical-order-and-local-collection-properties|Historical order and local collection properties]] |
+| D-176 | current | 2026-10-15 | [[notes/decisions/ADR-176-optional-extraction-and-positional-access|Optional extraction and positional access]] |
+| D-177 | current | 2026-10-15 | [[notes/decisions/ADR-177-abstract-thing-initialization-obligations|Abstract thing initialization obligations]] |
+| D-178 | current | 2026-10-15 | [[notes/decisions/ADR-178-structural-tuple-inputs-and-postfix-generics|Structural tuple inputs and postfix generics]] |
 
 ## Reserved identifiers
 

@@ -14,6 +14,12 @@ tags:
 
 ## Candidate themes — not selected parts or APIs
 
+First/last are library or structure conveniences rather than new core
+quantifiers under [[decisions/ADR-174-value-extrema-and-association-sequences|D-174]].
+Concrete APIs remain undesigned. Candidate generic List/Set/Map names must retain
+the distinction between sequence order and explicit key sorting; they do not
+introduce new TypeKind categories or erase nominal alias contracts.
+
 | Theme | Candidate capabilities |
 | --- | --- |
 | Collections and algorithms | Transform, group, partition, search, combine, accumulate; stacks, queues and priority queues using existing collection contracts. |
@@ -45,3 +51,13 @@ Rust-backed base libraries without mandatory Python/.NET installation are a reco
 ## Next work
 
 Settle dependency boundaries and formalise causal execution before asynchronous I/O APIs. Inventory candidate contracts broadly; do not implement libraries or invent unresolved scheduling through native wrappers. Patch reproduction and recording require their own specified guarantees.
+
+## Native-construction audit boundary
+
+The current audit keeps take native. Prefix/sampling experiments do not yet
+preserve all occurrence provenance, generic guarantees, exact-dictionary/Text
+contracts or stochastic identity through ordinary library code. No wrapper API,
+shuffle/forget-order operation or replacement syntax is accepted. Evaluate
+native forms by observable guarantees, composition and accessibility of basic
+world modelling, not by reserved-word count alone. Postfix generic applications
+are the preferred examples; explicit with remains available.

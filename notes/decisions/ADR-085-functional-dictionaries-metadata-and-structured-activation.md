@@ -32,6 +32,10 @@ affects:
 
 Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
 
+- Amended by: [[ADR-178-structural-tuple-inputs-and-postfix-generics|D-178]].
+
+- Amended by: [[ADR-177-abstract-thing-initialization-obligations|D-177]].
+
 ## Context
 
 MUD already has collections, exact dictionaries, sequential composition through calls within `then`, nominal names, initial activation and `Text` templates. Several later decisions show four related needs:
@@ -128,7 +132,7 @@ selector --> result
 
 Within the selector and result, `value` is an implicit ordinary immutable variable bound to the input of type `A`. The selector is a Boolean `ExpressionBlock` and the result a `ValueBlock`; the result extends its own selector's completed direct-preamble environment under D-172. Nested locals and other branches remain separate; per-application successful derivations are reused while inputs/dependencies remain unchanged.
 
-Selectors elaborate to pure Bool after the category-directed shorthand defined in the dictionary chapter. Bool expressions remain conditions; other supported values compare equality, intervals/domains test membership and nominal types use is. Complete input coverage is required. Fallback handles no applicable selector, not an empty selected result.
+Selectors elaborate to pure Bool after the category-directed shorthand defined in the dictionary chapter. Bool expressions remain conditions; other supported values compare equality, intervals/domains test membership and nominal types use is. Complete input coverage is required only for a positive application-result minimum; zero-admitting applications return empty for uncovered inputs. Fallback handles no applicable selector, not an empty selected result.
 
 Results and selectors may read external state. Every read must be recorded as a dependency of the branch and dictionary. All transitive calls of an application observe the same stable snapshot of the world.
 
@@ -154,7 +158,7 @@ A --> B [ordered]
 - The first match wins.
 - Selectors may overlap and ordering forms part of the value.
 - `_` must be the last effective branch; every later branch is unreachable.
-- Without fallback, complete input coverage must be proved; output absence depends on the admitted selected result contract.
+- Without fallback, positive application minima require complete input coverage; zero-admitting applications may leave inputs uncovered. Selected output absence follows its result contract.
 - Fallback establishes coverage but not a singleton result when the output admits empty.
 - ordinary `unique` and `unique by path` are valid but redundant because at most one result is produced; either produces a removal suggestion.
 
@@ -170,7 +174,7 @@ A --> B
 - Each matching branch contributes a result.
 - Selectors may overlap.
 - Source order is not semantic.
-- Coverage must be proved or supplied by a residual branch; empty is an explicitly admitted selected result.
+- Coverage must be proved or supplied by a residual branch for a positive application minimum; zero-admitting applications need neither. Empty remains an admitted selected result without retry.
 - `_` contributes its admitted result only when no ordinary branch matches, including explicit empty when allowed.
 - Derived cardinality is `[0..n]`, where `n` is the demonstrable maximum of matching ordinary branches; fallback establishes coverage, while the lower bound depends on all reachable output contracts.
 - `unique` deduplicates equal whole-value results produced by different branches; `unique by path` deduplicates equal projected keys and retains the first result by stable occurrence provenance.
@@ -222,7 +226,7 @@ Cardinality omission is no longer universally normalised to `[1]` before the fie
 - A unit value infers `[1]`, a literal collection of three members infers `[3]` and `empty` infers `[0]`.
 - The internal contents of a dictionary do not alter external cardinality: a dictionary is one value even when it contains several associations or branches.
 - In a field with external mutability, omission retains `[1]`.
-- Every stored field declaration requires an explicit initialiser, including Any.
+- Every concrete stored field declaration requires an explicit initialiser, including Any; an abstract explicitly typed field may defer it under D-177.
 - Calculated fields `:=` retain the form inferred from their expression or the declared form.
 
 When the inferred cardinality of an immutable field differs from `[1]`, the compiler emits a non-blocking suggestion with a correction that materialises the exact cardinality in the source text.
@@ -274,7 +278,7 @@ The AST retains a single `StartSet(contributions)` sequence; elaboration checks 
 - retains narrowing within the functional branch where it was proven;
 - has no universal default.
 
-Every stored field of type Any requires an explicit initialiser under the general storage rule.
+Every concrete stored field of type Any requires an explicit initialiser; an abstract explicitly typed field may defer its required initialization.
 
 ### Postfix metadata
 
@@ -382,7 +386,7 @@ The minimum new diagnostics are:
 7. functional-dictionary cycle without a descent proof;
 8. inferred immutable cardinality different from `[1]`;
 9. `all Any` or enumeration of `Any`;
-10. `Any` field without an initialiser;
+10. concrete `Any` field without an initialiser; abstract deferred fields require concrete completion;
 11. attempt to assign to or update any `~` access at runtime;
 12. semantically fragile use of `~file`;
 13. removed `.name`, `name =` or `anchor{...}` form;

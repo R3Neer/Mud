@@ -11,6 +11,9 @@ depends-on:
 questions:
   - Q-032
 decisions:
+  - D-176
+  - D-175
+  - D-173
   - D-169
   - D-167
   - D-168
@@ -112,30 +115,82 @@ retained and discarded source occurrences; resulting cardinality still checks.
 An already computed value assigned to a stored contract is verified, not
 silently rewritten.
 
-`ordered` uses the complete member type's intrinsic total order when it exists,
-otherwise stable occurrence provenance. It invents no comparator between union
-branches from their spelling, tags or implementation identity. `ordered by`
-uses its semantic key and stable provenance for ties. Ordering a literal contrary
-to the applicable intrinsic/key order normalizes with the specified warning.
-Copying, passing, selecting or serializing an ordered value retains its sequence
-unless the operation explicitly removes/replaces order.
+Bare `ordered` establishes historical occurrence order, independently of the
+member type's intrinsic comparability and any previous key sorting. A literal supplies its written order. Copying, passing,
+selecting, mapping or serializing an ordered value retains the sequence unless
+the operation explicitly removes or replaces order. Sequential additions append
+new occurrences; removal retains the relative order of survivors. Completing an
+unordered source's sequence uses stable occurrence provenance. Concurrent ties
+follow the causal-respecting provenance contract, not physical arrival time.
+
+`ordered by path` establishes order by a singular, transitively stable key with
+a total semantic comparator, retaining stable provenance for ties. The single
+component `value` first selects an accessible member field/component/datum of
+that name. If none exists, `ordered by value` uses the complete element's total
+comparator. A present but invalid field causes a static error; it does not fall
+back to the complete element. One interpretation and compatible key contract
+must hold over all remaining static union alternatives. A mixture of member and
+whole-element interpretations is invalid. Longer paths such as value.score are
+ordinary member paths. No comparison is invented from type names, tags or thing
+identity. Literals contrary to an explicit key order normalize with a warning.
+
+```mud
+# Fragments inside an admitted owner:
+let sequence: Int [* ordered] = [3, 1, 2]
+let sorted: Int [* ordered by value] = [3, 1, 2] # normalizes; warning
+```
+
+`ordered family` member comparison, functional FirstMatch priority and exact
+dictionary association ordering are independent contracts in their chapters.
+
+The local transform `source[ordered]` restores historical insertion/provenance
+order even when the source currently has an explicit key order. Reordering
+never rewrites occurrence history. Removed occurrences are not restored.
+Assigning that view to a stored place declared unordered does not upgrade the
+place's static guarantee. A derived binding may instead retain the ordered view.
 
 ## Local and derived transformations
 
-Let C be the temporary collection and let a specification supply domain D,
-uniqueness q, order o and bounds [l,u]. Transform in this order, independent of
-modifier spelling order: filter by D; normalize q; establish o; truncate to u;
-require at least l surviving members. Lower bounds never manufacture values.
-The written type remains statically checked and authority cannot be created.
+A local suffix changes only the specified uniqueness/order axes and retains
+compatible unmentioned guarantees and member authority. A replacement criterion
+supersedes the former criterion on that axis. `source[mut]` is invalid even if
+the source already has authority. Cardinality is not a local transformation:
+`source[2..4]` is a positional slice, selecting positions, not a size contract.
+
+A derived declaration may specify domain D, uniqueness q, order o and bounds
+[l,u]. Its normalization is: filter by D; normalize q; establish o; truncate to
+u; require l survivors. Bounds apply after normalization. Lower bounds never
+manufacture members. Stored destinations instead verify the produced value.
 
 > [!rule] MUD-COLL-003 — Transformation versus stored verification
-> Local collection specifications and derived shapes perform their defined
-> coercive transformations. Stored value contracts verify produced values.
-> Neither operation grants outer mutability, implicit container-alias identity
-> or authority absent from the source.
+> Local property suffixes and derived declarations perform their specified
+> transformations. Stored contracts verify results. Neither grants authority,
+> a nominal container identity or an implicit copy of thing members.
 
-The short local `[n]` retains positional indexing where syntactically ambiguous;
-an exact transformation can use `[n..n]`. Constructing a collection counts each
+A local unique result has newly derived cardinality, not the source minimum.
+Nonempty input retains at least one member; unknown duplicate classes do not
+prove a larger lower bound. Assignment to stored storage must prove its own
+minimum/maximum after deduplication; unknown preservation is a static error.
+
+```mud
+# Fragments within an admitted owner:
+let source: Int [3] = [1, 1, 2]
+let distinct := source[unique]  # two members; source still has three
+# Invalid: let tooMany: Int [3] = source[unique]
+let prefix: Int [0..2 ordered] := [3, 1, 2]  # truncates to [3,1]
+```
+
+Filtering and slicing retain survivor history. A comprehension creates new
+occurrences in production order: logical source enumeration when ordered,
+otherwise its established stable provenance enumeration, never worker completion
+or hash traversal. Operand composition uses each operand's surviving history
+under the operation's specified left/right composition, independently of a
+current key sort; it introduces no global cross-collection creation clock.
+Transforms produce values; persistent sharing, views, fusion and storage reuse
+are permitted only when preserving all observable results, faults, authority,
+coherent views and provenance. Self-assignment does not itself authorize reuse.
+
+Constructing a collection counts each
 written element expression once, including empty inner collections. An erased
 Boolean-rule result used as element data closes to true and remains an element,
 under [[21-expressions]]; pruning is not collection deletion.
@@ -224,3 +279,17 @@ they do not permit different cardinality, purity or prefix/sample contracts.
 cover nested empties, shape compatibility, source proof requirements, modifier
 propagation and pruning/data boundaries. [[effects/README]] covers stored
 update contracts. These witnesses are finite evidence, not an executor.
+
+## Optional and last-position access
+
+T [?] is T [0..1]. C[*] selects the last observable collection position, with
+ordinary optional absence for an empty source. C[1] remains first position;
+[..*] and [*..] are not extreme-index abbreviations. Dictionary keys are not
+positional collection slots. Text retains its own positional sequence.
+
+C[?] requires a maximum of one, extracts its complete member when present and
+otherwise propagates omission under [[21-expressions#Optional extraction and omission]].
+It never unwraps multiple nested layers or treats [empty] as outer absence.
+Collection construction skips omitted elements; a produced normal empty member
+still counts. Required stored cardinality remains statically proved after all
+possible omissions. A comprehension skips that emission and continues.

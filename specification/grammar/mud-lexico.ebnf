@@ -181,7 +181,7 @@ constant-word
    mud.ebnf reserves contextually. The production makes the catalogue
    enumerable without turning entries into hard reserved words. *)
 contextual-word
-    ::= "abstract" | "part" | "only" | "uses" | "always" | "start"
+    ::= "abstract" | "part" | "only" | "uses" | "always" | "start" | "value"
       | "mud"
       | "type"
       | "name" | "path" | "anchor" | "file"
@@ -242,4 +242,4 @@ one-character-operator
 brace-token       ::= "{" | "}" ;
 parenthesis-token ::= "(" | ")" ;
 bracket-token     ::= "[" | "]" ;
-punctuation-token ::= "," | "." | ":" | ";" ;
+punctuation-token ::= "," | "." | ":" | ";" | "?" ;

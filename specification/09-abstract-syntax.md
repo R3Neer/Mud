@@ -17,6 +17,11 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-178
+  - D-177
+  - D-176
+  - D-175
+  - D-174
   - D-172
   - D-171
   - D-170
@@ -284,7 +289,7 @@ The preamble contains metadata declarations, while the remainder contains specif
 ThingInitializer(name, valueBlock)
 ```
 
-Stored alias component declarations require let in the CST; AliasComponentDecl already records their immutable component category, so no new AST flag is introduced. Stored field data carry mandatory `default_value: ValueBlock`; alias component and family datum defaults may remain absent until completeness checking.
+Stored alias component declarations require let in the CST; AliasComponentDecl already records their immutable component category, so no new AST flag is introduced. Stored field data carry optional `default_value: ValueBlock?` for explicitly typed abstract schema obligations; alias component and family datum defaults may remain absent until completeness checking.
 
 It retains the written `fieldName = value-body` shape in a concrete or abstract `thing` body. It is not a `StoredFieldDecl` and is not included in `defaultValue`: the AST keeps schema defaults separate from initialisation contributions. `name` remains an unresolved `FieldName`, and the RHS normalises to `ValueBlock`; later resolution and elaboration ensure that the target is an inherited stored field and that the value satisfies its type and domain.
 
@@ -300,7 +305,7 @@ The initialiser sequence remains separate from the field sequence. In an abstrac
 StoredFieldDecl(field)
 ```
 
-The field is a stored_field_data product containing collection_mutable, name, optional stored_value_shape, mandatory default_value ValueBlock and metadata. ExplicitStoredShape contains the written TypeExpr; InferredStoredShape retains written domain/collection restrictions without inventing a type. A wholly omitted annotation remains absent.
+The field is a stored_field_data product containing collection_mutable, name, optional stored_value_shape, optional default_value ValueBlock (absence restricted to abstract schema obligations) and metadata. ExplicitStoredShape contains the written TypeExpr; InferredStoredShape retains written domain/collection restrictions without inventing a type. A wholly omitted annotation remains absent.
 
 ### Calculated field
 
@@ -583,7 +588,7 @@ Default file metadata assignments do not use `ValueBlock`: they retain a static 
 
 The owners of `ExpressionBlock` are Boolean rules, `always`, `when`, guards, action `after`, `foreach` filters, selections, `exists`, `forall`, `count`, `min`, `max`, exact keys and functional selectors. The owners of `ValueBlock` are the value slots declared by the grammar: locals, fields, data/components, initialisers, dictionary values/results, operator implementations, raise payloads and metadata. `given` retains `expr? defaultValue` because its default does not accept a value block.
 
-`min` and `max` retain `QuantifierExpr` and a Boolean `ExpressionBlock`. Elaboration returns the first or last accepted witness according to `source`'s semantic order; `Sum` does not exist in `quantifier_kind`.
+`min` and `max` retain `QuantifierExpr` and a Boolean `ExpressionBlock`. Elaboration selects least/greatest accepted witnesses by the applicable total criterion under chapter 22; sequence position alone is insufficient; `Sum` does not exist in `quantifier_kind`.
 
 When metadata and `ValueBlock` physically share a compatible descriptor body, the AST extracts metadata into the owner's `metadata` field and retains only value statements in `ValueBlock`.
 
@@ -998,3 +1003,16 @@ Foreign operations require checked or explicitly trusted type/effect contracts. 
 Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.
 
 LocalStatementBlock groups statements within the owning ValueBlock and shares its error channel; it is not an independent value-result block or handler owner. Declaration/schema/metadata braces are not evaluated expression, value or effect blocks. Otherwise may attach to their contained initializer computations, not to the declaration braces themselves.
+
+LocalCollectionTransform carries optional uniqueness and order axes only; no
+cardinality or mut slot exists. Range index expressions select positions.
+Explicit derived contracts retain their upper-bound normalization.
+
+SpecialIndexExpr(receiver, LastPosition/OptionalMember) retains [*]/[?] source
+syntax without encoding a receiver type. Assignable paths retain the matching
+SpecialIndexSuffix where ordinary place admission permits it. IndexExpr remains
+neutral for collection positions, dictionary keys and static tuple components.
+The type cardinality [?] normalizes to finite bounds 0 and 1 with written origin;
+CST retains its spelling. Deferred StoredFieldDecl defaults remain absent in
+Surface AST, not invented values. Typing checks the abstract/concrete boundary.
+Postfix Nat List(args) folds TypeApplicationExpr before the following CallExpr.

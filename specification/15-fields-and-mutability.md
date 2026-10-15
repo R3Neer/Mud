@@ -10,6 +10,8 @@ depends-on:
   - "[[11-type-system]]"
 questions: []
 decisions:
+  - D-177
+  - D-175
   - D-169
   - D-167
   - D-168
@@ -169,7 +171,7 @@ Explicit raise is an observable error-channel effect under the owner permissions
 ## 4. Schemas and initialisation
 
 > [!rule] MUD-EFFECT-004 — Static field schema
-> Thing field declarations come exclusively from the canonical schema and admissible specialisation. Every newly declared stored field has an explicit initialiser. Runtime add/remove modify collections or associations and never add/remove field declarations.
+> Thing field declarations come exclusively from the canonical schema and admissible specialisation. Every newly declared concrete stored field has an explicit initialiser. An abstract thing may defer a stored field initializer with a complete explicit contract; every concrete descendant must resolve all deferred initialization obligations before materialization. Runtime add/remove modify collections or associations and never add/remove field declarations.
 
 Stored thing schema initialisers must be closed and statically evaluable, including every subordinate ValueBlock and native contract they use. Private temporary storage is permitted, but captured runtime-world dependencies and observable effects are not. Stored locals inside a runtime value/effect computation instead inherit that owner's mode and are not schema initialisers.
 
@@ -241,3 +243,9 @@ Handlers run after the protected scope has rolled back. Their bindings are immut
 Elaboration records storage roots, reconstructible paths, generation dependencies, authorised footprints, per-block proof obligations and permitted runtime overlap checks. It preserves incorporated operator update classes for consolidation; user-overloaded updates retain their computed replacement class rather than acquiring an inferred algebra. It does not add those fields to nominal HIR or prescribe a semantic IR layout.
 
 Conformance instances in [[types/typing-cases.yaml]] cover writable invariance, nested capability boundaries, private-region mutation, cardinality-preserving replacement, rejected unknown cardinality and residual key overlap. Full operational wave correctness and dynamic lifetime/acyclicity proofs remain separately scoped.
+
+An abstract stored-field omission is not a local uninitialized variable and
+supplies no runtime slot. Inherited origin/default conflict rules still apply;
+an abstract descendant may remain incomplete, a concrete descendant may not.
+A local property suffix cannot contain mut, even when restating source authority.
+Identity-preserving transformations may retain existing immediate-member rights.

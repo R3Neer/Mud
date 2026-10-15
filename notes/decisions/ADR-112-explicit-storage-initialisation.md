@@ -18,13 +18,15 @@ affects:
 
 Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
 
+- Amended by: [[ADR-177-abstract-thing-initialization-obligations|D-177]].
+
 ## Context
 
 The author chooses explicit storage initialisation rather than a type-wide default function. This replaces D-017 and amends D-015, D-026, D-031, D-032, D-038, D-056, D-068, D-069, D-074 and D-085.
 
 ## Decision
 
-Every newly declared stored thing field includes an explicit initialiser. Descendants inherit that declaration and initialiser without repeating them. Existing specific initialisation contributions retain their precedence and inheritance rules. A refinement must preserve a valid effective initialiser or replace it. Recreating a destroyed materialisation reruns effective initialisation from the canonical schema, never from prior or ancestor mutable state.
+Every newly declared concrete stored thing field includes an explicit initialiser. An abstract thing may defer a field with a complete explicit contract; every concrete descendant must resolve all pending initializers. Descendants inherit that declaration and initialiser without repeating them. Existing specific initialisation contributions retain their precedence and inheritance rules. A refinement must preserve a valid effective initialiser or replace it. Recreating a destroyed materialisation reruns effective initialisation from the canonical schema, never from prior or ancestor mutable state.
 
 There is no default(type) function or automatic choice of zero, false, a family member or a world participant. Type validity and supplying a value are separate. An empty domain cannot supply a required value; a zero-minimum collection can explicitly use empty.
 
@@ -36,7 +38,7 @@ Explicit given defaults and intrinsic metadata defaults such as ~name and ~prefi
 
 ## Integration review
 
-The mathematical, grammar, CST and Surface AST surfaces distinguish mandatory storage initialisers from optional alias/family defaults. Alias and family completeness are elaboration constraints. The nominal HIR retains the same field symbols, owners and initialisation references; it requires no type-default node. Chapters 11 and 15 develop the static initialization contract. Complete lifecycle transitions remain assigned to their planned chapter.
+The mathematical, grammar, CST and Surface AST surfaces retain optional abstract-schema defaults with mandatory concrete completeness, separately from alias/family defaults. Alias and family completeness are elaboration constraints. The nominal HIR retains the same field symbols, owners and initialisation references; it requires no type-default node. Chapters 11 and 15 develop the static initialization contract. Complete lifecycle transitions remain assigned to their planned chapter.
 
 ## Verification
 

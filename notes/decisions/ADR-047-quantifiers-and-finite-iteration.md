@@ -31,6 +31,8 @@ affects:
 
 MUD needs to iterate through domain sets without introducing general loops whose termination or result depends on the inner container.
 
+- Amended by: [[ADR-174-value-extrema-and-association-sequences|D-174]].
+
 ## Decision
 
 Expressions allow:
@@ -43,7 +45,7 @@ min x in source : predicate
 max x in source : predicate
 ```
 
-The source must be finite and have an admitted canonical enumeration; mathematical countability alone is insufficient. Evaluation is pure. The five bodies are Boolean predicates. `min` and `max` return the first or last accepted witness according to the source's semantic order; they require a source with a usable order. These are partial queries: if no witness is accepted, they produce `empty` with cardinality `[0..1]`; otherwise they produce a value of the source member type. The result is a problem only when a later receiving context does not support cardinality zero, in accordance with D-095.
+The source must be finite and have an admitted canonical enumeration; mathematical countability alone is insufficient. Evaluation is pure. The five bodies are Boolean predicates. `min` and `max` select least/greatest accepted witnesses by an explicit source ordering key, otherwise their witness type's total comparator. Bare sequence position is insufficient. All required predicates are examined unless an explicit compatible ordered-by criterion permits directional short circuit. These are partial queries: if no witness is accepted, they produce `empty` with cardinality `[0..1]`; otherwise they produce a value of the source member type. The result is a problem only when a later receiving context does not support cardinality zero, in accordance with D-095.
 
 D-081 Add a pure selection that returns the flags rather than consuming them:
 

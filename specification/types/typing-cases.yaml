@@ -2607,7 +2607,7 @@ cases:
   source: 'max x in values : 1 / x > 0'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Required static fixture has ordered Num values -1,0,1. Reverse search accepts 1 before zero; min would demand the zero-divisor fault.
+  contract: Required static fixture has Num values -1,0,1 explicitly ordered by value. Reverse search accepts 1 before zero; min would demand the zero-divisor fault.
 
 - id: quantifier-count-demands-all
   rules:
@@ -2891,3 +2891,106 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The result body tries to redeclare its visible direct selector local adjusted; ordinary no-shadowing remains mandatory.
+
+- id: optional-extraction-upper-one
+  rules:
+  - MUD-TYPE-049
+  source: Use(optional[?])
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: 'The fixture supplies optional: Int [0..1] and a permitted call. Absence omits this call and its
+    pending arguments, not later statements.'
+- id: last-position-access
+  rules:
+  - MUD-TYPE-049
+  source: items[*]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The fixture supplies an ordered Int collection. The result is optional unless nonemptiness is proved;
+    empty is ordinary absence.
+- id: optional-extraction-multiple-rejected
+  rules:
+  - MUD-TYPE-049
+  source: items[?]
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The fixture supplies an upper cardinality greater than one; optional extraction cannot choose an
+    occurrence.
+- id: omitted-initializer-rejected
+  rules:
+  - MUD-TYPE-049
+  source: let missing = optional[?]
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A possibly omitted non-Boolean initializer cannot establish a value, even for a zero-admitting
+    declared contract.
+- id: omitted-collection-element
+  rules:
+  - MUD-TYPE-049
+  source: let kept = [optional[?]]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The collection constructor consumes omission for one element and returns a normal zero-or-one collection.
+    A normal empty inner member is retained.
+- id: tuple-last-static-type
+  rules:
+  - MUD-TYPE-049
+  source: pair[*]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: pair is an anonymous (Int, Text) tuple. The last component is Text, not a union and not the whole
+    pair.
+- id: tuple-dynamic-index-rejected
+  rules:
+  - MUD-TYPE-049
+  source: pair[index]
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: pair is heterogeneous and index is not statically determined; component access requires a known
+    in-range position.
+- id: tuple-alias-input-renaming
+  rules:
+  - MUD-TYPE-047
+  source: policy[journey]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: 'The target input is (origin: City,destination: City); Journey stores departure/arrival with identical
+    component contracts. Projection relabels positions at this boundary only.'
+- id: tuple-exact-key-normalization
+  rules:
+  - MUD-TYPE-047
+  source: table[journey]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Exact tuple keys normalize construction, insertion and lookup through the same positional projection;
+    source outer alias identity is not part of the projected key.
+- id: abstract-field-deferral
+  rules:
+  - MUD-TYPE-048
+  source: 'abstract thing Base { mut size: Nat }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The complete explicit contract is retained without a default; no Base runtime slot exists.
+- id: concrete-field-obligation-rejected
+  rules:
+  - MUD-TYPE-048
+  source: thing Concrete as Base
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Base has a deferred required field and this concrete descendant supplies no applicable initializer.
+- id: concrete-field-obligation-completed
+  rules:
+  - MUD-TYPE-048
+  source: thing Concrete as Base { size = 3 }
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The fixture Base has one deferred Nat field. The concrete initializer resolves it with a closed
+    valid value.
+- id: optional-functional-coverage
+  rules:
+  - MUD-TYPE-050
+  source: 'let positive: Int --> Int [0..1 ordered] = value > 0 --> value'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Negative and zero inputs have no applicable branch and return normal empty. A positive minimum
+    would require coverage. Selected faults never become absence.

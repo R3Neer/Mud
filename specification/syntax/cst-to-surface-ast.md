@@ -15,6 +15,11 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-178
+  - D-177
+  - D-176
+  - D-175
+  - D-173
   - D-172
   - D-171
   - D-170
@@ -74,8 +79,9 @@ into the RHS or changing source order. Cache validity/availability are typed
 and evaluation contracts, not CST/AST fields. Exact associations and comprehension
 filters retain their independent scope boundaries.
 
-Functional value is an ordinary nominally resolved input symbol, not a token
-classification. Input/filter/result scope contracts follow 10-names-and-anchors.
+Contextual value references retain the ordinary nominally resolved input symbol
+and source spelling. A contextual keyword classification does not replace
+binding resolution. Input/filter/result scopes follow 10-names-and-anchors.
 
 ## State and purpose
 
@@ -204,7 +210,7 @@ produces `ThingDecl`:
 - Stored or calculated `~...` statements → `metadata_assignment` sequence, normalised to `StoredMetadataAssignment` or `CalculatedMetadataAssignment`.
 - Body → metadata, fields and specific initialisers.
 
-Newly declared stored fields require `=` and retain a mandatory `ValueBlock`. Inherited fields are not redeclared; completeness of alias components and family data belongs to elaboration.
+StoredFieldDecl retains an optional default ValueBlock. Omission is admitted only for an explicitly typed abstract thing field; concrete schema completeness is checked during typing. Inherited fields are not redeclared; completeness of alias components and family data belongs to elaboration.
 
 `thing-body` and `thing-body-declaration` do not generate independent AST nodes. `metadata-assignment` does produce its own node and does not become a field. Each `field-declaration` feeds the `fields` sequence; every `thing-initializer`, in either a concrete or abstract `thing`, produces `ThingInitializer(fieldName, value)` in `initializers`, without being folded into `StoredFieldDecl.defaultValue`. A definition that locally declares a field and contains a `thing-initializer` with the same name is rejected during validation before AST construction. Omitting the body and writing an explicit empty body produce the same empty sequences; the terminator is discarded as layout.
 
@@ -312,7 +318,7 @@ order = Unordered
 elementsMutable = Disabled
 ```
 
-`unique` produces `UniqueByValue`; `unique by a.b` produces `UniqueBy([a,b])`. Independently, `ordered` produces `OrdinaryOrdered`, a neutral surface feature whose semantic meaning is determined during elaboration, and `ordered by a.b` produces `OrderedBy([a,b])`. The two keyed forms share `CollectionKeyPath` syntax but retain different final-key semantic requirements.
+`unique` produces `UniqueByValue`; `unique by a.b` produces `UniqueBy([a,b])`. Independently, `ordered` produces `OrdinaryOrdered`, a neutral surface feature whose semantic meaning is determined during elaboration, and `ordered by a.b` produces `OrderedBy([a,b])`. The two keyed forms share `CollectionKeyPath` syntax but retain different final-key semantic requirements. OrderedBy([value]) retains the contextual spelling without deciding whether it denotes a member or the complete element. That choice requires the static member contract during elaboration; it creates no synthetic field or nominal symbol. UniqueBy([value]) remains an ordinary field-key path.
 
 Pre-AST validation rejects:
 
@@ -805,3 +811,16 @@ Nominal resolution binds captures/exports without inserting semantic types or na
 OperatorDeclarationSyntax produces UnaryOperatorDecl or BinaryOperatorDecl. Operand names and optional explicit types remain OperatorOperand; absence is retained until owner-type substitution. Result absence is retained for local result inference. Structural aliases store AliasOperatorDecl members; representation aliases store their operators separately from payload. Both descriptor-value-body metadata attachment forms project to the operator declaration's metadata list; their assignments are not ValueBlock statements or result-value metadata. Preserve source origins and reject combining the two forms. Only the closed overloadable token set projects here. Do not synthesize inverse declarations, algebraic property metadata or update declarations.
 
 RaiseExpressionSyntax produces RaiseExpr(ValueBlock). Direct executable raise statements project to RaiseValueStatement or RaiseEffect according to their enclosing body, before generic action-call candidate projection. Handler raise still produces RecoverRaise; nested value bodies retain their own handlers. Payload typing and checking-only normal-result context belong to elaboration.
+
+LocalCollectionTransform carries optional uniqueness and order axes only; no
+cardinality or mut slot exists. Range index expressions select positions.
+Explicit derived contracts retain their upper-bound normalization.
+
+SpecialIndexExpr(receiver, LastPosition/OptionalMember) retains [*]/[?] source
+syntax without encoding a receiver type. Assignable paths retain the matching
+SpecialIndexSuffix where ordinary place admission permits it. IndexExpr remains
+neutral for collection positions, dictionary keys and static tuple components.
+The type cardinality [?] normalizes to finite bounds 0 and 1 with written origin;
+CST retains its spelling. Deferred StoredFieldDecl defaults remain absent in
+Surface AST, not invented values. Typing checks the abstract/concrete boundary.
+Postfix Nat List(args) folds TypeApplicationExpr before the following CallExpr.

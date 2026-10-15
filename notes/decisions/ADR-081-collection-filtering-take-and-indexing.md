@@ -26,6 +26,10 @@ affects:
 
 - Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
 
+- Amended by: [[ADR-175-historical-order-and-local-collection-properties|D-175]].
+
+- Amended by: [[ADR-176-optional-extraction-and-positional-access|D-176]].
+
 ## Context
 
 `foreach ... if ...` selects participants to produce effects, but does not build a reusable pure collection. Quantifiers consume witnesses to produce booleans or aggregates and `all` enumerates a complete domain; none of these forms returns the subcollection satisfying a predicate.

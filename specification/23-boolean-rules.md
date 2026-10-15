@@ -14,6 +14,7 @@ depends-on:
 questions:
   - Q-030
 decisions:
+  - D-176
   - D-167
   - D-168
   - D-166
@@ -193,3 +194,10 @@ syntax model cover signature selection, named binding, contextual input checks,
 pure bodies and value/erasure boundaries. These are scoped evidence, not a full
 recursive admission solver or Boolean evaluator. Nominal HIR retains original
 rule/participant identities and scopes without effect summaries or cached values.
+
+Explicit optional extraction can contribute erasure under
+[[21-expressions#Optional extraction and omission]]. Its source is evaluated to
+establish absence, unlike an inactive Boolean-rule call whose arguments are
+not demanded. Once erasure reaches the Boolean core, the same demand, negation,
+closure and derived/stored boundaries apply. A wholly erased guard closes true
+and does not establish that an optional receiver exists.

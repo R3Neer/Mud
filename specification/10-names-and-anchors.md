@@ -13,6 +13,10 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-177
+  - D-176
+  - D-178
+  - D-173
   - D-172
   - D-171
   - D-169
@@ -63,7 +67,7 @@ decisions:
 
 ## Functional input and comprehension scopes
 
-Each functional branch introduces one ordinary immutable LocalSymbol of kind
+Each functional branch introduces one immutable LocalSymbol of kind
 functional-input named value, owned by the nearest anchored declaration and
 distinguished by the branch's source ordinal. The branch has a shared input
 scope containing the selector scope; the result scope extends its completed
@@ -73,6 +77,9 @@ branch SurfaceRef provenance and no public anchor. References to value and
 implicit .member receivers resolve to that symbol through ordinary lexical
 lookup. A visible outer value conflicts under no-shadowing; branch-local
 redeclaration also fails. Exact associations introduce no implicit input.
+The contextual keyword use of value retains this same symbol. In an ordering
+key, the source path value remains neutral until elaboration can choose an
+accessible member or the complete element; no fictitious member is introduced.
 Selector shorthand retains source references; operator interpretation, type
 membership, coverage and result joins belong to elaboration, not Nominal HIR.
 
@@ -482,3 +489,8 @@ MUD-TYPE-042 in [[11-type-system]] permits private provenance references only in
 Contextual callable destinations and summaries follow [[types/contextual-call-analysis]] after ordinary lookup and static signature selection. Context keys preserve existing declaration/application identities; they add no nominal HIR fields, anchors or source scopes.
 
 [[types/termination-certification]] records code-origin proof nodes for functional policies and statically selected operator bodies. They create no value equality, public callable category or additional nominal HIR field. Ranking/context information remains in later semantic analysis.
+
+Tuple input labels belong to their anonymous product contract, not injected
+LocalSymbols. Functional .name/value.name resolve through the existing implicit
+value binding. Positional alias projection and optional omission are elaboration
+facts; they create no alias members, anchors or nominal-HIR type payloads.

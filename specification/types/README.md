@@ -4,6 +4,8 @@ status: current
 normative: true
 questions: []
 decisions:
+  - D-174
+  - D-173
   - D-172
   - D-171
   - D-167
@@ -44,6 +46,11 @@ decisions:
 ---
 
 # Static type contract corpus
+
+sequence_order_witnesses.py and test_sequence_order_witnesses.py check supplied
+sequence/key premises: bare sequence preservation, explicit sort, stable ties,
+value-member precedence, invalid present fields and mixed union interpretation.
+They do not infer source bindings or implement concurrent insertion ordering.
 
 The contracts are specified in [[../11-type-system]], [[../15-fields-and-mutability]] and [[../21-expressions]]. Those chapters are current within their published scopes. This document defines the corpus coverage/evidence boundary; it neither implements a source analyzer nor certifies runtime protocols.
 
@@ -99,3 +106,9 @@ source constructors or implement a parser, typechecker or runtime.
 parents and per-application/branch derivation traces, including unchanged reuse,
 private dependency invalidation, lazy demand, disposal and retained footprints.
 It executes no Mud RHS and implements no source resolver or runtime cache.
+
+`test_sequence_order_witnesses.py` contrasts historical occurrence order with
+explicit key order and dictionary replacement/reinsertion. `access_schema_witnesses.py`
+and `test_access_schema_witnesses.py` check finite supplied demand/emission,
+component contract, projected-key and initialization-origin facts. They do not
+parse Mud, infer schemas or implement optional propagation or a runtime.

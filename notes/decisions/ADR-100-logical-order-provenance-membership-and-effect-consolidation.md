@@ -30,9 +30,15 @@ affects:
 
 - Developed by: [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]].
 
+- Amended by: [[ADR-175-historical-order-and-local-collection-properties|D-175]].
+
 ## Context
 
 MUD already distinguishes ordered and unordered collections, concurrent effects computed from a common snapshot and canonical structural composition. The logical persistence of order, the provenance needed to order values without a common comparator, local collection transformations, Boolean membership and several concurrent-consolidation rules remained to be unified.
+
+- Amended by: [[ADR-173-sequence-order-and-contextual-value|D-173]].
+
+- Amended by: [[ADR-174-value-extrema-and-association-sequences|D-174]].
 
 ## Decision
 
@@ -52,7 +58,7 @@ Every operation whose semantics depend on order consumes the collection's logica
 
 ### Local collection transformations
 
-A collection specification applied locally to an expression transforms the temporary value. In value declarations, the contract is verificatory and never transforms the value. In derived declarations, the written nominal or structural type is checked statically, while domain, cardinality, uniqueness (`unique` or `unique by path`) and order declared in the derived form, whether or not an explicit type exists, are coercive over the result and use the same normalisation as the equivalent local transformation.
+A collection specification applied locally to an expression transforms the temporary value. In value declarations, the contract is verificatory and never transforms the value. In derived declarations, the written nominal or structural type is checked statically, while domain, cardinality, uniqueness (`unique` or `unique by path`) and order declared in the derived form are coercive over the result. Local suffixes only transform uniqueness/order; cardinality contracts remain declaration-level normalization, not local suffixes.
 
 Local transformations are normalised, regardless of the modifiers' textual order, in this order:
 
@@ -67,11 +73,11 @@ Local domain restriction uses the form:
 people in Adults
 ```
 
-and filters out members that do not belong to the domain. `unique` removes later occurrences of the same whole value. `unique by path` removes later occurrences whose projected semantic key equals one already retained, using stable provenance to decide the first survivor. `ordered by path` establishes order by the indicated key and uses stable provenance to break equal-key ties. `ordered` uses the complete type's intrinsic total semantic order when one exists; if the complete type has no common total comparator, it uses the provenance of all occurrences. No order is invented between union branches by textual position, nominal name, internal tag or implementation identity.
+and filters out members that do not belong to the domain. `unique` removes later occurrences of the same whole value. `unique by path` removes later occurrences whose projected semantic key equals one already retained, using stable provenance to decide the first survivor. `ordered by path` establishes order by the indicated key and uses stable provenance to break equal-key ties. Bare `ordered` establishes stable historical occurrence order, including after a prior explicit key order. Intrinsic comparison is used only by an explicit key criterion. In `ordered by value`, a member named value takes precedence; without that member, the complete element must have a total comparator. A present invalid member is an error and the interpretation must be uniform over static alternatives. No order is invented between union branches by textual position, nominal name, internal tag or implementation identity.
 
-An upper cardinality bound truncates after filtering, deduplication and ordering. A lower bound requires enough members to exist and never manufactures members. A local transformation cannot introduce inner `[mut]` capability or any authority not possessed by the source expression. In a derived form, `[mut]` is therefore a capability requirement: it may be preserved through transformations retaining the semantic identity of the same `thing` values, but is never obtained by coercion.
+In a derived declaration an upper cardinality bound truncates after filtering, deduplication and ordering. A lower bound requires enough members to exist and never manufactures members. A local transformation cannot introduce inner `[mut]` capability or any authority not possessed by the source expression. In a derived form, `[mut]` is therefore a capability requirement: it may be preserved through transformations retaining the semantic identity of the same `thing` values, but is never obtained by coercion.
 
-Writing a local exact cardinality that would be indistinguishable from indexing retains indexing as the short form; the exact transformation may be written as a degenerate interval, for example `[2..2]`. A specification containing `unique` or `ordered` is unambiguously a transformation.
+Local suffixes transform only uniqueness and order. A range suffix is a positional slice; it never imposes a cardinality contract. Local mut is invalid, including when the source already has authority. Derived declarations retain their explicit cardinality normalization.
 
 ### Boolean membership
 
@@ -182,8 +188,8 @@ Conformance must cover at least:
 
 1. inherited refinements that strengthen guarantees and rejection of those that remove capability;
 2. persistence of logical order through filters, copies and assignments;
-3. intrinsic order of totally orderable types and provenance fallback for heterogeneous types;
-4. local normalisation domain → uniqueness (`unique` or `unique by`) → order → cardinality and rejection of local `[mut]`;
+3. sequence preservation for every member type and explicit stable-key ordering;
+4. derived normalization domain → uniqueness → order → cardinality, local property-axis replacement and rejection of local cardinality/mut suffixes;
 5. `has` and `has not`, with rejection of `in` as Boolean membership;
 6. prior merging of semantically equal ordinary-`unique` insertions, first-by-stable-provenance resolution of keyed collisions, and reproducible causal-respecting linear extension;
 7. arithmetic form `(Δ, P, Q)`, valid cancellations and preserved failures;

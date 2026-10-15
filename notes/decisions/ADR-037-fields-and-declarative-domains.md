@@ -34,6 +34,8 @@ affects:
 
 - Clarified by: [[ADR-130-acyclic-domain-evaluation|D-130]].
 
+- Amended by: [[ADR-177-abstract-thing-initialization-obligations|D-177]].
+
 ## Decision
 
 ### Types of field
@@ -153,3 +155,5 @@ The parser and the AST distinguish between:
 ## Amendment by D-084
 
 Structural aliases support derived fields and overrides of inherited defaults. Their derived forms preserve the distinction between a verification constraint and enforcement for domain/collection; coercion cannot create `[mut]` capability.
+
+An abstract thing may omit an explicitly typed stored initializer; all deferred obligations must be resolved for every concrete descendant before materialization. No runtime slot is left uninitialized.

@@ -12,6 +12,8 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-176
+  - D-173
   - D-164
   - D-169
   - D-141
@@ -94,9 +96,12 @@ A name that does not follow the capitalisation rules is a static error, not an a
 
 ## Reserved and contextual words
 
-`let` and `foreach` are hard reserved words. `each` and `value` are ordinary
-identifiers. Functional input injection and abbreviated .member receivers
-belong to nominal scopes, not lexical classification.
+`let` and `foreach` are hard reserved words. `each` is an ordinary identifier.
+`value` is contextual when denoting a functional branch's implicit input or the
+single-component ordering criterion in `ordered by value`. It remains available
+as an ordinary declaration/member name elsewhere. Input injection, .member
+abbreviation and member-versus-whole ordering-key resolution retain their
+nominal/elaboration contracts; token classification does not prove a binding.
 
 Reserved words cannot be used as identifiers. The standard catalogue is:
 
@@ -121,6 +126,9 @@ The terminals `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>`, `<-` and `<=>` are no
 The scanner applies the longest match: `a--b` contains the operator `--`, whilst `a - -b` contains separate subtraction and negation. The parenthesised form `a - (-b)` is equivalent to the latter.
 
 They are contextual:
+
+- `value` for a functional branch's implicit input and the `ordered by value`
+  criterion; an applicable member named value takes precedence in that criterion.
 
 - `part` and `only` in the initial `.mud` header `part only`; `uses` in a `mud.part` manifest.
 
@@ -439,3 +447,8 @@ Within a template, `\u{...}` is applied first, followed by the other escape sequ
 > After `from` and its language label, the selected adapter classifies each native statement or export RHS as `FOREIGN_STATEMENT` or `FOREIGN_EXPRESSION`. These contextual tokens are lossless source spans, not products of ordinary MUD lexing. The label and bridge prefix `mud name [: Type] <-` use MUD syntax. `mud` is contextual only at a direct foreign-body item boundary; `<-` is a two-character token.
 
 The adapter determines native statement boundaries, nesting, strings, comments and continuation. Native braces, semicolons or the word `mud` inside a string/comment do not delimit MUD constructs. A newline inside a continued native expression is not an extra instruction. At the outer body level the adapter hands separators and the closing MUD brace back to the MUD parser; native nested separators remain part of the foreign region. Recognition must use language-aware parsing, not regular-expression splitting. Original offsets, indentation and line endings are preserved; virtual-document indentation adjustments require source maps. The adapter protocol remains uncertain in Q-069.
+
+The punctuation token ? occurs in the cardinality abbreviation [?] and optional
+extraction C[?]. It is neither an identifier nor a standalone ternary operator.
+The token * in C[*] retains its existing spelling; its index context is distinct
+from multiplication and the unbounded type-cardinality marker.

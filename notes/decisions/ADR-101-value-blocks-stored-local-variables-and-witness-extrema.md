@@ -26,6 +26,8 @@ MUD already distinguished declarative expression blocks and executable effect bl
 
 The extension must preserve two deliberate language boundaries: a value computation cannot acquire observable effects, and `if` does not become a general statement inside calculation blocks.
 
+- Amended by: [[ADR-174-value-extrema-and-association-sequences|D-174]].
+
 ## Decision
 
 ### Three body contracts
@@ -81,9 +83,9 @@ The following use `ExpressionBlock`: Boolean rules, `always`, `when`, `if` guard
 
 ### Witness extrema
 
-`min` and `max` use an `ExpressionBlock` as a Boolean predicate. Among accepted witnesses, `min` returns the first and `max` the last according to the source's semantic order. An `ordered` source, even without an explicit key, provides sufficient order. A source without usable semantic order is invalid. No accepted candidate produces `empty` with the ordinary partial cardinality of extrema.
+`min` and `max` use an `ExpressionBlock` as a Boolean predicate. Among accepted witnesses, min/max select least/greatest by an explicit source ordering key, otherwise the witness type's total comparator. Arbitrary sequence position is not an extremum criterion. Without explicit compatible key order, all required predicate candidates are examined. No accepted candidate produces `empty` with the ordinary partial cardinality of extrema.
 
-`by` retains exclusively its progression meaning when the source admits it; `min` and `max` introduce no ordering criterion of their own.
+`by` retains exclusively its progression meaning; min/max add no inline key-expression syntax. Their criterion is the explicit source key or the witness type comparator.
 
 ### `ValueBlock` owners
 
@@ -93,7 +95,7 @@ The owner's constraints remain in force. When a field, component, datum, member 
 
 ### Dictionaries
 
-An exact association has `ExpressionBlock` on the left and `ValueBlock` on the right. A functional branch has `ExpressionBlock<Bool>` on the left and `ValueBlock` on the right. The scopes on both sides are independent; locals on the left do not pass to the right. The common outer environment and ordinary implicit input `value` remain available under their contracts.
+An exact association has `ExpressionBlock` on the left and `ValueBlock` on the right. A functional branch has `ExpressionBlock<Bool>` on the left and `ValueBlock` on the right. Exact key/value scopes are independent. Functional results extend their own completed direct selector-preamble scope under D-172; nested locals do not escape. The common outer environment and contextual implicit input value retain their contracts.
 
 Braces replace only the extended operand. All four short/extended combinations are freely admitted:
 
@@ -133,7 +135,7 @@ A declaration does not combine the integrated preamble with a second metadata bo
 4. Nested `LocalForEach`, pure filter and body without a mandatory result.
 5. Sequential ordered accumulator and consolidated unordered accumulator; distinction between `+=` and `=`.
 6. Readonly binding and `for mut` foreach local class, including rollback.
-7. Boolean `min`/`max` returning witnesses, ordered source without a key and `empty` without candidates.
+7. Boolean `min`/`max` returning witnesses, unsorted sources versus explicit key order and `empty` without candidates.
 8. All four short/extended combinations of `->` and `-->`, with independent scopes.
 9. Integrated metadata projected to the descriptor and rejection of a second metadata body.
 10. `given` default remains constant.

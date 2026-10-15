@@ -22,6 +22,8 @@ must be evaluated when a truth/witness result is already known. The author
 accepts semantic-order short circuit for exists/forall, common-view complete
 evaluation for unordered sources, and extremum-direction witness search.
 
+- Amended by: [[ADR-174-value-extrema-and-association-sequences|D-174]].
+
 ## Decision
 
 Produce, capture and validate the source and step before predicate search;
@@ -37,10 +39,11 @@ not erase a fault elsewhere, and technical hash/provenance order cannot choose
 which predicates are skipped. Count examines all: sequential semantic order
 where supplied, otherwise common-view independent contributions.
 
-Min requires usable source order and searches from the first end; max searches
-from the last in reverse. Each stops at its first accepted witness. This uses
-an already ordered source; it does not find an arbitrary minimum without
-examining unsorted input or avoid source construction/sorting costs. The body
+Min/max select extrema by an explicit source key, otherwise the witness type's
+total comparator. Without explicit compatible ordered-by ordering they examine
+all required predicate candidates. With that explicit ordering, min searches
+from the first end and max from the last in reverse, stopping at the first
+accepted witness. Internal sorting cannot change predicate fault demand. The body
 is Bool filtering, not a minimization expression. No accepted witness gives
 empty; ordinary empty-source exists/forall/count/extrema results remain unchanged.
 

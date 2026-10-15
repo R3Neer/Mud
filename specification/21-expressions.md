@@ -13,6 +13,10 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-178
+  - D-176
+  - D-173
+  - D-174
   - D-172
   - D-171
   - D-169
@@ -138,7 +142,7 @@ Block evaluation has the disjoint outcomes $\mathsf{Normal}(v)$ and $\mathsf{Fau
 > [!rule] MUD-TYPE-009 — Literal synthesis and checking
 > A name obtains the contract of its resolved visible binding. An exact numeric literal remains contextual until its compatible representation is uniquely established. No Nat/Int/Num/Money priority is applied to an ambiguous literal; an insufficiently constrained calculated binding requires an annotation. Signs are operators. A basic/alias/magnitude expected context may contextualise a compatible untyped literal. A Rum literal requires its lexical r prefix even in a Rum context.
 
-Text literals synthesise Text, including one-scalar text. A Char context admits one decoded Unicode scalar, with no interpolation. Text is not implicitly a canonically ordered Char collection; its specified textual-list construction in a Char-collection context must satisfy that collection's order/shape. Bool literals have singleton Bool.
+Text literals synthesise Text, including one-scalar text. A Char context admits one decoded Unicode scalar, with no interpolation. Text is not implicitly a Char collection; its specified textual-list construction in a Char-collection context must satisfy that collection's order/shape. Bool literals have singleton Bool.
 
 Empty has cardinality zero and no chosen nominal member type. An expected zero-admitting collection can check it; a positive-minimum context fails the ordinary admission/contract check. All and fallback are contextual forms: all requires a finite enumerable expected domain, and fallback exists only in a functional branch position.
 
@@ -154,9 +158,69 @@ For field access, every possible static receiver alternative must expose one com
 
 Metadata access applies the static owner-category matrix. Type reflection returns Type for the statically known contract at that programme point, including valid narrowing. Unsupported metadata is rejected; supported absent optional metadata returns its declared optional result. No runtime lookup repairs invalid reflection.
 
-Positional indexing requires observable order, uses one-based indices and returns the optional member form when absence is permitted. Slices preserve the source members' contracts and retained guarantees with conservative cardinality. Text indexing produces Char and text slicing produces Text; positional text order is distinct from a canonical ordered-collection modifier.
+Positional indexing requires observable order, uses one-based indices and returns the optional member form when absence is permitted. Slices preserve the source members' contracts and retained guarantees with conservative cardinality. Text indexing produces Char and text slicing produces Text; Text retains its own positional sequence without acquiring collection modifiers.
 
 An exact dictionary query checks the key contract and yields its value contract with possible absence; composite keys contextualise one product key. A functional query applies all relevant branch-selector/result contracts and the dictionary's selection mode. The static result preserves the documented FirstMatch or AllMatches collection shape. Missing exact keys yield empty; exhaustive functional policies obtain absence only from admitted selected results, not an invented type default or a special aggregation error.
+
+### Optional extraction and omission
+
+> [!rule] MUD-TYPE-049 — Scoped optional omission
+> For C with static upper cardinality at most one, C[?] extracts its one complete
+> member, or produces omission when C is empty. Omission is a computation
+> qualification, never a Mud value, Error, ordinary empty or third Boolean.
+
+Write C |- e : tau ; m for the ordinary expression contract plus a possible
+omission flag m. SpecialIndexExpr(OptionalMember) adds this possibility when
+zero is admitted. A Fault obtaining C remains Fault. A definitely singleton
+extraction adds no omission possibility and grants no additional authority.
+
+Dependent member/index access, arithmetic, construction and calls transmit
+omission without executing their remaining dependent work. Arguments and
+operands retain ordinary left-to-right demand; assignment destinations retain
+their ordinary once-only resolution order. Earlier faults/effects/dependencies
+remain observable. A tuple/alias constructor is omitted as a complete expression,
+not constructed with a missing required component. Optimization may reorder or
+eliminate work only with observational equivalence, including termination,
+faults, random observations, read footprints, snapshots and authority.
+
+A Boolean-producing expression affected by omission contributes erasure to the
+canonical Boolean pruning core. Not preserves erasure; and/or retain surviving
+operands and ordinary demand; whole erased ordinary Boolean data closes true.
+Stored Boolean capture and derived Boolean transparency retain their existing
+boundary rules. Thus an entirely omitted if guard admits its then, and does
+not prove the optional receiver present. Quantifier filters consume erasure
+under their existing witness-preserving rules, never manufacturing witnesses.
+
+A collection literal consumes omission for one complete element. A comprehension
+consumes it for the current emission, continues traversal, and derives bounds
+including zero emissions. Normal collection-valued results, including empty,
+remain complete members. They are not flattened or silently erased.
+
+An omitted effect assignment/update/call performs no dependent effect and the
+next statement proceeds. No assignment of empty, implicit return, rollback of
+earlier work or second transaction occurs. Required owner results and definite
+initialization must still be proved: a possibly omitted non-Boolean stored or
+derived initializer, branch result or required handler result is invalid even
+if its declared value contract admits zero. A surrounding collection literal
+can consume omission and produce a normal empty value. A handler cannot treat
+pending Errors as handled merely because its required work was omitted.
+
+```mud
+# Fragments inside an admitted owner; optional has upper bound one:
+let kept = [optional[?]]  # a normal collection with zero or one member
+# Invalid when optional may be empty: let missing = optional[?]
+# In an effect body: Process(optional[?], expensiveArgument) skips the call
+# and the pending argument when optional is empty.
+```
+
+SpecialIndexExpr(LastPosition) selects the last observable collection position,
+returning [1] when nonemptiness is proved and otherwise [0..1]; it does not
+propagate omission. Anonymous tuples instead select their statically last
+component, with its complete type. Ordinary tuple indices must be static
+integers in 1..arity. Collection-of-tuple indexing selects the outer member;
+extract an optional tuple with [?] before component access. A mandatory tuple's
+[?] is redundant. Tuple component access does not extend to arbitrary aliases.
+Dictionary indexing remains key lookup, not implicit positional association access.
 
 ## Static generic expressions
 
@@ -335,9 +399,9 @@ Take checks a singleton Nat amount and a finite enumerable source. With constant
 | --- | --- | --- |
 | Exists, forall | Finite enumerable source; pure deterministic Bool predicate | Singleton Bool |
 | Count | Same predicate contract | Singleton Nat, bounded by source size |
-| Min, max | Finite enumerable source with the required order; pure deterministic Bool filter | Source member contract with cardinality $[0,1]$ |
+| Min, max | Finite enumerable source with an applicable total extremum criterion; pure deterministic Bool filter | Source member contract with cardinality $[0,1]$ |
 
-Quantifier predicate demand follows MUD-ITER-004 in [[22-quantifiers-and-iteration]]: ordered exists/forall short-circuit, unordered sources evaluate all, count needs all, and extrema search from their respective semantic ends. Source production/validation remains demanded; skipped predicates produce no reads/faults.
+Quantifier predicate demand follows MUD-ITER-004 in [[22-quantifiers-and-iteration]]: ordered exists/forall short-circuit, unordered sources evaluate all, count needs all, and extrema short-circuit only with explicit compatible key ordering; otherwise all required predicate candidates are examined. Source production/validation remains demanded; skipped predicates produce no reads/faults.
 
 Min/max return witnesses, not a value computed by a numeric body. No accepted witness yields ordinary empty. Direct quantification/traversal may consume a finite domain without first constructing a collection where its contract permits this. For each executes the appropriate effect/private-region block and preserves its source snapshot and decreasing/finite traversal evidence. Iteration, selection and quantifiers validate the complete recursive binding pattern before the predicate/body, introducing named leaves together and no symbol for a discard. Exact association patterns preserve dictionary witnesses; min/max still return the original accepted witness. Pattern mismatch is a static error and cannot filter the source.
 

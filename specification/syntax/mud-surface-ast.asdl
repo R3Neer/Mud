@@ -227,7 +227,7 @@ module MUDSurface {
     stored_field_data = (flag collection_mutable,
                          field_name name,
                          stored_value_shape? shape,
-                         value_block default_value,
+                         value_block? default_value,
                          metadata_assignment* metadata)
         attributes (source_origin origin)
 
@@ -395,12 +395,14 @@ module MUDSurface {
 
     action_kind = PublicAction | Subaction
 
+    -- OrderedBy([value]) retains contextual spelling; typed elaboration selects
+    -- an applicable member or the whole element. No synthetic field is created.
     collection_order = Unordered
                      | OrdinaryOrdered
                      | OrderedBy(collection_key_path key)
         attributes (source_origin origin)
 
-    local_collection_transform = LocalCollectionTransform(cardinality? cardinality, local_collection_uniqueness? uniqueness, local_collection_order? order)
+    local_collection_transform = LocalCollectionTransform(local_collection_uniqueness? uniqueness, local_collection_order? order)
         attributes (source_origin origin)
 
     local_collection_uniqueness = OrdinaryLocalUnique | LocalUniqueBy(collection_key_path key)
@@ -643,6 +645,7 @@ module MUDSurface {
 
     access_suffix = MemberSuffix(identifier_name member)
                   | IndexSuffix(expr first_index, expr* remaining_indices)
+                  | SpecialIndexSuffix(index_access_kind kind)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
@@ -710,6 +713,7 @@ module MUDSurface {
          | ConversionExpr(expr value, conversion_target target)
          | MemberAccessExpr(expr receiver, identifier_name member)
          | MetadataAccessExpr(expr receiver, metadata_name metadata)
+         | SpecialIndexExpr(expr receiver, index_access_kind kind)
          | IndexExpr(expr receiver,
                      expr first_index,
                      expr* remaining_indices)
@@ -717,6 +721,8 @@ module MUDSurface {
                     expr* positional_arguments,
                     named_call_argument* named_arguments)
         attributes (source_origin origin)
+
+    index_access_kind = LastPosition | OptionalMember
 
     selector_syntax = SelectorOperand(expr value)
                     | SelectorComparison(comparison_operator operator, expr expected)

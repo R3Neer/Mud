@@ -179,3 +179,8 @@ expressions:
     section: 6. Collection and dictionary algebra
     cases:
     - expression-selector-expr
+  SpecialIndexExpr:
+    section: 2. Access, reflection and indexing
+    cases:
+    - optional-extraction-upper-one
+    - last-position-access

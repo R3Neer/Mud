@@ -166,8 +166,8 @@ class RecoveryContractTests(unittest.TestCase):
                 bad = re.sub(rf"(?m)(^{production}\s*::=.*?)(;)", r"\1 , { otherwise-clause }\2", self.grammar, count=1, flags=re.S)
                 self.assertTrue(recovery_contract_problems(bad, self.ast))
 
-    def test_field_initialization_cannot_be_optional(self):
-        bad = self.ast.replace('value_block default_value', 'value_block? default_value')
+    def test_abstract_field_default_cannot_be_forced_in_surface_ast(self):
+        bad = self.ast.replace('value_block? default_value', 'value_block default_value')
         self.assertTrue(recovery_contract_problems(self.grammar, bad))
 
     def test_abstract_alias_and_imagine_cannot_be_lost(self):

@@ -21,6 +21,8 @@ affects:
 - Questions: [[notes/questions/Q-042-e-specialisation-from-a-concrete-thing|Q-042]], [[notes/questions/Q-043-c-specialisation-cycles|Q-043]]
 - Documents concerned: [[specification/04-mathematical-model]], future `12-things.md`
 
+- Amended by: [[ADR-177-abstract-thing-initialization-obligations|D-177]].
+
 ## Context
 
 [[notes/decisions/ADR-014-unified-ontology-of-thing|ADR-014]] provides that every `thing` A concrete thing is simultaneously a thing with state its own and a possible ancestor. This makes it necessary to clarify:
@@ -69,7 +71,7 @@ When you first activate a specific `thing` through `start with` or:
 create N
 ```
 
-the initialisation of $N$ It takes the effective defaults from its predecessors, incorporates the local declarations and then applies the effective initialisers. It does not take the active states from its predecessors. Every newly declared stored field has an explicit initialiser. Recreating a destroyed owner reconstructs its own load; dependency suspension preserves independently owned load.
+the initialisation of $N$ It takes the effective defaults from its predecessors, incorporates the local declarations and then applies the effective initialisers. It does not take the active states from its predecessors. Every newly declared concrete stored field has an explicit initialiser; explicitly typed abstract fields may defer their obligation until a concrete descendant resolves it. Recreating a destroyed owner reconstructs its own load; dependency suspension preserves independently owned load.
 
 Initialisers do not become declarations of field nor in schema defaults. That an initialiser of a `thing` The fact that an abstract class can be inherited as an initialisation argument does not alter the default inheritability of the field.
 

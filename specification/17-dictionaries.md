@@ -13,6 +13,10 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-176
+  - D-178
+  - D-174
+  - D-173
   - D-172
   - D-169
   - D-167
@@ -115,9 +119,14 @@ changes, whole replacements, joint value-uniqueness checking and final cardinali
 validation are distinct stages. Shared roots alone do not imply conflict.
 This static chapter does not replace that batch algorithm.
 
-An exact dictionary is enumerable by keys or full associations. `ordered` uses
-the applicable canonical key order/provenance contract; hash traversal is not
-observable order. A single traversal binding projects the key. A two-position
+An exact dictionary is enumerable by keys or full associations. Bare `ordered`
+preserves the association sequence, independently of key comparability. Literal
+association order establishes it. A new sequential key appends; replacing an
+existing value preserves that key's position. Deleting and reinserting creates
+a new position. Concurrent additions use stable causal-respecting provenance.
+Copying and filtering preserve surviving order. Explicit stable-key ordering is
+distinct. Hash traversal is not observable order. A single traversal binding
+projects the key. A two-position
 root pattern projects key and value, with recursive patterns within those
 positions. Pattern matching does not alter association identity. Equality of
 exact dictionaries compares the same semantic key/value associations, independent
@@ -154,12 +163,12 @@ contracts and inferred bounds must account for that omission.
 
 ## Functional policy branches
 
-> [!rule] MUD-DICT-003 — Pure exhaustive selectors
-> Every functional dictionary has pure deterministic interpreted selectors and proven input coverage. Its results satisfy the complete output contract.
+> [!rule] MUD-DICT-003 — Pure selectors and conditional coverage
+> Every functional dictionary has pure deterministic interpreted selectors and input coverage when the application minimum is positive. Its results satisfy the complete output contract.
 
 A functional branch has a pure selector and a ValueBlock result. Its input
-is the implicit immutable ordinary variable `value`, visible in its selector
-and result scopes. It is not a reserved or contextually classified word. Normal lookup,
+is the implicit immutable variable denoted contextually by `value`, visible in
+its selector and result scopes. This spelling is not globally reserved. Normal lookup,
 duplicate-name and no-shadowing rules apply; neither result nor selector may
 redeclare it. Direct selector-preamble locals are visible in that branch's result under the shared-scope contract below. Exact associations
 do not inject value: their values are computed at association construction,
@@ -268,22 +277,13 @@ A nominal named product cannot be opened with that positional binding; access
 its named components instead. Structural input identity and once-only input
 evaluation retain the ordinary contextual-construction rules.
 
-Coverage is universal over the admitted input contract and applicable views,
-not a check of one current world or runtime sample. State-dependent guards
-require fallback unless the version's finite static certificate procedure
-proves coverage independently of that sample. Finite family enumeration,
-nominal inclusion/exclusion, static domain coverage and propositional Boolean
-certificates use the existing static proof rules. No general theorem solver
-or type-based nominal guessing is introduced.
-
-Each dictionary must cover every input admitted by its complete input contract.
-Coverage must be proved from declared family members, nominal alternatives,
-admitted interval/domain relations, ordinary supported Boolean facts or a
-residual `_`. Unproved coverage is static rejection, including for a dictionary
-with an empty-admitting output. Arbitrary predicates need a fallback when the
-supported proof procedure cannot establish coverage. Closed-family members
-can be enumerated; union coverage respects overlapping ancestry and exact iis
-tests rather than treating every nominal type as a disjoint variant.
+When the application-result minimum is positive, coverage is universal over
+the admitted input contract and applicable views, not one runtime sample.
+Prove it using declared finite families, nominal alternatives, admitted domain
+relations, supported Boolean facts or residual fallback. Unproved positive
+coverage is static rejection. A zero-admitting application may be uncovered;
+no applicable branch then yields normal empty. An ambiguous inferred output
+cannot be made zero-admitting by guessing a contract.
 
 Fallback is unique and last. It applies only when no ordinary selector applies.
 A selected result yielding empty has handled that input and does not trigger
@@ -291,7 +291,7 @@ fallback. Exhaustive treatment is independent of output presence: `_ --> empty`
 is valid when the output admits absence. Selected computing faults propagate;
 they do not retry another branch or fallback. Ordered FirstMatch chooses the
 first applicable selector; without ordered, AllMatches evaluates all ordinary selectors
-in one snapshot and produces all applicable results. Coverage is required in
+in one snapshot and produces all applicable results. Positive-minimum coverage is required in
 both modes; unreachable/redundant cases are diagnosed when provable.
 
 Input and output types may be inferred only with unique evidence/context.
@@ -346,3 +346,40 @@ generic structural keys, recursive proof boundaries and functional equality.
 [[effects/README]] covers association updates, missing write-back, deletion and
 joint uniqueness. Grammar/AST retain both arrow forms and local branch provenance;
 no new callable category, source trait or nominal HIR branch anchor is introduced.
+
+## Anonymous tuple input projection
+
+> [!definition] Positional alias input projection (MUD-TYPE-047)
+> An anonymous exact/functional dictionary input tuple admits a structural alias
+> with the same number and sequence of complete stored component contracts,
+> ignoring source component names. Its projection uses the target tuple labels.
+
+Compare normalized component types, domains, cardinality, nested shapes,
+uniqueness/order and authority. No extra/missing component, hidden private
+schema or implicit conversion of nominal component types is admitted. Derived
+fields are not stored components and are not exposed by this projection.
+This rule is distinct from ===, which continues to compare names and complete
+structural contracts, and from general nominal conversion/subtyping.
+
+The projected input is the target tuple, not an alias retaining extra source
+members. Inside a functional branch use value, .name or value.name. No bare
+component local is injected. Positional patterns remain available for unnamed
+inputs. Original caller values are unchanged and retain their nominal identity.
+Exact construction, insertion and lookup all project admitted keys identically;
+hash/equality use target tuple components and supported semantic equality.
+Distinct outer aliases with equal projected contents address the same key.
+
+```mud
+alias Journey { let departure: City; let arrival: City }
+# Within an admitted owner:
+let sameCity: (origin: City, destination: City) --> Bool [ordered] =
+    _ --> .origin == .destination
+# sameCity[journey] exposes origin/destination, not departure/arrival.
+```
+
+A zero-admitting application-result contract permits uncovered inputs, producing
+normal empty when no branch applies. A positive minimum retains universal
+coverage and required-result proofs. FirstMatch never retries after a matching
+branch returns empty; AllMatches collects its applicable results. Omission in
+a required result is not ordinary empty: [[21-expressions#Optional extraction and omission]]
+requires explicit construction to consume it. Computing faults remain faults.

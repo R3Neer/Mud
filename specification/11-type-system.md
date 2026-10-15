@@ -12,6 +12,9 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-176
+  - D-178
+  - D-177
   - D-171
   - D-170
   - D-169
@@ -433,7 +436,7 @@ Stored local patterns evaluate the RHS once, validate the complete pattern and e
 
 ## 10. Schemas, visibility and descriptor types
 
-Every new stored thing field has an explicit initialiser. Alias components are all present in a value, from supplied values or explicit defaults. Family data are supplied by the schema or by every member. User-defined metadata needs an explicit effective value; intrinsic defaults retain their individual contracts.
+Every new concrete stored thing field has an explicit initialiser; an explicitly typed abstract field may defer initialization until a concrete effective schema resolves the obligation. Alias components are all present in a value, from supplied values or explicit defaults. Family data are supplied by the schema or by every member. User-defined metadata needs an explicit effective value; intrinsic defaults retain their individual contracts.
 
 Inherited writable stored contracts remain invariant. Immutable alias contracts may refine all inherited guarantees, with a valid effective initialiser/default where one is required. Diamonds deduplicate origins and incomparable independent members need a common explicit refinement. No runtime effect changes the set of field declarations.
 
@@ -552,3 +555,28 @@ composition additionally uses the certified well-founded call measure. Neither
 argument assumes a missing runtime interface or proves global stabilization.
 
 The machine-readable instances in [[types/typing-cases.yaml]] distinguish static acceptance/rejection from permitted runtime checks. Their validator checks evidence structure and finite contract witnesses; it does not parse or execute MUD programmes.
+
+## Deferred abstract schema and tuple-input boundaries
+
+> [!rule] MUD-TYPE-048 — Complete concrete initialization
+> An abstract thing may defer an explicitly typed stored initializer. Every
+> concrete descendant must resolve each required initializer under existing
+> origin/conflict precedence before materialization. No uninitialized concrete
+> field, implicit default or runtime inheritance of another thing's state exists.
+
+Schema checking follows [[15-fields-and-mutability]]. Anonymous dictionary input
+projection follows MUD-TYPE-047 in [[17-dictionaries]]; it ignores source component
+names at that boundary only. === and explicit conversion keep their existing
+name-sensitive contracts. Tuple components are not new nominal declarations.
+
+> [!rule] MUD-TYPE-047 — Anonymous dictionary tuple input
+> A structural alias may project its complete stored component sequence into
+> an anonymous exact/functional input tuple with identical component contracts,
+> ignoring source names and applying target names. No nominal component cast,
+> extra member, hidden schema or added authority is admitted.
+
+> [!rule] MUD-TYPE-050 — Zero-admitting policy coverage
+> Functional application with a zero-admitting result cardinality may leave
+> inputs uncovered and returns ordinary empty for no applicable branch. Positive
+> minima require universal coverage and result proofs. Selected faults and
+> omitted required results are not converted to empty.
