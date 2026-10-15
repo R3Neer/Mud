@@ -19,6 +19,9 @@ The planned source-model change workflow is described in
 [[model-authoring|Semantic model authoring]]. It is separate from runtime actions
 and from the command-line tools already available here.
 
+[Writing readable Mud](mud-style.md) gives informative recommendations for line
+breaks, constructors, dictionary arguments and extracting semantic helpers.
+
 Every human-facing command supports `-h`, `--help`,
 `--colour auto|always|never`, `--ascii` and `NO_COLOR`. Command suites provide
 focused pages through `<command> --help`. Mud tooling deliberately has no

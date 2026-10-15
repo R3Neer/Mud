@@ -13,5 +13,6 @@ alias ActivationSelection {
         CanSelect, CanAttempt, ConcentrationWithinLimit,
         TargetUsable, CanLink, ExclusiveSympathy, PublishSpellEvents,
         FeedbackChannel, PlanSpellFeedback, PrepareLinkEffects
-    ] if (features | [ActivationFeature.Core]) has declaration~activationFeature --> declaration
+    ] if (features | [ActivationFeature.Core]) has declaration~activationFeature -->
+        declaration
 }

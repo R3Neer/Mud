@@ -146,6 +146,10 @@ unique short declaration names and scenarios path. It inventories literal enum
 metadata, the written ActivationSelection template, explicit fixture lists and
 direct statically named test calls. It checks complete classifications, registered
 support, resource requirements and every scenario setup before producing a plan.
+It also rejects a parenthesised tuple passed to the known byStage dictionary
+component. This narrow shape check catches a parseable but incompatible literal;
+it does not validate arbitrary constructor types. Sublook/submessage declarations
+are inventoried so private query helpers cannot hide test references.
 
 It is not a Mud parser, name resolver, typechecker, runtime or test executor. It
 cannot establish arbitrary closed-static evaluation, descriptor availability,

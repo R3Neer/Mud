@@ -19,7 +19,7 @@ from tooling.cli_support import (HelpCatalogue, HelpItem, MudArgumentParser,
                                  add_presentation_arguments, failure, parse_cli)
 
 EXAMPLE = ROOT / 'notes/examples/duelo-spellcasting'
-HEAD = re.compile(r'^(?:(?:abstract|always) )?(family|alias|thing|rule|action|subaction|look|message|test) (\w+)', re.M)
+HEAD = re.compile(r'^(?:(?:abstract|always) )?(family|alias|thing|rule|action|subaction|look|sublook|message|submessage|test) (\w+)', re.M)
 MASK = re.compile(r'"(?:\\.|[^"\\])*"|\#[^\n]*')
 NAME = r'[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*'
 
@@ -39,6 +39,24 @@ class Declaration:
 
 def mask(source: str) -> str:
     return MASK.sub(lambda m: ''.join('\n' if c == '\n' else ' ' for c in m[0]), source)
+
+
+def check_dictionary_arguments(source: str) -> None:
+    """Catch the known byStage tuple/association-list mistake, not general typing."""
+    for match in re.finditer(r'\bbyStage\s*=\s*\(', source):
+        stack = ['(']
+        for char in source[match.end():]:
+            if char in '([{':
+                stack.append(char)
+            elif char in ')]}':
+                if not stack or stack.pop() != {')': '(', ']': '[', '}': '{'}[char]:
+                    raise ValueError('Unbalanced byStage grouping')
+                if not stack:
+                    break
+            elif char == ',' and len(stack) == 1:
+                raise ValueError('SpellFeedbackProfile.byStage requires dictionary associations in [...], not a tuple')
+        if stack:
+            raise ValueError('Unclosed byStage grouping')
 
 
 def metadata(source: str, key: str, contract: str, prefix: str, many: bool) -> frozenset[str] | None:
@@ -87,6 +105,7 @@ class Inventory:
         self.declarations: dict[str, Declaration] = {}
         for file in sorted(root.rglob('*.mud')):
             source = mask(file.read_text(encoding='utf-8-sig'))
+            check_dictionary_arguments(source)
             heads = list(HEAD.finditer(source))
             for index, head in enumerate(heads):
                 end = heads[index + 1].start() if index + 1 < len(heads) else len(source)
@@ -101,7 +120,7 @@ class Inventory:
         self.features = self.enum('ActivationFeature')
         self.concerns = self.enum('TestConcern')
         self.modalities = self.enum('FeedbackModality')
-        registry = self.declarations['ActivationSelection'].body
+        registry = re.sub(r'\s+', ' ', self.declarations['ActivationSelection'].body).strip()
         match = re.fullmatch(
             r'\s*let features:\s*ActivationFeature \[\* unique\] = empty\s*'
             r'let declarations := foreach declaration in \[([^\]]+)\]\s*'

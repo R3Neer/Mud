@@ -7,7 +7,7 @@ import json
 import tempfile
 import unittest
 
-from tooling.examples.spell_metadata import EXAMPLE, Inventory, metadata
+from tooling.examples.spell_metadata import EXAMPLE, Inventory, metadata, check_dictionary_arguments, mask
 
 
 class SpellMetadataTests(unittest.TestCase):
@@ -152,10 +152,35 @@ class SpellMetadataTests(unittest.TestCase):
 
     def test_changed_activation_semantics_require_a_new_supported_template(self):
         root = self.mutate('configuration/activationSelection.mud', lambda s:s.replace(
-            'has declaration~activationFeature --> declaration',
-            'has declaration~activationFeature and false --> declaration'))
+            'has declaration~activationFeature',
+            'has declaration~activationFeature and false'))
         with self.assertRaisesRegex(ValueError, 'Unsupported activation catalogue'):
             Inventory(root)
+
+    def test_tuple_shaped_dictionary_argument_is_not_accepted_as_a_plan(self):
+        root = self.mutate('fixtures/feedback.mud', lambda s:s.replace(
+            'byStage = [', 'byStage = (', 1).replace('\n        ],', '\n        ),', 1))
+        with self.assertRaisesRegex(ValueError, 'not a tuple'):
+            Inventory(root)
+
+    def test_grouping_one_association_is_distinct_from_an_association_tuple(self):
+        check_dictionary_arguments(mask('byStage = (Stage.Key -> [one, two])'))
+        check_dictionary_arguments(mask('byStage = [Stage.A -> [one, two], Stage.B -> [three]]'))
+        with self.assertRaisesRegex(ValueError, 'not a tuple'):
+            check_dictionary_arguments(mask('byStage = (Stage.A -> [one, two], Stage.B -> [three])'))
+
+    def test_sublook_is_inventoried_and_cannot_hide_test_references(self):
+        self.assertEqual(self.inventory.declarations['PlanSympathy'].category, 'sublook')
+        root = self.mutate('sympathy/targetPlan.mud', lambda s:s.replace(
+            'decision[aim]', 'FeedbackSelectedEffectsAreMerged()'))
+        with self.assertRaisesRegex(ValueError, 'outside scenario bodies'):
+            Inventory(root)
+
+    def test_layout_changes_do_not_change_activation_template_meaning(self):
+        root = self.mutate('configuration/activationSelection.mud', lambda s:s.replace(
+            'has declaration~activationFeature', 'has\n        declaration~activationFeature'))
+        inventory = Inventory(root)
+        self.assertEqual(inventory.plan([]), self.inventory.plan([]))
 
 
 if __name__ == '__main__':

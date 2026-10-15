@@ -87,6 +87,13 @@ with read-only participants; they never export the operational link's authority.
 
 ## Selection and attempt contracts
 
+Cast selects the provider and delegates to private AttemptSympathy. The pure
+PlanSympathy sublook classifies its input. EstablishSympathyLink checks admission
+again immediately before creating the oriented relation; ResolveAttempt completes
+the outcome. These helpers have ordinary child-resolution and rollback boundaries,
+not independent roots. They preserve the domain contract without promising the
+same causal batch grouping as a single large body.
+
 Selection activates a configured, unlocked spell and reserves concentration
 immediately. An already active selection toggles cancellation before applying
 new-selection admission. Selection rejection is a normal domain occurrence,
@@ -229,13 +236,15 @@ from this example. The normative language specification is unchanged.
 
 The [operational metadata contracts](metadata.md) describe the installed activation,
 feedback filtering and source-only regression selection consumers.
+The example applies the [Mud authoring recommendations](../../../tooling/mud-style.md)
+for readable headers, branches, constructors and private semantic helpers.
 
 | Directory | Semantic files | Part-only files |
 | --- | --- | --- |
 | world | entities.mud: identities, shapes, capabilities and own effects | None |
 | configuration | activationFeature.mud, testConcern.mud | activationSelection.mud |
 | spells | contracts.mud, state.mud, selection.mud, observations.mud | availability.mud, completion.mud, outbox.mud |
-| sympathy | casting.mud, relations.mud, observations.mud | admission.mud, linkState.mud |
+| sympathy | casting.mud, relations.mud, observations.mud | admission.mud, linkState.mud, targetPlan.mud, attempt.mud, creation.mud |
 | feedback | contracts.mud, channel.mud, observations.mud | planning.mud |
 | presentation | views.mud: derived views and change notifications | None |
 | fixtures | entities.mud, feedback.mud, feedbackCapabilities.mud: concrete example configurations | None |
