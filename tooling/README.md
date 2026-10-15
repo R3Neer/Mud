@@ -41,11 +41,17 @@ python governance/validate_temporaries.py --help
 python governance/validate_spec_editorial.py --help
 python specification/grammar/validate_grammar.py --help
 python specification/syntax/validate_syntax_model.py --help
+python tooling/examples/spell_metadata.py --help
 ```
 
 Text displayed to users is in British English. Source documents, generated
 migration indexes and other temporary migration content retain their current
 language until the corresponding repository migration phase changes them.
+
+The spell example metadata planner reads its documented literal metadata subset
+and prints JSON scenario/activation plans. It supports repeated `--concern` filters
+and validates the entire example before selection. It does not compile or execute
+Mud; see [its contracts and limits](../notes/examples/duelo-spellcasting/metadata.md).
 
 ## Tests
 

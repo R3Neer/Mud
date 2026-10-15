@@ -27,12 +27,13 @@ using fixtures
 
 The using directives belong in the file header; the calls are effect fragments
 inside an admitted then. Start a fresh world with
-Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA and BoxB, plus
-CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-ExclusiveSympathy and PublishSpellEvents. Add PrepareLinkEffects for engine
-requests. Boolean rules must remain active: inactive-call pruning must not
+configuration.ActivationSelection().declarations and the explicit MagicWorld,
+Player, BoxA and BoxB fixtures. Request ActivationFeature.LinkEffects for engine
+requests and ActivationFeature.Feedback for feedback support, adding the chosen
+channel fixture explicitly. Boolean rules must remain active: inactive-call pruning must not
 silently remove mandatory domain checks. Message declarations are not lifecycle
-targets. The full rule set is explicit in every source scenario.
+targets. The finite activation catalogue supplies support; each source scenario
+selects its features and names its concrete fixtures.
 
 ## Paths and part visibility
 
@@ -198,6 +199,9 @@ an excluded asset. Rejection fallback keeps order and repetitions. Success
 requests Partial then Success phases; the same asset in both is requested twice.
 There is no promised order within a phase's asset set. Empty work is not emitted.
 The channels are filtered by caster identity, not names or native callbacks.
+Resource modalities metadata additionally filters work against each channel's
+allowedModalities. Every required modality must be allowed; filtering preserves
+phase order and rejection repetitions and never changes spell acceptance.
 
 ## Engine boundary and limits
 
@@ -223,23 +227,28 @@ from this example. The normative language specification is unchanged.
 
 ## Files and verification
 
-The [operational metadata proposal](metadata-proposal.md) evaluates concrete
-activation, feedback filtering and regression-selection consumers. It is a design
-candidate; the current sources do not yet apply those changes.
+The [operational metadata contracts](metadata.md) describe the installed activation,
+feedback filtering and source-only regression selection consumers.
 
 | Directory | Semantic files | Part-only files |
 | --- | --- | --- |
 | world | entities.mud: identities, shapes, capabilities and own effects | None |
+| configuration | activationFeature.mud, testConcern.mud | activationSelection.mud |
 | spells | contracts.mud, state.mud, selection.mud, observations.mud | availability.mud, completion.mud, outbox.mud |
 | sympathy | casting.mud, relations.mud, observations.mud | admission.mud, linkState.mud |
 | feedback | contracts.mud, channel.mud, observations.mud | planning.mud |
 | presentation | views.mud: derived views and change notifications | None |
-| fixtures | entities.mud and feedback.mud: concrete example configurations | None |
-| scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud | All eight |
+| fixtures | entities.mud, feedback.mud, feedbackCapabilities.mud: concrete example configurations | None |
+| scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, feedbackCapabilities.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud | All nine |
 
-The root mud.part has no foreign dependencies. The forty source scenarios cover
+The root mud.part has no foreign dependencies. The 47 source scenarios cover
 selection, pair admission, effects, departure, cancellation, frozen occurrences
 and feedback without changing the domain contracts.
+
+From the repository root, python tooling/examples/spell_metadata.py --concern Feedback
+validates the bounded metadata inventory and prints independent scenario activation
+plans as JSON. It executes no Mud. Its Python boundary tests are separate from the
+declarative Mud scenarios.
 
 The source scenarios are not executed tests: no Mud compiler/runtime exists here.
 Repository validators check specification artefacts; bounded grammar witnesses

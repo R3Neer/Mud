@@ -1,5 +1,8 @@
 part only
 
+~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Lifecycle]
+
+using configuration
 using world
 using spells
 using sympathy
@@ -9,9 +12,8 @@ using fixtures
 
 test ParticipantDepartureClosesLinksAndReleasesTheirOwner {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         BoxA.ownEffects = "red" -> EffectValue("red", 10, 2)
@@ -33,9 +35,8 @@ test ParticipantDepartureClosesLinksAndReleasesTheirOwner {
 
 test CasterDepartureAlsoClosesLinksBetweenOtherEntities {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
@@ -54,9 +55,8 @@ test CasterDepartureAlsoClosesLinksBetweenOtherEntities {
 
 test DepartingCasterReleasesPreparationWithoutAnyLink {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)

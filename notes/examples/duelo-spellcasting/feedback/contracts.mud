@@ -2,7 +2,37 @@ using spells
 
 # Feedback configuration, phases and immutable request values.
 
-alias FeedbackAsset { let name: Text }
+family FeedbackModality { Visual, Audio, Haptic }
+
+family FeedbackAsset {
+    AmbientGlow {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Visual]
+    },
+    SelectionFlash {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Visual]
+    },
+    CastChime {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Audio]
+    },
+    LegacyPulse {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Haptic]
+    },
+    FailureChime {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Audio]
+    },
+    SuccessFlash {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Visual]
+    },
+    CancelPulse {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Haptic]
+    },
+    RejectionChime {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Audio]
+    },
+    SynchronizedBurst {
+        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Audio, FeedbackModality.Visual]
+    }
+}
 
 family FeedbackStage { Selected, Rejected, Partial, Failed, Success, Cancelled }
 

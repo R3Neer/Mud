@@ -1,5 +1,8 @@
 part only
 
+~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Feedback]
+
+using configuration
 using world
 using spells
 using sympathy
@@ -9,9 +12,10 @@ using feedback
 # Phase planning contracts isolated with typed domain facts.
 
 test FeedbackSelectedEffectsAreMerged {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, PlayerFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.Selected, caster = Player, spell = Spell.Fireball,
         aim = Aim(Point3(r1, r2, r3), empty)
@@ -20,7 +24,7 @@ test FeedbackSelectedEffectsAreMerged {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.groups == [FeedbackGroup(
             FeedbackStage.Selected,
-            [FeedbackAsset("specific"), FeedbackAsset("shared"), FeedbackAsset("global")]
+            [FeedbackAsset.SelectionFlash, FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow]
         )]
         forall request in PlayerFeedback.requests : request.aim.point == Point3(r1, r2, r3)
         MagicWorld.pending == empty
@@ -28,9 +32,10 @@ test FeedbackSelectedEffectsAreMerged {
 }
 
 test FeedbackSuccessfulAttemptHasTwoPhases {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, PlayerFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
         outcome = CastOutcome.Success, aim = Aim(Point3(r4, r5, r6), empty)
@@ -39,17 +44,18 @@ test FeedbackSuccessfulAttemptHasTwoPhases {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.groups == [
             FeedbackGroup(FeedbackStage.Partial,
-                [FeedbackAsset("shared"), FeedbackAsset("global")]),
+                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow]),
             FeedbackGroup(FeedbackStage.Success,
-                [FeedbackAsset("shared"), FeedbackAsset("global"), FeedbackAsset("success")])
+                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow, FeedbackAsset.SuccessFlash])
         ]
     }
 }
 
 test FeedbackPartialAttemptHasNoSuccessPhase {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, PlayerFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
         outcome = CastOutcome.Partial, aim = Aim(Point3(r0, r0, r0), empty)
@@ -58,15 +64,16 @@ test FeedbackPartialAttemptHasNoSuccessPhase {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.groups == [
             FeedbackGroup(FeedbackStage.Partial,
-                [FeedbackAsset("shared"), FeedbackAsset("global")])
+                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow])
         ]
     }
 }
 
 test FeedbackFailedAttemptUsesFailureEffects {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, PlayerFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
         outcome = CastOutcome.Failed, aim = Aim(Point3(r0, r0, r0), empty)
@@ -74,15 +81,16 @@ test FeedbackFailedAttemptUsesFailureEffects {
     after {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.groups == [
-            FeedbackGroup(FeedbackStage.Failed, [FeedbackAsset("failure")])
+            FeedbackGroup(FeedbackStage.Failed, [FeedbackAsset.FailureChime])
         ]
     }
 }
 
 test FeedbackCancellationRetainsItsAim {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, PlayerFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.Cancelled, caster = Player, spell = Spell.Fireball,
         aim = Aim(Point3(r7, r8, r9), empty)
@@ -90,7 +98,7 @@ test FeedbackCancellationRetainsItsAim {
     after {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.groups == [
-            FeedbackGroup(FeedbackStage.Cancelled, [FeedbackAsset("cancel")])
+            FeedbackGroup(FeedbackStage.Cancelled, [FeedbackAsset.CancelPulse])
         ]
         forall request in PlayerFeedback.requests : request.aim.point == Point3(r7, r8, r9)
     }

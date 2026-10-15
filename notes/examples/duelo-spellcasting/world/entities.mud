@@ -17,6 +17,8 @@ alias EffectValue {
 }
 
 abstract thing Entity {
+    ~activationFeature: configuration.ActivationFeature = configuration.ActivationFeature.Core
+
     # Presence in this game world, independently of Mud declaration activity.
     mut present: Bool = true
     mut position: Point3 = Point3(r0, r0, r0)
@@ -26,4 +28,6 @@ abstract thing Entity {
     mut ownEffects: Text -> EffectValue = empty
 }
 
-abstract thing Creature as Entity
+abstract thing Creature as Entity {
+    ~activationFeature: configuration.ActivationFeature = configuration.ActivationFeature.Core
+}

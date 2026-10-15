@@ -1,5 +1,7 @@
 part only
 
+~activationFeature: configuration.ActivationFeature = configuration.ActivationFeature.Feedback
+
 using spells
 
 # Internal reactive planning from the matched frozen spell event payload.

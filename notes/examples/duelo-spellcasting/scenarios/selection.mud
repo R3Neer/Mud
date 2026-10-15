@@ -1,5 +1,8 @@
 part only
 
+~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Selection]
+
+using configuration
 using world
 using spells
 using sympathy
@@ -8,9 +11,10 @@ using fixtures
 # Declarative source contracts; each test starts a fresh world. Not executed Mud tests.
 
 test SelectionReservesConcentrationBeforeLink {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player
+    }
     then (MagicWorld, Player).SelectSpell(Spell.Sympathy)
     after {
         Player.selected == [Spell.Sympathy]
@@ -23,9 +27,10 @@ test SelectionReservesConcentrationBeforeLink {
 }
 
 test CapabilityBelongsToTheActualEntity {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, Turret,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player, Turret
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Turret).SelectSpell(Spell.Sympathy)
@@ -41,9 +46,12 @@ test CapabilityBelongsToTheActualEntity {
 }
 
 test SelectionToggleEndsTheSameSpell {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Selection, configuration.TestConcern.Lifecycle]
+
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
@@ -56,9 +64,10 @@ test SelectionToggleEndsTheSameSpell {
 }
 
 test UnconfiguredSpellIsNormalDomainRejection {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player
+    }
     then (MagicWorld, Player).SelectSpell(Spell.Fireball)
     after {
         Player.activeSpells == empty
@@ -67,9 +76,10 @@ test UnconfiguredSpellIsNormalDomainRejection {
 }
 
 test RepeatedFailedAttemptsPreservePreparationAndReservation {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, Unshaped,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player, Unshaped
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         let aim = Aim(Point3(r1, r2, r3), [Unshaped])
@@ -86,17 +96,19 @@ test RepeatedFailedAttemptsPreservePreparationAndReservation {
 }
 
 test CastingWithoutSelectionProducesNoAttempt {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player
+    }
     then (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), empty))
     after MagicWorld.published == empty and MagicWorld.pending == empty
 }
 
 test NoConcentrationRoomRejectsSelection {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, NoFocus,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, NoFocus
+    }
     then (MagicWorld, NoFocus).SelectSpell(Spell.Sympathy)
     after {
         NoFocus.activeSpells == empty
@@ -106,9 +118,12 @@ test NoConcentrationRoomRejectsSelection {
 }
 
 test InstantProviderCompletionProtocolReleasesActivity {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, InstantProtocolCaster,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Selection, configuration.TestConcern.Lifecycle]
+
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, InstantProtocolCaster
+    }
     then {
         (MagicWorld, InstantProtocolCaster).SelectSpell(Spell.Fireball)
         # A fixture supplies the result of a hypothetical Mud spell body.

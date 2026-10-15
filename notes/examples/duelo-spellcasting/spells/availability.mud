@@ -1,5 +1,7 @@
 part only
 
+~activationFeature: configuration.ActivationFeature = configuration.ActivationFeature.Core
+
 # Admission checks and concentration invariant; keep these active.
 
 rule CanSelect for caster: Spellcaster given spell: Spell {

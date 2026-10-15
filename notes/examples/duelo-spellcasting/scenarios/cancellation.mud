@@ -1,5 +1,8 @@
 part only
 
+~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Lifecycle]
+
+using configuration
 using world
 using spells
 using sympathy
@@ -9,9 +12,8 @@ using fixtures
 
 test RepeatedCancellationProducesNoDuplicateDomainFacts {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
@@ -29,9 +31,8 @@ test RepeatedCancellationProducesNoDuplicateDomainFacts {
 
 test RelockingDoesNotTrapAnActiveSpell {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
@@ -49,10 +50,11 @@ test RelockingDoesNotTrapAnActiveSpell {
 }
 
 test LinkEffectFactsKeepTheirOwnOrientation {
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Lifecycle, configuration.TestConcern.Contributions]
+
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PrepareLinkEffects
+        ActivationSelection([ActivationFeature.LinkEffects]).declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         # Isolate a single publication containing two immutable domain facts.

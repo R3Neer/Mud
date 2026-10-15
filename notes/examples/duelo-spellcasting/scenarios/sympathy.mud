@@ -1,5 +1,8 @@
 part only
 
+~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.PairAdmission]
+
+using configuration
 using world
 using spells
 using sympathy
@@ -8,9 +11,10 @@ using fixtures
 # Sympathy provider source contracts; no compiler/runtime executes these yet.
 
 test NoHitIsNoneRatherThanARejection {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), empty))
@@ -23,9 +27,10 @@ test NoHitIsNoneRatherThanARejection {
 }
 
 test FirstTargetPreparesWithoutReservingEndpoint {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Player).Cast(Aim(Point3(r1, r2, r3), [BoxA]))
@@ -40,9 +45,12 @@ test FirstTargetPreparesWithoutReservingEndpoint {
 }
 
 test SuccessfulLinkEndsTargetingButKeepsConcentration {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents, PrepareLinkEffects }
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.PairAdmission, configuration.TestConcern.Lifecycle]
+
+    start with {
+        ActivationSelection([ActivationFeature.LinkEffects]).declarations,
+        MagicWorld, Player, BoxA, BoxB
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
@@ -59,9 +67,12 @@ test SuccessfulLinkEndsTargetingButKeepsConcentration {
 }
 
 test InitialOrientationPrefersGrabbedFollower {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.PairAdmission, configuration.TestConcern.Contributions]
+
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
+    }
     then {
         BoxB.grabbed = true
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
@@ -75,9 +86,12 @@ test InitialOrientationPrefersGrabbedFollower {
 }
 
 test InversionChangesTheRelationWithoutAnInteractorCache {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Contributions]
+
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
@@ -93,9 +107,12 @@ test InversionChangesTheRelationWithoutAnInteractorCache {
 }
 
 test TargetDepartureInvalidatesPreparationWithoutEndingTheSpell {
-    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA,
-        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
-        ExclusiveSympathy, PublishSpellEvents }
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Lifecycle, configuration.TestConcern.PairAdmission]
+
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))

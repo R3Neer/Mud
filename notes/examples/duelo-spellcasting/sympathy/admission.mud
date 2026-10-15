@@ -1,5 +1,7 @@
 part only
 
+~activationFeature: configuration.ActivationFeature = configuration.ActivationFeature.Core
+
 using world
 using spells
 

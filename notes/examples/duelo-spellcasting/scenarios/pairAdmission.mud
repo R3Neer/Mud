@@ -1,5 +1,8 @@
 part only
 
+~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.PairAdmission]
+
+using configuration
 using world
 using spells
 using sympathy
@@ -9,9 +12,8 @@ using fixtures
 
 test SharedPreparationDoesNotReserveAnEndpoint {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, Turret,
-        BoxA, BoxB, BoxC, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, Turret, BoxA, BoxB, BoxC
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
@@ -35,9 +37,8 @@ test SharedPreparationDoesNotReserveAnEndpoint {
 
 test PairCreationRevalidatesThePreparedShape {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
@@ -57,9 +58,8 @@ test PairCreationRevalidatesThePreparedShape {
 
 test PairCreationRevalidatesSharedCapabilities {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
@@ -79,9 +79,8 @@ test PairCreationRevalidatesSharedCapabilities {
 
 test MissingAndUnsuitableHitsDoNotAcquireExtraConcentration {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, Unshaped,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, Unshaped
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)

@@ -1,5 +1,8 @@
 part only
 
+~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Feedback]
+
+using configuration
 using world
 using spells
 using sympathy
@@ -9,9 +12,10 @@ using feedback
 # Profile, occurrence, filtering and end-to-end feedback source contracts.
 
 test FeedbackRejectionRetainsDuplicateEffectsWithoutProfile {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, MissingProfileFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, MissingProfileFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.SelectionRejected, caster = Player, spell = Spell.Sympathy,
         aim = Aim(Point3(r0, r0, r0), empty)
@@ -20,14 +24,15 @@ test FeedbackRejectionRetainsDuplicateEffectsWithoutProfile {
         (count _ in MissingProfileFeedback.requests : true) == 1
         forall request in MissingProfileFeedback.requests : request.groups == empty
         forall request in MissingProfileFeedback.requests : request.rejected ==
-            [FeedbackAsset("rejected"), FeedbackAsset("rejected")]
+            [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
     }
 }
 
 test FeedbackMissingProfileProducesNoRequest {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, MissingProfileFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, MissingProfileFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.Selected, caster = Player, spell = Spell.Sympathy,
         aim = Aim(Point3(r0, r0, r0), empty)
@@ -38,9 +43,12 @@ test FeedbackMissingProfileProducesNoRequest {
 }
 
 test FeedbackModelsARealSympathyCast {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld, BoxA, BoxB,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Feedback, configuration.TestConcern.Selection, configuration.TestConcern.PairAdmission]
+
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, BoxA, BoxB, PlayerFeedback
+    }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Player).Cast(Aim(Point3(r1, r0, r0), [BoxA]))
@@ -57,9 +65,10 @@ test FeedbackModelsARealSympathyCast {
 }
 
 test FeedbackNoneProducesNoRequest {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, PlayerFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
         outcome = CastOutcome.None, aim = Aim(Point3(r0, r0, r0), empty)
@@ -70,9 +79,10 @@ test FeedbackNoneProducesNoRequest {
 }
 
 test FeedbackRepeatedEqualFactsRemainTwoRequests {
-    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, MagicWorld, PlayerFeedback
+    }
     then {
         let event = SpellEvent(
             kind = SpellEventKind.Selected, caster = Player, spell = Spell.Fireball,
@@ -85,15 +95,16 @@ test FeedbackRepeatedEqualFactsRemainTwoRequests {
         (count _ in PlayerFeedback.requests : true) == 2
         forall request in PlayerFeedback.requests : request.groups == [FeedbackGroup(
             FeedbackStage.Selected,
-            [FeedbackAsset("specific"), FeedbackAsset("shared"), FeedbackAsset("global")]
+            [FeedbackAsset.SelectionFlash, FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow]
         )]
     }
 }
 
 test FeedbackIgnoresAnotherSpellcaster {
-    start with { Entity, Creature, Spellcaster, Magic, Player, Turret, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, Turret, MagicWorld, PlayerFeedback
+    }
     then add SpellEvent(
         kind = SpellEventKind.Selected, caster = Turret, spell = Spell.Fireball,
         aim = Aim(Point3(r0, r0, r0), empty)
@@ -102,9 +113,10 @@ test FeedbackIgnoresAnotherSpellcaster {
 }
 
 test FeedbackFiltersAMixedCasterBatch {
-    start with { Entity, Creature, Spellcaster, Magic, Player, Turret, MagicWorld,
-        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    start with {
+        ActivationSelection([ActivationFeature.Feedback]).declarations,
+        Player, Turret, MagicWorld, PlayerFeedback
+    }
     then {
         add SpellEvent(
             kind = SpellEventKind.Selected, caster = Turret, spell = Spell.Fireball,

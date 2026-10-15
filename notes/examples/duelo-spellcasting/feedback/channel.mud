@@ -1,3 +1,5 @@
+~activationFeature: configuration.ActivationFeature = configuration.ActivationFeature.Feedback
+
 using spells
 
 # Per-caster channel configuration and pure phase/merge policies.
@@ -6,6 +8,9 @@ abstract thing FeedbackChannel {
     let magic: Magic
     let caster: Spellcaster
     let subscribed: Bool = true
+    let allowedModalities: FeedbackModality [* unique] = [
+        FeedbackModality.Visual, FeedbackModality.Audio, FeedbackModality.Haptic
+    ]
     let profiles: Spell -> SpellFeedbackProfile = empty
     let global: FeedbackStage -> (FeedbackAsset [*]) = empty
     let selectionRejected: FeedbackAsset [* ordered] = empty
@@ -30,14 +35,18 @@ abstract thing FeedbackChannel {
                 foreach stage in stages[event] : {
                     let effects = (global[stage][unique] -- profile.excluded)
                         | profile.byStage[stage][unique]
-                    add FeedbackGroup(stage, effects) to groups
+                    let permitted := foreach asset in effects
+                        if forall modality in asset~modalities : allowedModalities has modality --> asset
+                    add FeedbackGroup(stage, permitted) to groups
                 }
             }
             groups
         }
 
     let rejectedFor: SpellEvent --> FeedbackAsset [* ordered] :=
-        .kind == SpellEventKind.SelectionRejected --> selectionRejected
+        .kind == SpellEventKind.SelectionRejected -->
+            foreach asset in selectionRejected
+                if forall modality in asset~modalities : allowedModalities has modality --> asset
 
     let requestFor: SpellEvent --> FeedbackRequest [? ordered] :=
         {

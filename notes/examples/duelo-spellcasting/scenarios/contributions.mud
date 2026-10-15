@@ -1,5 +1,8 @@
 part only
 
+~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Contributions]
+
+using configuration
 using world
 using spells
 using sympathy
@@ -9,9 +12,8 @@ using fixtures
 
 test BorrowedEffectsStayLiveWithoutOverwritingOwnEffects {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         BoxA.ownEffects = "heat" -> EffectValue("heat", 10, 2)
@@ -33,9 +35,8 @@ test BorrowedEffectsStayLiveWithoutOverwritingOwnEffects {
 
 test InversionReversesOnlyBorrowedContributions {
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         BoxA.ownEffects = "red" -> EffectValue("red", 10, 2)
@@ -58,10 +59,11 @@ test InversionReversesOnlyBorrowedContributions {
 }
 
 test CancellationDoesNotPersistBorrowedEffects {
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Contributions, configuration.TestConcern.Lifecycle]
+
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         BoxA.ownEffects = "red" -> EffectValue("red", 10, 2)
@@ -80,10 +82,11 @@ test CancellationDoesNotPersistBorrowedEffects {
 }
 
 test LaterGrabbingDoesNotReorientAnExistingLink {
+    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Contributions, configuration.TestConcern.PairAdmission]
+
     start with {
-        Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
-        CanSelect, CanAttempt, TargetUsable, CanLink,
-        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents
+        ActivationSelection().declarations,
+        MagicWorld, Player, BoxA, BoxB
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)

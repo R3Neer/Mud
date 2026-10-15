@@ -8,35 +8,35 @@ thing PlayerFeedback as FeedbackChannel {
     caster = Player
     profiles = Spell.Fireball -> SpellFeedbackProfile(
         byStage = (
-            FeedbackStage.Selected -> [FeedbackAsset("specific"), FeedbackAsset("shared")],
-            FeedbackStage.Partial -> [FeedbackAsset("shared")],
-            FeedbackStage.Failed -> [FeedbackAsset("failure")],
-            FeedbackStage.Success -> [FeedbackAsset("shared"), FeedbackAsset("success")],
-            FeedbackStage.Cancelled -> [FeedbackAsset("cancel")]
+            FeedbackStage.Selected -> [FeedbackAsset.SelectionFlash, FeedbackAsset.CastChime],
+            FeedbackStage.Partial -> [FeedbackAsset.CastChime],
+            FeedbackStage.Failed -> [FeedbackAsset.FailureChime],
+            FeedbackStage.Success -> [FeedbackAsset.CastChime, FeedbackAsset.SuccessFlash],
+            FeedbackStage.Cancelled -> [FeedbackAsset.CancelPulse]
         ),
-        excluded = [FeedbackAsset("shared"), FeedbackAsset("excluded")]
+        excluded = [FeedbackAsset.CastChime, FeedbackAsset.LegacyPulse]
     ),
     Spell.Sympathy -> SpellFeedbackProfile(
         byStage = (
-            FeedbackStage.Selected -> [FeedbackAsset("specific"), FeedbackAsset("shared")],
-            FeedbackStage.Partial -> [FeedbackAsset("shared")],
-            FeedbackStage.Failed -> [FeedbackAsset("failure")],
-            FeedbackStage.Success -> [FeedbackAsset("shared"), FeedbackAsset("success")],
-            FeedbackStage.Cancelled -> [FeedbackAsset("cancel")]
+            FeedbackStage.Selected -> [FeedbackAsset.SelectionFlash, FeedbackAsset.CastChime],
+            FeedbackStage.Partial -> [FeedbackAsset.CastChime],
+            FeedbackStage.Failed -> [FeedbackAsset.FailureChime],
+            FeedbackStage.Success -> [FeedbackAsset.CastChime, FeedbackAsset.SuccessFlash],
+            FeedbackStage.Cancelled -> [FeedbackAsset.CancelPulse]
         ),
-        excluded = [FeedbackAsset("shared"), FeedbackAsset("excluded")]
+        excluded = [FeedbackAsset.CastChime, FeedbackAsset.LegacyPulse]
     )
     global =
-        FeedbackStage.Selected -> [FeedbackAsset("global"), FeedbackAsset("shared"),
-            FeedbackAsset("excluded"), FeedbackAsset("global")],
-        FeedbackStage.Partial -> [FeedbackAsset("global")],
-        FeedbackStage.Success -> [FeedbackAsset("global")]
-    selectionRejected = [FeedbackAsset("rejected"), FeedbackAsset("rejected")]
+        FeedbackStage.Selected -> [FeedbackAsset.AmbientGlow, FeedbackAsset.CastChime,
+            FeedbackAsset.LegacyPulse, FeedbackAsset.AmbientGlow],
+        FeedbackStage.Partial -> [FeedbackAsset.AmbientGlow],
+        FeedbackStage.Success -> [FeedbackAsset.AmbientGlow]
+    selectionRejected = [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
 }
 
 thing MissingProfileFeedback as FeedbackChannel {
     magic = MagicWorld
     caster = Player
-    global = FeedbackStage.Selected -> [FeedbackAsset("global")]
-    selectionRejected = [FeedbackAsset("rejected"), FeedbackAsset("rejected")]
+    global = FeedbackStage.Selected -> [FeedbackAsset.AmbientGlow]
+    selectionRejected = [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
 }
