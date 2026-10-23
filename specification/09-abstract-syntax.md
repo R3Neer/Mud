@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-182
   - D-181
   - D-180
   - D-179
@@ -956,6 +957,15 @@ ExactDictionaryType(
 ```
 
 Validation after resolution rejects an arrow as a partial union alternative, even when introduced through an alias.
+
+## Composition expressions
+
+CompositionExpr records left/right operands and ForwardComposition or
+ReverseComposition. The precedence table folds composition before index
+suffixes: `f >> g[x]` projects to IndexExpr(CompositionExpr(f, ForwardComposition,
+g), x). Parenthesized `f >> (g[x])` retains the opposite boundary. Trivia and
+forced-continuation NEWLINE spans remain in CST; no synthetic argument or
+per-member application is created.
 
 ## Cardinality omitted
 

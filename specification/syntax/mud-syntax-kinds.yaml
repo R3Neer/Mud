@@ -150,6 +150,8 @@ fixed_tokens:
 - spelling: <-
 - spelling: let
 - spelling: foreach
+- spelling: '<<'
+- spelling: '>>'
 named_tokens:
 - kind: HEADER_WITH
 - kind: EOF
@@ -191,10 +193,18 @@ lexical_forms:
     - text-literal
   bom:
     rhs: '? U+FEFF, only as the first character ?'
-    references: []
+    references:
+    - as
+    - character
+    - first
+    - only
+    - the
   eof:
     rhs: '? end of file ?'
-    references: []
+    references:
+    - end
+    - file
+    - of
   horizontal-space:
     rhs: '" " | tab'
     references:
@@ -229,17 +239,27 @@ lexical_forms:
     - closed-comment-character
   line-comment-character:
     rhs: '? any Unicode scalar except NEWLINE ?'
-    references: []
+    references:
+    - any
+    - except
+    - scalar
   closed-comment-character:
     rhs: '? any Unicode scalar except "#", NEWLINE ?'
-    references: []
+    references:
+    - any
+    - except
+    - scalar
   multiline-comment:
     rhs: special-multiline-comment
     references:
     - special-multiline-comment
   special-multiline-comment:
     rhs: '? ### block validated by MUD-LEX-020 to MUD-LEX-024 ?'
-    references: []
+    references:
+    - block
+    - by
+    - to
+    - validated
   text-literal:
     rhs: "quote\n        , { text-character\n          | text-escape-sequence\n          | value-template-hole\n          }\n        , [ quote ]"
     references:
@@ -252,21 +272,33 @@ lexical_forms:
     references: []
   text-character:
     rhs: '? Unicode scalar except ''"'', "\", "{", "}", CR and LF ?'
-    references: []
+    references:
+    - and
+    - except
+    - scalar
   value-template-hole:
     rhs: special-value-template-hole
     references:
     - special-value-template-hole
   special-value-template-hole:
     rhs: '? balanced {...} block according to MUD-LEX-036 ?'
-    references: []
+    references:
+    - according
+    - balanced
+    - block
+    - to
   multiline-text-literal:
     rhs: special-multiline-text
     references:
     - special-multiline-text
   special-multiline-text:
     rhs: '? triple-quoted block validated by MUD-LEX-030 to MUD-LEX-036 ?'
-    references: []
+    references:
+    - block
+    - by
+    - to
+    - triple-quoted
+    - validated
   apostrophe:
     rhs: '? U+0027 COMILLA SIMPLE ?'
     references: []
@@ -416,7 +448,8 @@ lexical_forms:
     rhs: '"<=>" | "-->" | "--=" | "===" | "!=="'
     references: []
   two-character-token:
-    rhs: "\"<-\" | \":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n      | \"=>\" | \"+=\" | \"-=\" | \"*=\" | \"/=\"\n      | \"|=\" | \"&=\" | \"^=\" | \"--\""
+    rhs: "\">>\" | \"<<\" | \"<-\" | \":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n    \
+      \  | \"=>\" | \"+=\" | \"-=\" | \"*=\" | \"/=\"\n      | \"|=\" | \"&=\" | \"^=\" | \"--\""
     references: []
   one-character-operator:
     rhs: "\"=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"%\"\n      | \"<\" | \">\" | \"&\" | \"|\" | \"^\" | \"~\""
@@ -464,7 +497,8 @@ syntax_nodes:
     - value-body
   positional-binding-pattern:
     kind: PositionalBindingPatternSyntax
-    rhs: '"(" , binding-pattern , "," , binding-pattern , { "," , binding-pattern } , ")"'
+    rhs: "\"(\" , binding-pattern , \",\" , binding-pattern\n        , { \",\" , binding-pattern } , \"\
+      )\""
     references:
     - binding-pattern
   pure-pattern-declaration:
@@ -550,25 +584,27 @@ syntax_nodes:
     - stored-type-expression
   stored-named-product-type:
     kind: StoredNamedProductTypeSyntax
-    rhs: '"(" , stored-named-product-component , "," , stored-named-product-component , { "," , stored-named-product-component
-      } , ")"'
+    rhs: "\"(\" , stored-named-product-component\n        , \",\" , stored-named-product-component\n   \
+      \     , { \",\" , stored-named-product-component } , \")\""
     references:
     - stored-named-product-component
   stored-nominal-type:
     kind: StoredNominalTypeSyntax
-    rhs: stored-generic-argument-head , { generic-constructor | stored-callable-type-suffix }
+    rhs: "stored-generic-argument-head\n        , { generic-constructor | stored-callable-type-suffix }"
     references:
     - generic-constructor
     - stored-callable-type-suffix
     - stored-generic-argument-head
   stored-positional-product-type:
     kind: StoredPositionalProductTypeSyntax
-    rhs: '"(" , stored-type-expression , "," , stored-type-expression , { "," , stored-type-expression } , ")"'
+    rhs: "\"(\" , stored-type-expression , \",\" , stored-type-expression\n        , { \",\" , stored-type-expression\
+      \ } , \")\""
     references:
     - stored-type-expression
   stored-postfix-generic-type-application:
     kind: StoredPostfixGenericTypeApplicationSyntax
-    rhs: stored-generic-argument-head , { generic-constructor | stored-callable-type-suffix } , generic-constructor
+    rhs: "stored-generic-argument-head\n        , { generic-constructor | stored-callable-type-suffix }\n\
+      \        , generic-constructor"
     references:
     - generic-constructor
     - stored-callable-type-suffix
@@ -649,7 +685,7 @@ syntax_nodes:
     - generic-argument
   postfix-generic-type-application:
     kind: PostfixGenericTypeApplicationSyntax
-    rhs: generic-argument-head , { generic-constructor | callable-type-suffix } , generic-constructor
+    rhs: "generic-argument-head\n        , { generic-constructor | callable-type-suffix }\n        , generic-constructor"
     references:
     - callable-type-suffix
     - generic-argument-head
@@ -680,7 +716,8 @@ syntax_nodes:
     - type-reference
   generic-bound-list:
     kind: GenericBoundListSyntax
-    rhs: nominal-type , { "," , nominal-type } | "[" , nominal-type , { "," , nominal-type } , "]"
+    rhs: "nominal-type , { \",\" , nominal-type }\n      | \"[\" , nominal-type , { \",\" , nominal-type\
+      \ } , \"]\""
     references:
     - nominal-type
   type-parameter-list:
@@ -696,7 +733,8 @@ syntax_nodes:
     - type-parameter-list
   ancestor-list:
     kind: AncestorListSyntax
-    rhs: nominal-type , { "," , nominal-type } | "[" , nominal-type , { "," , nominal-type } , "]"
+    rhs: "nominal-type , { \",\" , nominal-type }\n      | \"[\" , nominal-type , { \",\" , nominal-type\
+      \ } , \"]\""
     references:
     - nominal-type
   message-signature-body:
@@ -1168,8 +1206,8 @@ syntax_nodes:
     - stored-field-declaration
   stored-field-declaration:
     kind: StoredFieldDeclarationSyntax
-    rhs: "( \"let\" | \"mut\" ) , field-name , [ stored-value-shape ]
-        , [ \"=\" , descriptor-value-body ]"
+    rhs: "( \"let\" | \"mut\" ) , field-name , [ stored-value-shape ]\n        , [ \"=\" , descriptor-value-body\
+      \ ]"
     references:
     - descriptor-value-body
     - field-name
@@ -1243,7 +1281,7 @@ syntax_nodes:
     - callable-type-suffix
   callable-receiver:
     kind: CallableReceiverSyntax
-    rhs: generic-argument-head , { generic-constructor | callable-type-suffix }
+    rhs: "generic-argument-head\n        , { generic-constructor | callable-type-suffix }"
     references:
     - callable-type-suffix
     - generic-argument-head
@@ -1311,9 +1349,7 @@ syntax_nodes:
     - optional-comma
   cardinality:
     kind: CardinalitySyntax
-    rhs: "\"?\"
-      | cardinality-bound
-      | cardinality-bound , \"..\" , cardinality-bound"
+    rhs: "\"?\"\n      | cardinality-bound\n      | cardinality-bound , \"..\" , cardinality-bound"
     references:
     - cardinality-bound
   cardinality-bound:
@@ -1537,8 +1573,7 @@ syntax_nodes:
     - then-statement
   then-statement:
     kind: ThenStatementSyntax
-    rhs: "effect
-      | value-local-declaration"
+    rhs: "effect\n      | value-local-declaration"
     references:
     - effect
     - value-local-declaration
@@ -1832,7 +1867,8 @@ syntax_nodes:
     - optional-comma
   local-collection-modifier:
     kind: LocalCollectionModifierSyntax
-    rhs: '"unique" , [ "by" , collection-key-path ] | "ordered" , [ "by" , collection-key-path ]'
+    rhs: "\"unique\" , [ \"by\" , collection-key-path ]\n      | \"ordered\" , [ \"by\" , collection-key-path\
+      \ ]"
     references:
     - collection-key-path
   quantitative-expression:
@@ -1880,11 +1916,13 @@ syntax_nodes:
     references: []
   postfix-expression:
     kind: PostfixExpressionSyntax
-    rhs: primary-expression , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix
-      | generic-call-suffix | expression-generic-suffix }
+    rhs: "primary-expression\n        , { member-access | metadata-access | index-access | call-arguments\
+      \ | collection-transform-suffix | generic-call-suffix | expression-generic-suffix | composition-step\
+      \ }"
     references:
     - call-arguments
     - collection-transform-suffix
+    - composition-step
     - expression-generic-suffix
     - generic-call-suffix
     - index-access
@@ -2408,8 +2446,8 @@ syntax_nodes:
     - value-block-body
   generic-argument-head:
     kind: GenericArgumentHeadSyntax
-    rhs: type-reference | explicit-generic-type-application | reflected-type | product-type | "(" , generic-union-argument
-      , ")"
+    rhs: "type-reference | explicit-generic-type-application\n      | reflected-type | product-type\n  \
+      \    | \"(\" , generic-union-argument , \")\""
     references:
     - explicit-generic-type-application
     - generic-union-argument
@@ -2418,14 +2456,15 @@ syntax_nodes:
     - type-reference
   stored-callable-type-suffix:
     kind: StoredCallableTypeSuffixSyntax
-    rhs: '"." , callable-kind , "(" , [ stored-type-expression , { "," , stored-type-expression } ] , ")"'
+    rhs: "\".\" , callable-kind\n        , \"(\" , [ stored-type-expression , { \",\" , stored-type-expression\
+      \ } ] , \")\""
     references:
     - callable-kind
     - stored-type-expression
   stored-generic-argument-head:
     kind: StoredGenericArgumentHeadSyntax
-    rhs: type-inference-hole | type-reference | stored-explicit-generic-type-application | reflected-type | stored-product-type
-      | "(" , stored-generic-union-argument , ")"
+    rhs: "type-inference-hole | type-reference | stored-explicit-generic-type-application\n      | reflected-type\
+      \ | stored-product-type\n      | \"(\" , stored-generic-union-argument , \")\""
     references:
     - reflected-type
     - stored-explicit-generic-type-application
@@ -2435,14 +2474,15 @@ syntax_nodes:
     - type-reference
   callable-type-suffix:
     kind: CallableTypeSuffixSyntax
-    rhs: '"." , callable-kind , "(" , [ type-expression , { "," , type-expression } ] , ")"'
+    rhs: "\".\" , callable-kind\n        , \"(\" , [ type-expression , { \",\" , type-expression } ] , \"\
+      )\""
     references:
     - callable-kind
     - type-expression
   grouped-postfix-generic-type-application:
     kind: GroupedPostfixGenericTypeApplicationSyntax
-    rhs: ( product-type | "(" , generic-union-argument , ")" ) , { generic-constructor | callable-type-suffix } ,
-      generic-constructor
+    rhs: "( product-type | \"(\" , generic-union-argument , \")\" )\n        , { generic-constructor | callable-type-suffix\
+      \ }\n        , generic-constructor"
     references:
     - callable-type-suffix
     - generic-constructor
@@ -2542,3 +2582,13 @@ syntax_nodes:
     rhs: '"." , identifier'
     references:
     - identifier
+  composition-step:
+    kind: CompositionStepSyntax
+    rhs: composition-operator , primary-expression
+    references:
+    - composition-operator
+    - primary-expression
+  composition-operator:
+    kind: CompositionOperatorSyntax
+    rhs: '">>" | "<<"'
+    references: []

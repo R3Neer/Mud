@@ -17,6 +17,8 @@ def boundary(p):
     """Evaluate MUD-SYN-015 over one supplied finite certificate."""
     if p['separator'] == 'semicolon' or p['enclosing_end']:
         return 'separate' if p['current_complete'] else 'error'
+    if p.get('next_leading_forward_composition', False):
+        return 'continue'
     if not p['current_complete']:
         return 'continue' if p['can_extend'] else 'error'
     if p['next_unit_start']:

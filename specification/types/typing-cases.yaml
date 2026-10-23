@@ -3203,3 +3203,20 @@ cases:
     inferred:
     - 0
     - 1
+- id: composition-whole-result
+  rules:
+  - MUD-TYPE-051
+  source: let result := f >> g[input]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: f accepts input and produces Int [3]; g accepts Int [*] and returns one
+    Nat. The complete collection is passed once to g; composition binds before the
+    final index.
+- id: composition-no-distribution
+  rules:
+  - MUD-TYPE-051
+  source: let result := f >> g[input]
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: f produces Int [3] while g requires singleton Int. No implicit mapping/flattening
+    repairs the intermediate contract.

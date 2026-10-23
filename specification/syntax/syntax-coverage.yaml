@@ -1573,3 +1573,13 @@ productions:
     ast:
       disposition: normalized
       target: ImplicitMemberExpr
+  composition-step:
+    cst: CompositionStepSyntax
+    ast:
+      disposition: normalized
+      target: expr
+  composition-operator:
+    cst: CompositionOperatorSyntax
+    ast:
+      disposition: normalized
+      target: composition_direction

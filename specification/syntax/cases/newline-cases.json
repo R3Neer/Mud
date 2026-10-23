@@ -280,6 +280,48 @@
         "enclosing_end": false
       },
       "expected_boundary": "continue"
+    },
+    {
+      "id": "forward-pipe-forces-continuation",
+      "context": "value-local",
+      "source": "let pipeline = f\n >> g",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": true,
+        "can_extend": true,
+        "enclosing_end": false,
+        "next_leading_forward_composition": true
+      },
+      "expected_boundary": "continue"
+    },
+    {
+      "id": "forward-pipe-semicolon-barrier",
+      "context": "value-local",
+      "source": "let pipeline = f\n >> g",
+      "premises": {
+        "separator": "semicolon",
+        "current_complete": true,
+        "next_unit_start": true,
+        "can_extend": true,
+        "enclosing_end": false,
+        "next_leading_forward_composition": true
+      },
+      "expected_boundary": "separate"
+    },
+    {
+      "id": "forward-pipe-block-barrier",
+      "context": "value-local",
+      "source": "let pipeline = f\n >> g",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": true,
+        "can_extend": true,
+        "enclosing_end": true,
+        "next_leading_forward_composition": true
+      },
+      "expected_boundary": "separate"
     }
   ]
 }

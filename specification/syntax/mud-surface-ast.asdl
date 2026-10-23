@@ -658,6 +658,7 @@ module MUDSurface {
 
     expr = ComprehensionExpr(iteration_binding binding, expr source, expr? step,
                              expression_block? filter, value_block body)
+         | CompositionExpr(expr left, composition_direction direction, expr right)
          | ImplicitMemberExpr(identifier_name member)
          | SelectorExpr(selector_syntax selector)
          | RaiseExpr(value_block errors)
@@ -761,6 +762,8 @@ module MUDSurface {
                     | OldValue
                     | ImagineQuery
                     | EnumerateAll
+
+    composition_direction = ForwardComposition | ReverseComposition
 
     binary_operator = Biconditional
                     | Implication

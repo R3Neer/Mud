@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-182
   - D-181
   - D-180
   - D-178
@@ -388,6 +389,13 @@ referenced binding; outer selector recovery cannot resurrect failed-scope locals
 Reuse successful demanded derivations with unchanged inputs/dependencies in the
 same application/branch, retaining full footprints and ordinary invalidation.
 No eager computation, cross-call sharing or mutation permission is introduced.
+
+> [!rule] MUD-TYPE-051 — Static whole-result composition
+> CompositionExpr resolves each policy operand under its static contract and
+> requires upstream whole-output inclusion in downstream whole-input. Retain
+> family constraints until an admitted specialization is determined. Its result
+> is a pure functional value with the upstream input and downstream output
+> contracts. Reject unsupported effectful operands and implicit distribution.
 
 ## 7. Domains, selection and finite traversal
 

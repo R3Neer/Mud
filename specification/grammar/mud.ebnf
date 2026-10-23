@@ -1249,8 +1249,14 @@ prefix-operator
 
 postfix-expression
     ::= primary-expression
-        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix | generic-call-suffix | expression-generic-suffix }
+        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix | generic-call-suffix | expression-generic-suffix | composition-step }
         ;
+
+composition-step
+    ::= composition-operator , primary-expression ;
+
+composition-operator
+    ::= ">>" | "<<" ;
 
 collection-transform-suffix
     ::= "[" , local-collection-transform , "]" ;

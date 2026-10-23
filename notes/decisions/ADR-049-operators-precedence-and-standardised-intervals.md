@@ -28,6 +28,8 @@ affects:
 - Related questions: Q-001, Q-018, Q-050
 - Documents affected: expressions, ranges, grammar
 
+- Amended by: [[ADR-182-whole-result-composition-and-pipe-continuation|D-182]].
+
 ## Context
 
 The reference contained the list of operators and their precedence, but it predates `to`, to the full nominalisation of aliases and to the current system of units.
@@ -38,6 +40,7 @@ The reference contained the list of operators and their precedence, but it preda
 
 | Family | Shapes |
 | --- | --- |
+| Pure policies | `>>` forward and `<<` reverse whole-result composition |
 | Arithmetic | `+`, `-`, `*`, `/`, `%` |
 | Comparison | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, `in` |
 | Logic | `not`, `and`, `or`, `xor`, `=>`, `<=>` |
@@ -131,3 +134,5 @@ D-059 includes intervals of magnitude with local units or a unit external common
 13. Equivalent normalisation of intervals of magnitude with local and shared drives.
 14. Normalisation to `empty` of inverted or degenerate open linear endpoints.
 
+
+Composition binds above brackets and below calls/member/metadata access; both directions fold left. Its symbols are not alias-overloadable.

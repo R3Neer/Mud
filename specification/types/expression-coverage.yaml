@@ -184,3 +184,7 @@ expressions:
     cases:
     - optional-extraction-upper-one
     - last-position-access
+  CompositionExpr:
+    section: 6. Collection and dictionary algebra
+    cases:
+    - composition-whole-result

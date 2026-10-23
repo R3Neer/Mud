@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 176.
-- Current: 172.
+- Total: 177.
+- Current: 173.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -195,6 +195,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-179 | current | 2026-10-16 | [[notes/decisions/ADR-179-optional-empty-magnitude-bodies|Optional empty magnitude bodies]] |
 | D-180 | current | 2026-10-16 | [[notes/decisions/ADR-180-uniform-dictionary-cardinality-inference|Uniform dictionary cardinality inference]] |
 | D-181 | current | 2026-10-23 | [[notes/decisions/ADR-181-string-primitive-spelling|String primitive spelling]] |
+| D-182 | current | 2026-10-23 | [[notes/decisions/ADR-182-whole-result-composition-and-pipe-continuation|Whole-result composition and pipe continuation]] |
 
 ## Reserved identifiers
 

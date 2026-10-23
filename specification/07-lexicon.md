@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-182
   - D-181
   - D-176
   - D-173
@@ -121,6 +122,8 @@ true false empty all _
 String Char Bool Thing Any Nat Int Num Rum Money
 Name MudPath Anchor MudFile Prefix Rand
 ```
+
+The composition tokens `>>` and `<<` are indivisible and matched before `>` and `<`. They are pure policy composition, not shifts or new alias-overloadable symbols.
 
 The terminals `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>`, `<-` and `<=>` are not words. `-->` is recognised by the longest match before `--` and `->`. `|=`, `&=`, `^=` and `--=` are also indivisible tokens. `!` on its own does not belong to the lexicon; `===` and `!==` are indivisible structural-type comparison tokens, matched before `==` and `!=`; `!=` remains an indivisible token of inequality and is not interpreted as the composition of negation and assignment.
 

@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-182
   - D-181
   - D-180
   - D-179
@@ -1577,7 +1578,9 @@ From highest to lowest:
 
 | Level | Shapes | Group |
 | ---: | --- | --- |
-| 1 | access `.`, metadata `~`, index `[]`, call `()` with optional static `with` arguments and `unit from container in point` | left or complete form |
+| 1a | access `.`, metadata `~`, call `()` with optional static `with` arguments and `unit from container in point` | left or complete form |
+| 1b | pure composition `>>`, `<<` | left |
+| 1c | index `[]` and collection transformation suffixes | left |
 | 2 | prefixes `old`, `imagine`, `not`, sign | right |
 | 3 | `*`, `/`, `%` | left |
 | 4 | `+`, `-`, `--` | left |
@@ -1590,6 +1593,14 @@ From highest to lowest:
 | 11 | `=>` | right |
 | 12 | `<=>` | adjacent chain |
 | 13 | `eventually ... through ...` | outer |
+
+The postfix-chain grammar admits composition steps and the table determines
+folding. Thus `f >> g[x]` is `(f >> g)[x]`, while `f >> (g[x])` explicitly composes
+with the indexed value. Already indexed operands remain admissible:
+`f[x] >> g[y]` groups as `(f[x] >> g)[y]`. Composition has equal precedence in
+both directions and folds left when mixed. Calls/member/metadata suffixes bind
+more tightly than composition; brackets bind less tightly. No argument is
+evaluated during grouping or overload selection.
 
 The forms `take amount from source`, `binding in source : predicate` and the quantifiers contain complete expressions in their delimited positions. The first unnested `from` that can delimit `take` separates amount from source; the unnested colon separates source from predicate. A `from` or `:` inside delimiters or another complete construct belongs to that construct. This contextual delimitation prevents the `from` in component extraction from accidentally consuming the `take` separator. Therefore:
 
@@ -1807,7 +1818,7 @@ Let $C$ be the grammatical context containing the current unit, $P$ its signific
 Define $Complete_C(P)$ when the current unit can end here, $Start_C(F)$ when the following fragment starts a separate unit admitted at this boundary, and $Extend_C(P,F)$ when the fragment is a grammatical continuation of the current unit with the newline treated as whitespace. Start includes an incomplete but valid beginning such as `other =`; it does not require a complete next physical line. These predicates use syntax only. A recognised next-unit beginning keeps its boundary even if that unit has a later syntax error. No fixed token-count lookahead or parser implementation is prescribed.
 
 > [!rule] MUD-SYN-015 — Contextual newline boundary
-> Inside an open `()`/`[]` or an unfinished unit, a newline permits continuation when the grammar admits it. After a complete unit, a valid next-unit start takes precedence and the newline separates the units. Otherwise, if the next fragment can extend the current unit, the newline is continuation whitespace. If neither interpretation is valid, report a syntax error rather than accepting a concatenation. An explicit `;` is always a separator and cannot be reclassified to repair an incomplete unit. Indentation has no role.
+> Inside an open `()`/`[]` or an unfinished unit, a newline permits continuation when the grammar admits it. After a complete unit, a valid next-unit start takes precedence and the newline separates the units. Otherwise, if the next fragment can extend the current unit, the newline is continuation whitespace. If neither interpretation is valid, report a syntax error rather than accepting a concatenation. An explicit `;` is always a separator and cannot be reclassified to repair an incomplete unit. A following significant `>>` forces continuation within the same enclosing unit, even if ordinary next-unit-start classification would win; malformed joined syntax is diagnosed without retrying separation. Explicit semicolons, EOF and enclosing closing delimiters remain hard barriers. Indentation has no role.
 
 At EOF or a closing delimiter of the containing block, a complete unit may end under the ordinary enclosing production; an incomplete unit is an error. Lookahead skips comments and blank lines but does not cross an explicit semicolon, EOF or the enclosing closing delimiter to seek a rescuing fragment. Newlines inside native regions, literal contents and multiline comments retain their own scanner/adapter contracts.
 

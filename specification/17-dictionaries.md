@@ -13,6 +13,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-182
   - D-181
   - D-180
   - D-176
@@ -373,6 +374,38 @@ Output cardinality follows admitted branch results, not coverage alone; a
 covered FirstMatch returning optional values can still produce empty.
 
 Functional dictionaries have no outer mutability or inner `[mut]` capability and cannot enumerate branches or their input population. All reads record transitive dependencies in one stable application snapshot. Branch selector keys remain local normalized reconstruction identities without public anchors; equivalent shorthand normalizes to the same predicate key.
+
+## Pure composition
+
+> [!rule] MUD-DICT-007 — Whole-result composition
+> F >> G applies F first and passes its complete normal result as the sole
+> input to G. F << G applies G first and passes its complete result to F.
+> The selected downstream input contract must admit the whole upstream output
+> contract. No per-member distribution, implicit flattening or causal effect is
+> introduced.
+
+```mud
+let increment: Int --> Int = _ --> value + 1
+let double: Int --> Int = _ --> value * 2
+let eight := increment >> double[3]
+let seven := increment << double[3]
+```
+
+Composition constructs a policy value. Construct/evaluate its operand values
+once in textual order; it does not invoke their bodies until application.
+During an application, execute the semantic upstream first, then the downstream
+in the same stable application snapshot. Forward/reverse affects application
+order, not textual operand-construction order. A normal empty result is passed
+as empty; it does not omit the downstream stage. A Fault stops dependent work;
+ordinary error recovery applies. Explicit optional omission keeps its existing
+owner boundary and is not silently converted into an empty result.
+
+Cardinality, domains, order, uniqueness and authority check at the complete
+intermediate boundary. For an admitted family, retain relational constraints
+rather than inventing cross-signature combinations. Incompatible or ambiguous
+mandatory specializations are static errors. A downstream scalar policy is not
+implicitly mapped over an upstream multi-member result. Use explicit traversal
+when per-member application is intended.
 
 ## Recursive admission and pointwise algebra
 
