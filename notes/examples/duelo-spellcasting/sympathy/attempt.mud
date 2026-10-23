@@ -9,9 +9,12 @@ given aim: Aim {
     then {
         let plan = (magic, caster).PlanSympathy(aim).plan
 
-        caster.prepared = plan.prepare[?]
+        let prepared := foreach preparation in plan
+            if preparation is SympathyPreparation --> preparation.target
+        caster.prepared = prepared[?]
 
-        (magic, caster).EstablishSympathyLink(plan.pair[?], aim)
+        let pairs := foreach ready in plan if ready is SympathyReady --> ready.pair
+        (magic, caster).EstablishSympathyLink(pairs[?], aim)
 
         (magic, caster).ResolveAttempt(Spell.Sympathy, plan.outcome, aim)
     }

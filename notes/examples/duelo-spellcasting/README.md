@@ -130,6 +130,21 @@ new-selection admission. Selection rejection is a normal domain occurrence,
 not an IfRefusal. Concentration is derived from active spells, not link count.
 ConcentrationWithinLimit checks the bound; it performs no repair.
 
+Internal decisions use unions of concrete immutable alternatives. Selection
+returns exactly one of CancelSelection, ActivateSelection or RejectSelection,
+each carrying its required spell. There is no record with three independent
+optional decisions. Sympathy returns SympathyStopped (only None or Failed),
+SympathyPreparation (a required target and derived Partial outcome), or
+SympathyReady (a required pair and derived Success outcome). The common outcome
+projection is available on every alternative; payload access requires narrowing.
+No nominal wrapper alias or implicit conversion hides the union alternatives.
+
+The consumers project zero-or-one payloads from those unions and retain optional
+omission: no preparation skips its assignment, and no pair skips link creation.
+This preserves preparation across failed/no-hit attempts. Frozen public event,
+look and feedback schemas retain their existing contracts; optional observations
+are not converted into artificial decision variants.
+
 The implemented provider is Sympathy. Fireball is a reserved catalog entry,
 not an implemented spell body. The default entities configure only Sympathy.
 InstantProtocolCaster exists solely to test the provider-independent completion

@@ -2,11 +2,9 @@ part only
 
 # Internal atomic spell completion and cancellation protocol.
 
-alias SelectionPlan {
-    let activate: Spell [?] = empty
-    let cancel: Spell [?] = empty
-    let reject: Spell [?] = empty
-}
+alias ActivateSelection { let spell: Spell }
+alias CancelSelection { let spell: Spell }
+alias RejectSelection { let spell: Spell }
 
 subaction EndSpell
 for magic: Magic [mut], caster: Spellcaster [mut]

@@ -4,14 +4,19 @@ action SelectSpell
 for magic: Magic [mut], caster: Spellcaster [mut]
 given requested: Spell {
     then {
-        let selection: Spell -->[ordered] SelectionPlan =
-            caster.activeSpells has value --> SelectionPlan(cancel = [value]),
-            caster.CanSelect(value) --> SelectionPlan(activate = [value]),
-            _ --> SelectionPlan(reject = [value])
+        let selection: Spell -->[ordered]
+            (CancelSelection | ActivateSelection | RejectSelection) =
+                caster.activeSpells has value --> CancelSelection(value),
+                caster.CanSelect(value) --> ActivateSelection(value),
+                _ --> RejectSelection(value)
         let plan = selection[requested]
 
-        (magic, caster).EndSpell(plan.cancel[?])
-        foreach spell in plan.activate : {
+        let cancelled := foreach choice in plan
+            if choice is CancelSelection --> choice.spell
+        (magic, caster).EndSpell(cancelled[?])
+
+        foreach choice in plan if choice is ActivateSelection : {
+            let spell = choice.spell
             add spell to caster.activeSpells
             caster.selected = spell
             caster.prepared = empty
@@ -23,10 +28,12 @@ given requested: Spell {
             ) to magic.pending
         }
 
+        let rejected := foreach choice in plan
+            if choice is RejectSelection --> choice.spell
         add SpellEvent(
             kind = SpellEventKind.SelectionRejected,
             caster = caster,
-            spell = plan.reject[?],
+            spell = rejected[?],
             aim = Aim(caster.position, empty)
         ) to magic.pending
     }

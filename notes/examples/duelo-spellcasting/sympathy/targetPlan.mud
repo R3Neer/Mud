@@ -6,27 +6,22 @@ using spells
 sublook PlanSympathy
 for magic: Magic, caster: Spellcaster
 given aim: Aim {
-    let plan: SympathyPlan := {
-        let decision: Aim -->[ordered] SympathyPlan =
-            .target == empty -->
-                SympathyPlan(outcome = CastOutcome.None),
-            not (exists target in .target : (magic, target).TargetUsable()) -->
-                SympathyPlan(outcome = CastOutcome.Failed),
-            caster.preparation == empty -->
-                SympathyPlan(
-                    outcome = CastOutcome.Partial,
-                    prepare = .target
-                ),
-            {
-                exists leader in caster.preparation :
-                    exists follower in .target :
-                        (magic, leader, follower).CanLink()
-            } -->
-                SympathyPlan(
-                    outcome = CastOutcome.Success,
-                    pair = [SympathyPair(caster.preparation[?], .target[?])]
-                ),
-            _ --> SympathyPlan(outcome = CastOutcome.Failed)
+    let plan := {
+        let decision: Aim -->[ordered]
+            (SympathyStopped | SympathyPreparation | SympathyReady) =
+                .target == empty -->
+                    SympathyStopped(CastOutcome.None),
+                not (exists target in .target : (magic, target).TargetUsable()) -->
+                    SympathyStopped(CastOutcome.Failed),
+                caster.preparation == empty -->
+                    SympathyPreparation(.target[?]),
+                {
+                    exists leader in caster.preparation :
+                        exists follower in .target :
+                            (magic, leader, follower).CanLink()
+                } -->
+                    SympathyReady(SympathyPair(caster.preparation[?], .target[?])),
+                _ --> SympathyStopped(CastOutcome.Failed)
         decision[aim]
     }
 }

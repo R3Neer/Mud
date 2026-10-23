@@ -20,10 +20,18 @@ alias SympathyPair {
     let follower: Entity
 }
 
-alias SympathyPlan {
-    let outcome: CastOutcome
-    let prepare: Entity [?] = empty
-    let pair: SympathyPair [?] = empty
+alias SympathyStopped {
+    let outcome: CastOutcome in [CastOutcome.None, CastOutcome.Failed]
+}
+
+alias SympathyPreparation {
+    let target: Entity
+    let outcome := CastOutcome.Partial
+}
+
+alias SympathyReady {
+    let pair: SympathyPair
+    let outcome := CastOutcome.Success
 }
 
 rule PrepareLinkEffects on magic: Magic [mut] {
