@@ -13,6 +13,9 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-182
   - D-181
   - D-180
@@ -52,17 +55,18 @@ to admitted containing bodies; let/mut are not file-root declarations.
 
 ```mud
 let labels: Int -> String = 1 -> "one", 2 -> "two"
-let describe: Int --> String [ordered] =
+let describe: Int --> String [ordered] = first {
     value > 0 --> "positive",
-    _ --> "other"
+        _ --> "other"
+}
 ```
 
 `->` and `-->` admit complete key/input and value/output types. Arrows associate
-right: A -> B -> C is A -> (B -> C). A bracketed specification after an arrow
-constrains that dictionary's associations or application results, not the count
-of independent dictionary values. A -> B [2] -> C [3] groups as
-A -> (B -> C [3]) [2]. Parentheses delimit a dictionary used as key or shaped as
-an outer collection. A dictionary itself is one outer value.
+right: A -> B -> C is A -> (B -> C). An exact arrow's trailing specification constrains associations:
+A -> B[2] -> C[3] groups as A -> (B -> C[3])[2]. A functional arrow instead
+uses type-adjacent input/output specifications under [[types/functional-families]].
+Grouping distinguishes a residual policy from a collection of policies;
+A --> (B --> C)[3 ordered] produces three residual values. A dictionary itself is one outer value.
 
 > [!rule] MUD-DICT-001 — Complete arrow forms
 > A dictionary arrow must be the complete outer type form. It cannot be hidden
@@ -106,8 +110,8 @@ A dictionary's independent exterior count is resolved at its own layer.
 Resolve the member/input/output types and written structure without prematurely
 supplying a singleton for an omitted inference slot. Then infer the counted
 layer using the owner's initializer/body. A modifier-only specification such
-as [ordered] or [unique] still has omitted cardinality. It preserves the
-written mode/guarantee without imposing a singleton count. Existing nested
+as [ordered] or [unique] still has omitted cardinality. It preserves the written output guarantee without imposing a singleton count;
+first/all independently selects branch mode. Existing nested
 value contracts and arrow grouping remain independent; a receiving type-only
 contract is not inferred anew from every supplied value.
 
@@ -115,10 +119,13 @@ contract is not inferred anew from every supplied value.
 let names: Int -> String = 1 -> "one", 2 -> "two"  # two associations
 let noNames: Int -> String = empty                 # zero associations
 mut growing: Int -> String [*] = empty             # explicit variable capacity
-let partial: Int --> String [ordered] = > 0 --> "positive"  # [0..1]
-let total: Int --> String [1 ordered] =
+let partial: Int --> String [ordered] = first {
+    > 0 --> "positive"  # [0..1]
+}
+let total: Int --> String [1 ordered] = first {
     > 0 --> "positive",
-    _ --> "other"
+        _ --> "other"
+}
 ```
 
 Without [*], growing defaults to one association and cannot initialize from
@@ -239,11 +246,10 @@ contracts and inferred bounds must account for that omission.
 > [!rule] MUD-DICT-003 — Pure selectors and conditional coverage
 > Every functional dictionary has pure deterministic interpreted selectors and input coverage when the application minimum is positive. Its results satisfy the complete output contract.
 
-A functional branch has a pure selector and a ValueBlock result. Its input
-is the implicit immutable variable denoted contextually by `value`, visible in
-its selector and result scopes. This spelling is not globally reserved. Normal lookup,
-duplicate-name and no-shadowing rules apply; neither result nor selector may
-redeclare it. Direct selector-preamble locals are visible in that branch's result under the shared-scope contract below. Exact associations
+A functional branch has a pure selector and a ValueBlock result. Reserved value denotes the available complete input or
+cumulative positional chain product under [[types/functional-families]]. It is
+visible in selector/result scopes and cannot be redeclared. Named inputs and
+inferred free parameters keep declaration-local symbols and ordinary no-shadowing. Direct selector-preamble locals are visible in that branch's result under the shared-scope contract below. Exact associations
 do not inject value: their values are computed at association construction,
 not recomputed for each lookup.
 
@@ -331,24 +337,14 @@ condition such as `value.age >= 18 and value.hasPermit` needs no additional if.
 No as input binding, structural selector patterns or new guard form exists.
 Supported equality, singleton-Bool admission and purity remain mandatory.
 
-Composite application `policy[a, b]` supplies one complete contextual input,
-equivalent to `policy[(a, b)]`. The implicit value is that complete tuple or
-nominal product, not one independently dispatched argument. No argument names
-are injected as locals. Named components are accessible through value/.member;
-anonymous positional products use admitted positional binding.
-
-```mud
-let total: (Int, Int) --> Int [ordered] =
-    _ --> {
-        let (left, right) = value
-        left + right
-    }
-```
-
-total[2,3] applies this one tuple-input policy and produces 5 under its contract.
-A nominal named product cannot be opened with that positional binding; access
-its named components instead. Structural input identity and once-only input
-evaluation retain the ordinary contextual-construction rules.
+Composite application policy[a,b] retains its written arguments and explicit
+product grouping. It can supply one product input or two curried stages when
+the resolved static signature admits exactly that interpretation. Multiple
+admitted interpretations are an error requiring policy[(a,b)] or policy[a][b].
+Named signature parameters and cumulative value may be bound using ordinary
+positional patterns; product labels themselves are not injected as locals.
+Details, partial specialization and capture lifetimes follow
+[[types/functional-families]].
 
 When the application-result minimum is positive, coverage is universal over
 the admitted input contract and applicable views, not one runtime sample.
@@ -362,14 +358,23 @@ Fallback is unique and last. It applies only when no ordinary selector applies.
 A selected result yielding empty has handled that input and does not trigger
 fallback. Exhaustive treatment is independent of output presence: `_ --> empty`
 is valid when the output admits absence. Selected computing faults propagate;
-they do not retry another branch or fallback. Ordered FirstMatch chooses the
-first applicable selector; without ordered, AllMatches evaluates all ordinary selectors
+they do not retry another branch or fallback. The first constructor chooses FirstMatch and the
+first applicable selector; all or unmarked branches use AllMatches, evaluating all ordinary selectors
 in one snapshot and produces all applicable results. Positive-minimum coverage is required in
 both modes; unreachable/redundant cases are diagnosed when provable.
 
+AllMatches aggregates the exterior members of selected branch results. With
+contributions [1,2] and [3,4], the result has four occurrences; it is not
+[[1,2],[3,4]]. Equal occurrences are retained unless result uniqueness removes
+them. Empty contributes no member; a nested collection already contributed as
+one member keeps its entire nested shape. Sum contribution bounds before
+checking the aggregate cardinality; the aggregate's positive minimum is not a
+minimum imposed independently on every branch. Output ordering, uniqueness,
+fallback and finite occurrence evidence follow [[types/functional-families]].
+
 Input and output types may be inferred only with unique evidence/context.
 `_ --> .name` alone does not establish an input type. An explicit input with
-an output hole can, as in `let naming: Person --> _ [ordered] = _ --> .name`.
+an output hole can, as in `let naming: Person --> _ = first { _ --> .name }`.
 Output cardinality follows admitted branch results, not coverage alone; a
 covered FirstMatch returning optional values can still produce empty.
 
@@ -425,9 +430,11 @@ define `(F op G)[x] = F[x] op G[x]` in one snapshot. Each side retains its own
 selectors and fallback; dependencies combine transitively. No branch merge,
 shared fallback or left-preference functional union is introduced. The result
 operator retains its supported equality/uniqueness premises and conservative
-cardinality. A pair of FirstMatch policies can yield two union/symmetric-difference
-results, generally losing ordered FirstMatch mode; intersection/difference can
-retain it when at most one result is proved. Annotation cannot hide the loss.
+cardinality. A pair of FirstMatch policies can yield two union/symmetric-difference results.
+The computed policy applies each operand's own mode; it does not propagate a
+branch mode through a collection-order modifier. Result order/uniqueness/count
+follow ordinary result algebra, independently of how the operands selected
+branches. Annotation cannot hide an inadmissible result count.
 
 Functional dictionaries have no value ==/!=, including through aliases and
 stored structures requiring that comparison. This is distinct from comparing
@@ -477,9 +484,10 @@ Distinct outer aliases with equal projected contents address the same key.
 ```mud
 alias Journey { let departure: City; let arrival: City }
 # Within an admitted owner:
-let sameCity: (origin: City, destination: City) --> Bool [ordered] =
+let sameCity: (origin: City, destination: City) --> Bool [ordered] = first {
     _ --> .origin == .destination
-# sameCity[journey] exposes origin/destination, not departure/arrival.
+    # sameCity[journey] exposes origin/destination, not departure/arrival.
+}
 ```
 
 A zero-admitting application-result contract permits uncovered inputs, producing

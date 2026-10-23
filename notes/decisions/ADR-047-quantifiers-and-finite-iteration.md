@@ -61,7 +61,7 @@ The `foreach` The executable appears inside a `then`; D-101 also allows for `Loc
 foreach item in source if predicate :
     iterations += 1
 
-foreach value in source by step if predicate :
+foreach payload in source by step if predicate :
     iterations += 1
 ```
 

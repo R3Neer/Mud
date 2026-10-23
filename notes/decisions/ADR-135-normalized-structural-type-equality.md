@@ -16,6 +16,8 @@ affects:
 
 # ADR-135 — Normalized structural type equality
 
+- Amended by: [[ADR-184-structural-traits-and-capability-views|D-184]].
+
 ## Context
 
 The author accepted exact structural type comparison while retaining nominal value identity and the distinct explicit-conversion relation. Clarifications select normalized symbolic contracts rather than general semantic equivalence; calculated bodies are excluded when their effective contracts coincide.
@@ -23,6 +25,12 @@ The author accepted exact structural type comparison while retaining nominal val
 ## Decision
 
 === and !== compare Type operands and produce Bool. Compare the complete normalized effective contract after generic substitution, erasing only alias nominal identities. Thing/family identities and exact arguments remain opaque, including phantom family distinctions. Include names/order, member kind, complete types, symbolic domains, shapes, capabilities, criteria, products, dictionaries and normalized unions. Ignore metadata, presentation, documentation, defaults and calculation bodies except through their influence on an inferred effective contract. Current runtime population equality is not type-contract equality. Recursive comparison requires a finite closed labelled-bisimulation certificate. ==, is, iis and conversion compatibility remain distinct.
+
+Trait contracts normalize their minimum requirements independently of trait
+name and declaration order. A read requirement does not include the stored or
+calculated implementation kind of a satisfying witness; writable requirements
+retain their place/authority contract. Functional schemes retain correlated
+bound-variable positions and constraints, not parameter names or branch modes.
 
 ## Verification
 

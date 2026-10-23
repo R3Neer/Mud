@@ -13,6 +13,9 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-182
   - D-181
   - D-180
@@ -104,7 +107,7 @@ ComprehensionExpr checks its source/step before introducing the iterator and che
 The environments and synthesis/checking judgements are defined in [[11-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[15-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
 
 ```mud
-let value: Num = 2 + 3 * 4
+let result: Num = 2 + 3 * 4
 let positive := value > 0
 ```
 
@@ -320,9 +323,9 @@ Pruning-sensitive syntax is normal admitted language usage. No sensitivity warni
 ### Alias-owned operator signatures
 
 > [!rule] MUD-TYPE-028 — Declared alias operator contract
-> Only unary + and - and binary +, -, *, /, %, |, &, ^, -- are overloadable. Every declaration belongs to an alias and has at least one operand of its owner applied type. A bare operand has that type; an annotated operand is grouped as (name: type). The optional result follows a colon and the value body follows :=. The body obeys ordinary ValueBlock purity, capability, termination and error contracts. Equality, ordering, logical/contextual operations and assignment are not directly overloadable.
+> Only unary + and - and binary +, -, *, /, %, |, &, ^, -- are overloadable. Every declaration belongs to an alias and has at least one operand of its owner applied type. A bare operand has that type; an annotated operand is grouped as (name: type). A symbol-named field uses a curried functional signature and = or := body. The operand-header spelling is sugar with an optional result after a colon and a := body. The body obeys ordinary ValueBlock purity, capability, termination and error contracts. Equality, ordering, logical/contextual operations and assignment are not directly overloadable.
 
-Each declaration introduces only its written ordered signature. An inverse requires a declaration; it may delegate to the original. A same-type signature admits exchanged values without asserting commutativity. Metadata has no algebraic privileges, and compiler proofs do not create signatures or settle selection. Alias operator selection follows the rules below; complete signature identity encoding and the read-only reflective schema follow [[names/operator-contract-identity]]. The following result rule applies once a signature is unambiguously established; expected results cannot invent or select one.
+Each declaration introduces only its written ordered signature; (+) or an accessible symbol field projection can form a statically constrained functional reference to the visible family. An inverse requires a declaration; it may delegate to the original. A same-type signature admits exchanged values without asserting commutativity. Metadata has no algebraic privileges, and compiler proofs do not create signatures or settle selection. Alias operator selection follows the rules below; complete signature identity encoding and the read-only reflective schema follow [[names/operator-contract-identity]]. The following result rule applies once a signature is unambiguously established; expected results cannot invent or select one.
 
 > [!rule] MUD-TYPE-029 — Operator result contextual preference
 > An explicit result contract takes precedence. Without one, an untyped returned tuple first checks construction of the owner alias under its complete contract. If that fails, form the set of distinct operand types admitting its contextual construction. A singleton set selects that type; more than one requires an explicit result or expression type. If none fits, use ordinary structural inference. Typed values retain their nominal identity; no implicit alias conversion is introduced.
@@ -338,7 +341,7 @@ Let $C(A,B)$ be the visible original declarations supplied by the aliases of the
 
 For a binary candidate $s$ with operand contracts $P_s,Q_s$, define applicability by $A\preceq P_s$ and $B\preceq Q_s$. Candidate-local untyped literal checking follows ordinary contextual typing; no representation preference or implicit conversion is invented to break a tie. Define $s\prec t$ when $P_s\preceq P_t$ and $Q_s\preceq Q_t$, with at least one strict inclusion. A sole applicable candidate wins; with multiple candidates, one must strictly dominate every other distinct candidate. Unary selection uses the corresponding single operand relation. Unknown inclusion is not a proof of dominance.
 
-An inherited Vector2 * Num -> Vector2 implementation remains owned by Vector2 and returns Vector2 even when it admits a descendant. A descendant-specific declaration may dominate it; inherited bodies are not rewritten to construct descendant components. Reaching one originating declaration through a diamond contributes one candidate. Two distinct owners may each declare A * B, but a use seeing both equal signatures is ambiguous, even if their bodies agree. Changing the result annotation cannot repair this ambiguity.
+An inherited Vector2 * Num -> Vector2 implementation remains owned by Vector2 and returns Vector2 even when it admits a descendant. A descendant-specific declaration may dominate it; inherited bodies are not rewritten to construct descendant components. Reaching one originating declaration through a diamond contributes one candidate. Two distinct explicit owners declaring the same symbol/arity/ordered complete operand contracts make the linked program invalid, even if the bodies agree or no call sees both. Names and result annotations cannot distinguish those signatures. Explicit definitions dominate identical compiler-origin signatures; same-origin generations/diamonds deduplicate and incompatible implicit generations collide.
 
 For union operands use the alternatives remaining after flow narrowing. Every possible pair must be independently admissible and uniquely selected; join their normal result contracts. An implementation may branch on the checked union alternative but must not discover new overloads from a more specific runtime subtype. A missing or ambiguous pair rejects the whole expression; current runtime population does not eliminate a static alternative.
 
@@ -382,6 +385,16 @@ Union guarantees whole-value uniqueness only when both operands supply it. Inter
 An exact association checks one key and one complete value against its contextual dictionary contract and contributes one association. A functional branch interprets its selector in the input contract, checks its result against the output contract and its fallback only in the permitted branch position; selection mode determines result multiplicity. Omitted application cardinality in a definition is inferred from the complete body over admitted inputs/views, including zero for uncovered cases. Coverage and sufficient result presence must be proved when a written or receiving contract has a positive minimum, not merely because a functional body exists. Exact association and functional result bounds follow MUD-DICT-006 in [[17-dictionaries]]. These are value constructors, not assignable branch storage.
 
 Exact dictionary operators operate on complete associations with their defined shared-key precedence; ordered equality and value-uniqueness requirements remain part of the contract. Functional operators are extensional combinations of result computations, not implicit edits or concatenation of branch lists. Their operand/result contracts and termination proofs must all remain valid.
+
+FunctionalInputExpr obtains the available cumulative input contract.
+FunctionalPolicyExpr checks its supplied/inferred input scheme, selector scopes
+and contribution contracts under [[types/functional-families]]. AllMatches sums
+exterior contribution populations; a branch need not meet the aggregate's
+minimum independently. OperatorReferenceExpr retains a constrained visible
+signature family until static use determines a specialization. Constructing or
+copying these values grants no world writes or causal activation. Captured
+argument expressions are evaluated at their construction/application boundary;
+deferred bodies retain their checked application snapshot and transitive reads.
 
 Functional branch results extend their own selector's direct-preamble environment
 under MUD-DICT-005 in [[17-dictionaries]]. Every selected path must establish the

@@ -17,6 +17,8 @@ affects:
 
 - Amended by: [[ADR-175-historical-order-and-local-collection-properties|D-175]].
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Decision
 
 For ordinary collections, bare ordered establishes historical occurrence order
@@ -35,10 +37,7 @@ field is an error, not permission to fall back. The choice must be uniform over
 the remaining static alternatives; a mixed union cannot choose per occurrence.
 Longer paths starting with value remain ordinary member paths.
 
-value is contextual, not globally reserved: normal declarations and .value
-access remain valid. Functional branches retain their implicit immutable input
-symbol and existing scope/no-shadowing rules; occurrences denoting that input
-are contextual keyword uses. Their value field is accessed as value.value or
+value is reserved for functional input references. Explicit member-name exceptions retain .value and intrinsic diagnostic/schema components, but ordinary locals/arguments cannot use or shadow value. Functional scopes retain cumulative inputs and no-shadowing under D-183. Their value field is accessed as value.value or
 the existing .value abbreviation. The ordering spelling preserves a neutral
 key-path Surface AST; the member-versus-whole choice belongs to elaboration.
 
@@ -57,7 +56,7 @@ members into declaration order. Char collections can preserve arbitrary
 sequences; String remains a distinct basic value. Collection uniqueness remains
 an independent axis.
 
-Syntax Highlight should expose a configurable contextual-value category.
+Syntax Highlight should expose the reserved functional-input token while retaining member-name contexts. Its package release is separate from this specification change.
 Highlighting may recognise contextual source positions without proving the
 cross-file/generic member binding. It must not claim semantic resolution or
 classify every ordinary identifier named value as a keyword.

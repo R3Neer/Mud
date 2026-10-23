@@ -152,6 +152,9 @@ fixed_tokens:
 - spelling: foreach
 - spelling: '<<'
 - spelling: '>>'
+- spelling: first
+- spelling: trait
+- spelling: value
 named_tokens:
 - kind: HEADER_WITH
 - kind: EOF
@@ -396,12 +399,13 @@ lexical_forms:
     - operator-word
   keyword-word:
     kind: KeywordWordSyntax
-    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\"\
-      \ | \"action\" | \"subaction\" | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n\
-      \      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n      | \"if\" | \"then\" | \"after\"\
-      \ | \"with\" | \"otherwise\" | \"raise\"\n      | \"let\" | \"mut\" | \"unique\" | \"ordered\"\n \
-      \     | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"foreach\" | \"by\" |\
-      \ \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"min\" | \"max\""
+    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\" | \"trait\"\n \
+      \     | \"rule\" | \"action\" | \"subaction\" | \"look\" | \"sublook\" | \"message\" | \"submessage\"\
+      \ | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n      | \"if\" | \"then\"\
+      \ | \"after\" | \"with\" | \"otherwise\" | \"raise\"\n      | \"let\" | \"mut\" | \"unique\" | \"\
+      ordered\" | \"value\"\n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      |\
+      \ \"foreach\" | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"\
+      min\" | \"max\""
     references: []
   operator-word:
     rhs: "\"to\" | \"eventually\" | \"imagine\" | \"old\"\n      | \"is\" | \"iis\"\
@@ -414,7 +418,10 @@ lexical_forms:
     rhs: '"true" | "false" | "empty" | "all" | "_"'
     references: []
   contextual-word:
-    rhs: "\"abstract\" | \"part\" | \"only\" | \"uses\" | \"always\" | \"start\" | \"value\"\n      | \"mud\"\n      | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
+    rhs: "\"abstract\" | \"part\" | \"only\" | \"uses\" | \"always\" | \"start\" | \"first\"\n      | \"\
+      mud\"\n      | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" |\
+      \ \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\"\
+      \ | \"cycle\""
     references: []
   identifier:
     rhs: "contextual-word\n      | identifier-form"
@@ -521,9 +528,10 @@ syntax_nodes:
     - stored-callable-type-suffix
   stored-declared-type:
     kind: StoredDeclaredTypeSyntax
-    rhs: "type-inference-hole\n      | type-reference\n      | stored-callable-type\n      | reflected-type\n\
-      \      | stored-generic-type-application\n      | stored-product-type"
+    rhs: "functional-parameter-type\n      | type-inference-hole\n      | type-reference\n      | stored-callable-type\n\
+      \      | reflected-type\n      | stored-generic-type-application\n      | stored-product-type"
     references:
+    - functional-parameter-type
     - reflected-type
     - stored-callable-type
     - stored-generic-type-application
@@ -532,7 +540,7 @@ syntax_nodes:
     - type-reference
   stored-dictionary-link:
     kind: StoredDictionaryLinkSyntax
-    rhs: "dictionary-arrow , stored-dictionary-value-type\n        , [ collection-specification ]"
+    rhs: "dictionary-arrow , stored-dictionary-value-type\n        , { collection-specification }"
     references:
     - collection-specification
     - dictionary-arrow
@@ -625,8 +633,8 @@ syntax_nodes:
     - type-alternative-domain
   stored-type-expression:
     kind: StoredTypeExpressionSyntax
-    rhs: "stored-union-type-expression\n        , ( { collection-specification } | stored-dictionary-type\
-      \ )"
+    rhs: "stored-union-type-expression\n        , { collection-specification } , [ stored-dictionary-type\
+      \ ]"
     references:
     - collection-specification
     - stored-dictionary-type
@@ -837,10 +845,11 @@ syntax_nodes:
     - mud-path
   top-level-declaration:
     kind: TopLevelDeclarationSyntax
-    rhs: "thing-declaration\n      | alias-declaration\n      | family-declaration\n      | magnitude-declaration\n\
-      \      | boolean-rule-declaration\n      | reactive-rule-declaration\n      | always-rule-declaration\n\
-      \      | action-declaration\n      | subaction-declaration\n      | look-declaration\n      | sublook-declaration\n\
-      \      | message-declaration\n      | submessage-declaration\n      | test-declaration\n      | part-start-declaration"
+    rhs: "thing-declaration\n      | alias-declaration\n      | trait-declaration\n      | family-declaration\n\
+      \      | magnitude-declaration\n      | boolean-rule-declaration\n      | reactive-rule-declaration\n\
+      \      | always-rule-declaration\n      | action-declaration\n      | subaction-declaration\n    \
+      \  | look-declaration\n      | sublook-declaration\n      | message-declaration\n      | submessage-declaration\n\
+      \      | test-declaration\n      | part-start-declaration"
     references:
     - action-declaration
     - alias-declaration
@@ -857,6 +866,7 @@ syntax_nodes:
     - submessage-declaration
     - test-declaration
     - thing-declaration
+    - trait-declaration
   mud-path:
     kind: MudPathSyntax
     rhs: lower-name , { "." , lower-name }
@@ -879,12 +889,12 @@ syntax_nodes:
     - identifier
   member-name:
     kind: MemberNameSyntax
-    rhs: identifier
+    rhs: identifier | "value"
     references:
     - identifier
   field-name:
     kind: FieldNameSyntax
-    rhs: identifier
+    rhs: identifier | "value"
     references:
     - identifier
   metadata-name:
@@ -909,7 +919,7 @@ syntax_nodes:
     - identifier
   component-name:
     kind: ComponentNameSyntax
-    rhs: identifier
+    rhs: identifier | "value"
     references:
     - identifier
   variable-name:
@@ -1236,7 +1246,7 @@ syntax_nodes:
     - type-expression
   type-expression:
     kind: TypeExpressionSyntax
-    rhs: "union-type-expression\n        , ( { collection-specification } | dictionary-type )"
+    rhs: "union-type-expression\n        , { collection-specification } , [ dictionary-type ]"
     references:
     - collection-specification
     - dictionary-type
@@ -1265,10 +1275,11 @@ syntax_nodes:
     - stepped-domain
   declared-type:
     kind: DeclaredTypeSyntax
-    rhs: "type-reference\n      | callable-type\n      | reflected-type\n      | generic-type-application\n      |\
-      \ product-type"
+    rhs: "functional-parameter-type\n      | type-reference\n      | callable-type\n      | reflected-type\n\
+      \      | generic-type-application\n      | product-type"
     references:
     - callable-type
+    - functional-parameter-type
     - generic-type-application
     - product-type
     - reflected-type
@@ -1324,7 +1335,7 @@ syntax_nodes:
     - dictionary-link
   dictionary-link:
     kind: DictionaryLinkSyntax
-    rhs: "dictionary-arrow , dictionary-value-type\n        , [ collection-specification ]"
+    rhs: "dictionary-arrow , dictionary-value-type\n        , { collection-specification }"
     references:
     - collection-specification
     - dictionary-arrow
@@ -1931,9 +1942,10 @@ syntax_nodes:
     - primary-expression
   member-access:
     kind: MemberAccessSyntax
-    rhs: '"." , identifier'
+    rhs: '"." , ( field-name | pure-operator-symbol )'
     references:
-    - identifier
+    - field-name
+    - pure-operator-symbol
   metadata-access:
     kind: MetadataAccessSyntax
     rhs: '"~" , metadata-name'
@@ -1968,25 +1980,29 @@ syntax_nodes:
     - role-name
   primary-expression:
     kind: PrimaryExpressionSyntax
-    rhs: "generic-family-member\n      | explicit-generic-type-application\n      | grouped-postfix-generic-type-application\n\
-      \      | literal\n      | take-expression\n      | raise-expression\n      | selection-expression\n\
-      \      | comprehension-expression\n      | implicit-member-expression\n      | qualified-name\n  \
-      \    | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n\
+    rhs: "policy-expression\n      | operator-reference\n      | functional-input-reference\n      | generic-family-member\n\
+      \      | explicit-generic-type-application\n      | grouped-postfix-generic-type-application\n   \
+      \   | literal\n      | take-expression\n      | raise-expression\n      | selection-expression\n \
+      \     | comprehension-expression\n      | implicit-member-expression\n      | qualified-name\n   \
+      \   | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n\
       \      | point-component-expression\n      | quantifier-expression\n      | random-expression\n  \
-      \    | \"thing\" | \"alias\" | \"family\" | \"magnitude\" | \"rule\"\n      | \"action\" | \"subaction\"\
-      \ | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n      | \"(\" , expression ,\
-      \ \")\""
+      \    | \"thing\" | \"alias\" | \"family\" | \"magnitude\" | \"trait\" | \"rule\"\n      | \"action\"\
+      \ | \"subaction\" | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n      | \"(\"\
+      \ , expression , \")\""
     references:
     - collection-literal
     - comprehension-expression
     - explicit-generic-type-application
     - expression
+    - functional-input-reference
     - generic-family-member
     - grouped-postfix-generic-type-application
     - implicit-member-expression
     - interval-expression
     - literal
+    - operator-reference
     - point-component-expression
+    - policy-expression
     - qualified-name
     - quantifier-expression
     - quantity-expression
@@ -2496,14 +2512,17 @@ syntax_nodes:
     - generic-constructor
   operator-declaration:
     kind: OperatorDeclarationSyntax
-    rhs: "operator-operand , overload-binary-operator , operator-operand\n        , [ \":\" , type-expression\
-      \ ] , \":=\" , descriptor-value-body\n      | overload-unary-operator , operator-operand\n       \
-      \ , [ \":\" , type-expression ] , \":=\" , descriptor-value-body"
+    rhs: "overload-binary-operator , \":\" , stored-type-expression\n        , ( \"=\" | \":=\" ) , descriptor-value-body\n\
+      \      | overload-unary-operator , \":\" , stored-type-expression\n        , ( \"=\" | \":=\" ) ,\
+      \ descriptor-value-body\n      | operator-operand , overload-binary-operator , operator-operand\n\
+      \        , [ \":\" , type-expression ] , \":=\" , descriptor-value-body\n      | overload-unary-operator\
+      \ , operator-operand\n        , [ \":\" , type-expression ] , \":=\" , descriptor-value-body"
     references:
     - descriptor-value-body
     - operator-operand
     - overload-binary-operator
     - overload-unary-operator
+    - stored-type-expression
     - type-expression
   operator-operand:
     kind: OperatorOperandSyntax
@@ -2579,9 +2598,9 @@ syntax_nodes:
     - value-body
   implicit-member-expression:
     kind: ImplicitMemberExpressionSyntax
-    rhs: '"." , identifier'
+    rhs: '"." , field-name'
     references:
-    - identifier
+    - field-name
   composition-step:
     kind: CompositionStepSyntax
     rhs: composition-operator , primary-expression
@@ -2592,3 +2611,57 @@ syntax_nodes:
     kind: CompositionOperatorSyntax
     rhs: '">>" | "<<"'
     references: []
+  trait-declaration:
+    kind: TraitDeclarationSyntax
+    rhs: "\"trait\" , nominal-name , { generic-parameter-group }\n        , \"{\" , declaration-layout\n\
+      \        , trait-requirement , { required-separation , trait-requirement }\n        , [ required-separation\
+      \ ] , \"}\""
+    references:
+    - declaration-layout
+    - generic-parameter-group
+    - nominal-name
+    - required-separation
+    - trait-requirement
+  trait-requirement:
+    kind: TraitRequirementSyntax
+    rhs: "[ \"mut\" ] , field-name , \":\" , type-expression\n      | pure-operator-symbol , [ \":\" , type-expression\
+      \ ]"
+    references:
+    - field-name
+    - pure-operator-symbol
+    - type-expression
+  functional-parameter-type:
+    kind: FunctionalParameterTypeSyntax
+    rhs: '"(" , variable-name , ":" , type-expression , ")"'
+    references:
+    - type-expression
+    - variable-name
+  policy-expression:
+    kind: PolicyExpressionSyntax
+    rhs: "policy-mode , \"{\" , declaration-layout , mapping-expression\n        , { \",\" , declaration-layout\
+      \ , mapping-expression }\n        , [ required-separation ] , \"}\""
+    references:
+    - declaration-layout
+    - mapping-expression
+    - policy-mode
+    - required-separation
+  policy-mode:
+    kind: PolicyModeSyntax
+    rhs: '"first" | "all"'
+    references: []
+  operator-reference:
+    kind: OperatorReferenceSyntax
+    rhs: '"(" , pure-operator-symbol , ")"'
+    references:
+    - pure-operator-symbol
+  functional-input-reference:
+    kind: FunctionalInputReferenceSyntax
+    rhs: '"value"'
+    references: []
+  pure-operator-symbol:
+    kind: PureOperatorSymbolSyntax
+    rhs: "overload-binary-operator | \"==\" | \"!=\" | \"===\" | \"!==\"\n      | \"<\" | \">\" | \"<=\"\
+      \ | \">=\" | \"not\" | \"and\" | \"or\" | \"xor\"\n      | \"=>\" | \"<=>\" | \"is\" | \"iis\" | \"\
+      has\" | \"in\" | \">>\" | \"<<\""
+    references:
+    - overload-binary-operator

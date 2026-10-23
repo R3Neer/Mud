@@ -9,10 +9,11 @@ given pair: SympathyPair, aim: Aim {
     if caster.CanAttempt(Spell.Sympathy)
         and (magic, pair.leader, pair.follower).CanLink()
     then {
-        let orientation: SympathyPair --> _ [ordered] =
+        let orientation: SympathyPair --> _ = first {
             .follower.grabbed and not .leader.grabbed -->
                 SympathyPair(.follower, .leader),
             _ --> value
+        }
         let endpoints = orientation[pair]
         let link = SympathyLink(
             id = LinkId(magic.nextLink),

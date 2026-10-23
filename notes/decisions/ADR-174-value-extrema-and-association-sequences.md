@@ -14,6 +14,8 @@ affects:
 
 - Amended by: [[ADR-175-historical-order-and-local-collection-properties|D-175]], [[ADR-176-optional-extraction-and-positional-access|D-176]] and [[ADR-178-structural-tuple-inputs-and-postfix-generics|D-178]].
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Decision
 
 Min/max select least/greatest accepted witnesses by a defined total criterion,
@@ -43,8 +45,8 @@ existing causal-respecting provenance contract. Key uniqueness, value uniqueness
 and order remain independent; equality still compares associations rather than
 physical storage or iteration order. Explicit key ordering remains distinct.
 
-Ordered families retain member comparison; ordered functional policies retain
-FirstMatch branch priority. Neither is redefined as association insertion order.
+Ordered families retain member comparison; first functional policies retain
+FirstMatch branch priority independently of output ordering. Neither is redefined as association insertion order.
 
 Partially amends D-039, D-047, D-100, D-101, D-164 and D-173. No compiler,
 scheduler, library implementation or host adapter is introduced.

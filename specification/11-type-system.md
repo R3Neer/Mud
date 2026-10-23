@@ -12,6 +12,9 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-181
   - D-180
   - D-176
@@ -136,7 +139,9 @@ The following constructors are metalanguage, not new source syntax. $\mathsf{Man
 | $\mathsf{Produced}(a,(\tau_i),S)$ | A producer declaration $a$, its static generic arguments where applicable, and public schema $S$. |
 | $\mathsf{Union}(\tau_1,\ldots,\tau_m)$ | Finite nonempty alternatives without an invented intersection type. |
 | $\mathsf{Exact}(K,V,s)$ | Exact dictionary key/value contracts and association specification $s$. |
-| $\mathsf{Functional}(K,V,m)$ | Functional dictionary selector/result contracts and branch-selection mode $m$. |
+| $\mathsf{Functional}(K,V)$ | Functional input/output contracts; body mode is a value property. |
+| $\mathsf{Scheme}(Q,C,S)$ | Correlated quantified functional constraints and signature. |
+| $\mathsf{Trait}(R)$ | Normalized minimum structural requirements. |
 | $\mathsf{Interval}(\tau)$ | An interval/domain value over an ordered member type. |
 | $\mathsf{Magnitude}(a,r,d,p)$ | Nominal dimensional factors $d$, representation $r$, and linear/point kind $p$. |
 | $\mathsf{Descriptor}(k)$ | A first-class declaration, participant, type, domain or metadata descriptor contract. |
@@ -145,7 +150,7 @@ The following constructors are metalanguage, not new source syntax. $\mathsf{Man
 
 An ordinary omitted collection specification means $[1,1]$; the omission remains source provenance. In an immutable stored field with an initialiser, omitted outer cardinality instead inherits the exact external shape of that initial value. A dictionary remains one outer value independently of its association count. An outwardly mutable field keeps $[1,1]$ when omitted. A bare star is resolved against the applicable effective limits, not against a guessed finite runtime population. All actual collections are finite even when their static upper bound is unbounded. Nested collections occupy members without implicit flattening.
 
-For exact dictionaries the bracketed specification following the arrow constrains associations, not a collection of independent dictionaries. For functional dictionaries it constrains application results. Each arrow-owned omitted cardinality follows the owner matrix in [[17-dictionaries#Omitted cardinality and owner contracts]]: infer immutable initializers and derived bodies, retain [1] for mutable stored exact dictionaries and type-only contracts. Inference is static over admitted inputs/views, not the first invocation. Written bounds are checked before an inferred policy can satisfy a positive-minimum receiving contract. The value contract may itself contain a collection or another dictionary. String is a positional sequence as one basic value, not Char with a collection-order modifier.
+For exact dictionaries the bracketed specification following the arrow constrains associations, not a collection of independent dictionaries. For functional dictionaries type-adjacent specifications constrain complete input/output values, independently of residual-policy population and selection mode. Each arrow-owned omitted cardinality follows the owner matrix in [[17-dictionaries#Omitted cardinality and owner contracts]]: infer immutable initializers and derived bodies, retain [1] for mutable stored exact dictionaries and type-only contracts. Inference is static over admitted inputs/views, not the first invocation. Written bounds are checked before an inferred policy can satisfy a positive-minimum receiving contract. The value contract may itself contain a collection or another dictionary. String is a positional sequence as one basic value, not Char with a collection-order modifier.
 
 > [!rule] MUD-TYPE-002 — Well-formed type constructors
 > Every referenced declaration must be visible and have the required category. Cardinalities have nonnegative integral lower bounds and upper bounds no smaller than their lower bounds. Keyed paths and order paths must be statically meaningful and satisfy their stability contracts. Dictionary arrows must be the complete outer form, including after resolving representation aliases. A collection specification after a complete union qualifies that union; it does not qualify only its last alternative.
@@ -333,7 +338,7 @@ A source union is usable as $\sigma$ only when every alternative satisfies $\sig
 
 Recursive read-only inclusion may use a finite relation of graph-node pairs. Every pair must satisfy its local nominal, constructor, domain and guarantee premises; every required child pair must belong to the relation. Contravariant input/key positions reverse the child pair. This is a closed finite certificate, not acceptance because a pair was visited before. Writable invariance requires certificates in both directions. Domain premises not discharged by the mandatory proof basis remain unknown.
 
-Read-only exact dictionary values may widen covariantly. Their key contract must preserve all lookups admitted by the target: every target key must be admitted by the source key contract. Association/domain/modifier guarantees must also hold. This is query substitution, not permission to replace keys or values. Any writable dictionary destination is checked invariantly at its stored root. Functional dictionaries additionally preserve selector admission, output inclusion, selection mode and their termination/effect contract.
+Read-only exact dictionary values may widen covariantly. Their key contract must preserve all lookups admitted by the target: every target key must be admitted by the source key contract. Association/domain/modifier guarantees must also hold. This is query substitution, not permission to replace keys or values. Any writable dictionary destination is checked invariantly at its stored root. Functional substitution checks complete input contravariance, output covariance and the termination/effect contract. It does not change the supplied policy's branch-selection behaviour; selection mode is a property of that value, not a type dimension.
 
 ## 7. Representation equivalence and explicit construction
 
@@ -357,7 +362,7 @@ Normal and sub operations retain distinct declaration identity: `subaction <: ac
 
 Apply this exclusion through equality's stored representation/component/key/value edges in the finite normalized type graph. Derived fields, family associated data and metadata are not stored equality payload and do not create such edges. A container with proven maximum zero has no compared-member edge; comparing its empty content does not compare a functional value. Productive finite recursive values do not become unequal merely because their type graph is recursive; the exclusion applies when a compared reachable form is functional. This is a restriction on existing equality contracts, not a new source trait or public TypeKind.
 
-Exact dictionary keys, ordinary unique, whole-value membership/algebra and order comparisons cannot use an unsupported required equality. A stable unique by path can use a supported projected key without comparing the complete functional payload; it does not make ordinary whole-value equality or collection algebra available. Any claim of whole-value uniqueness is conditional on the member type having that equality. Automatic on binding sets and temporal changes also require equality for the values they actually compare; unsupported functional participant values cannot gain an internal equality implementation from binding syntax. Thing identity and family member equality do not compare ordinary fields or associated data. Functional FirstMatch ordered mode is branch selection, not a value comparator. Application and noncomparing filtering/traversal retain their established contracts. Type ===/!== below compares normalized contracts, not functional behavior, branch bodies or runtime captures.
+Exact dictionary keys, ordinary unique, whole-value membership/algebra and order comparisons cannot use an unsupported required equality. A stable unique by path can use a supported projected key without comparing the complete functional payload; it does not make ordinary whole-value equality or collection algebra available. Any claim of whole-value uniqueness is conditional on the member type having that equality. Automatic on binding sets and temporal changes also require equality for the values they actually compare; unsupported functional participant values cannot gain an internal equality implementation from binding syntax. Thing identity and family member equality do not compare ordinary fields or associated data. Functional FirstMatch is branch selection, independent of output order and a value comparator. Application and noncomparing filtering/traversal retain their established contracts. Type ===/!== below compares normalized contracts, not functional behavior, branch bodies or runtime captures.
 
 ### 7.1. Exact structural type equality
 
@@ -436,6 +441,20 @@ Exact dictionaries retain key traversal for a single name or discard. A position
 
 Stored local patterns evaluate the RHS once, validate the complete pattern and establish all immutable captures atomically; a failed RHS exposes no partial bindings. Derived patterns register live component projections of their common RHS. They have no writable root, and pure expression positions retain their ExpressionBlock restrictions. A completely discarded stored pattern still evaluates its RHS and enforces admission/error obligations; tooling may suggest removal only when no observable obligation is lost. Derived patterns retain derivation checks even when every component is discarded, but do not introduce eager reads or new effects solely to discard them.
 
+## Structural views and functional schemes
+
+> [!rule] MUD-TYPE-052 — Trait satisfaction and identity
+> Structural views require accessible complete-contract witnesses under
+> [[types/structural-traits]]. Preserve concrete nominal identity and existing
+> authority. Satisfies is not === or nominal Specializes; iis Trait is invalid.
+
+> [!rule] MUD-TYPE-053 — Static functional family formation
+> Immutable functional definitions may synthesize correlated schemes under
+> [[types/functional-families]]. Captures bind before implicit parameters;
+> copy/partial application preserves constraints and contextual literal evidence.
+> A mandatory unresolved or ambiguous specialization is a static diagnostic,
+> not arbitrary Any, independent unions or runtime overload dispatch.
+
 ## 10. Schemas, visibility and descriptor types
 
 Every new concrete stored thing field has an explicit initialiser; an explicitly typed abstract field may defer initialization until a concrete effective schema resolves the obligation. Alias components are all present in a value, from supplied values or explicit defaults. Family data are supplied by the schema or by every member. User-defined metadata needs an explicit effective value; intrinsic defaults retain their individual contracts.
@@ -464,7 +483,8 @@ Complete signature encoding and operator reflection schema: [[names/operator-con
 | Any | Any |
 | Nominal thing, alias, family | Thing, Alias, Family respectively |
 | Anonymous tuple, collection, union, interval | Tuple, Collection, Union, Interval respectively |
-| Exact dictionary; functional dictionary | Dictionary; FunctionalDictionary |
+| Exact dictionary; functional dictionary/family | Dictionary; FunctionalDictionary |
+| Structural trait contract | Trait |
 | Linear magnitude; point magnitude (including cyclic points) | Magnitude; PointMagnitude |
 | Produced look/sublook result; message/submessage payload | LookResult; MessagePayload |
 | Action/subaction callable; look/sublook callable; Boolean-rule callable | ActionCallable; LookCallable; BooleanRuleCallable |
@@ -489,7 +509,7 @@ Normalize before classification: Int | Int has kind Basic, whereas a nominal ali
 
 A simple unrestricted singleton specification, whether omitted or written, is a default wrapper and does not classify bare Int as Collection. A redundant unrestricted Int [1] confirms the same default singleton contract and is Basic. A nondefault collection form such as Int [0], Int [*], or an ordered/unique/nested collection layer is Collection. A nominal alias of any such form remains Alias; its schema does not leak through kind projection. Normalize duplicate unions before projection. A genuine remaining multi-alternative union is Union, even if all alternatives share one category. A generic application follows its constructor category, not GenericApplication. Cyclic points remain PointMagnitude. This recursion on the normalized public exterior terminates on the admitted finite type graph; nominal leaves do not require representation unfolding.
 
-For a fixed language version, the TypeKind member set, its spellings and this projection are invariant across compiler releases. A later catalogue applies only to a different selected language version; it is never silently merged into this one. Rechecking source under a new version may require changes to exhaustive family use. No unknown-kind fallback or automatic migration is implied. DeclarationKind.Operator classifies an operator declaration, whereas its descriptor's type category remains DeclarationDescriptor.
+For a fixed language version, the TypeKind member set, its spellings and this projection are invariant across compiler releases. A later catalogue applies only to a different selected language version; it is never silently merged into this one. Rechecking source under a new version may require changes to exhaustive family use. No unknown-kind fallback or automatic migration is implied. DeclarationKind.Operator and DeclarationKind.Trait classify their declarations; their descriptors remain DeclarationDescriptor. TypeKind.Trait classifies a structural trait contract, not a user-extensible kind.
 
 The catalogue has no members for host-only Ticket states, Normal/Fault block outcomes, the erased marker, AST/CST/HIR nodes, compiler proof objects, unit spellings, part/file syntax nodes or generic binders. A public immutable MudFile value still uses its nominal Alias category; that does not expose a file syntax tree. These exclusions do not prohibit explicitly supported reflection values.
 

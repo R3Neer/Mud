@@ -67,9 +67,9 @@ A selection `value in source : predicate` and `take amount from source` also pro
 When `to` supplies only a type context, tooling suggests moving it to the declaration. If the conversion is constant and safe, it also normalises the value:
 
 ```mud
-let value := 3.7 to Nat
-let value: Nat := 4
-let value: Nat = 4
+let payload := 3.7 to Nat
+let payload: Nat := 4
+let payload: Nat = 4
 ```
 
 Each transformation is an independent suggestion and is offered only when it preserves domains and failure behaviour.

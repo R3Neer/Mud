@@ -94,8 +94,8 @@ The mutability The organisation does not require its members to be `thing`: chan
 
 ```mud
 action Record for mut observations: Num [*]
-given value: Num {
-    then add value to observations
+given payload: Num {
+    then add payload to observations
 }
 ```
 
@@ -192,8 +192,8 @@ The separation does not depend on the type. A value is `for` when it constitutes
 
 ```mud
 action Record for mut observations: Num [*]
-given value: Num {
-    then add value to observations
+given payload: Num {
+    then add payload to observations
 }
 ```
 

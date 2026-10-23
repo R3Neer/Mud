@@ -6,16 +6,6 @@
 -- Static application references remain ordinary bindings. Effective schema,
 -- defaults and construction checking belong to typing; no callable or anchor
 -- is created by this expression.
--- Contextual value references keep the same implicit LocalSymbol kind functional-input.
--- OrderedBy([value]) needs typed member-versus-whole resolution, not a synthetic
--- nominal field, anchor or HIR type payload.
--- Functional branches share one implicit immutable LocalSymbol kind functional-input
--- named value in a branch input scope. Its result scope extends the completed
--- direct selector-preamble scope; nested RHS scopes and other branches remain
--- separate. Binding availability and per-application reuse are later facts, not
--- HIR fields. It has branch SurfaceRef
--- provenance and a source ordinal under the nearest anchored owner, no anchor.
--- Omitted .member receivers refer to it through normal lexical lookup.
 -- Comprehension iterator leaves are shared by sibling filter/result scopes.
 -- Source and step use the outer scope; selector interpretation and coverage
 -- are elaboration facts and create no nominal HIR type fields.
@@ -40,6 +30,18 @@
 -- Applications create no symbols or anchors. Specializes retains source constructors;
 -- effective application ancestry, inferred arguments and closure proofs are elaboration.
 -- PendingReceiverCall also defers static written-given compatibility, without storing it.
+
+-- Functional parameters and cumulative input use LocalSymbol kinds
+-- functional-parameter and functional-input. Source-ordered inferred binders
+-- are created only for unresolved free lowerCamel references in an eligible
+-- immutable functional definition; property labels and foreign tokens are not
+-- references. Captures retain ordinary ResolvedReference edges to outer symbols.
+-- Trait declarations have category trait and ordinary anchored ownership;
+-- structural satisfaction never creates a Specializes edge.
+-- Operator-reference families retain accessible nominal candidates using
+-- PendingReceiverCall with role operator-family; typing resolves correlated
+-- signatures, global collisions and instantiations outside this HIR.
+-- No quantified scheme, runtime dispatch or selected type is stored here.
 
 module MUDNominalHIR {
     source_span = SourceSpan(string file, int start_byte, int end_byte)

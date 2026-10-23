@@ -19,7 +19,7 @@ from tooling.cli_support import (HelpCatalogue, HelpItem, MudArgumentParser,
                                  add_presentation_arguments, failure, parse_cli)
 
 EXAMPLE = ROOT / 'notes/examples/duelo-spellcasting'
-HEAD = re.compile(r'^(?:(?:abstract|always) )?(family|alias|thing|rule|action|subaction|look|sublook|message|submessage|test) (\w+)', re.M)
+HEAD = re.compile(r'^(?:(?:abstract|always) )?(family|alias|trait|thing|rule|action|subaction|look|sublook|message|submessage|test) (\w+)', re.M)
 MASK = re.compile(r'"(?:\\.|[^"\\])*"|\#[^\n]*')
 NAME = r'[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*'
 

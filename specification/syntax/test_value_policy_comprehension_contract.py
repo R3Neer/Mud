@@ -23,6 +23,8 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
                 tokens.append('TERMINATOR')
             elif token.isdigit():
                 tokens.append('EXACT_NUMBER_LITERAL')
+            elif token == "first":
+                tokens.append("IDENTIFIER")  # these legacy finite fixtures use an ordinary name
             elif token in self.words or not token[0].isalnum():
                 tokens.append('"' + token + '"')
             else:
@@ -114,12 +116,12 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
                 self.assertTrue(self.accepts('mapping-expression', source))
         self.assertFalse(self.accepts('comparison-expression', '== expected'))
 
-    def test_value_is_contextual_but_not_hard_reserved(self):
+    def test_value_is_reserved_with_member_exceptions(self):
         lex = (ROOT / 'specification/grammar/mud-lexico.ebnf').read_text(encoding='utf-8')
         contextual = lex.split('contextual-word\n    ::=')[1].split(';')[0]
-        self.assertIn('"value"', contextual)
+        self.assertNotIn('"value"', contextual)
         keywords = lex.split('keyword-word\n    ::=')[1].split(';')[0]
-        self.assertNotIn('"value"', keywords)
+        self.assertIn('"value"', keywords)
         self.assertNotIn('"each"', keywords)
 
 

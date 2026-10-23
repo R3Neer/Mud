@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-074 — Nominal unions and type narrowing
 
+- Amended by: [[ADR-184-structural-traits-and-capability-views|D-184]].
+
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
 
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]] and [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
@@ -30,7 +32,9 @@ value: Nat | String
 alias Result := Nat | String
 ```
 
-An alternative may declare its own domain. Collection specification may appear only once, at the end, and applies to the complete union:
+An alternative may declare its own domain. A collection specification applies
+to the complete union, not an individual alternative. Repeated trailing
+specifications create distinct nested layers:
 
 ```mud
 values: Nat in 0..10 | Int in -10..-1 [1..*]
@@ -45,8 +49,8 @@ The union is associative, commutative and idempotent with respect to identical a
 An expression is implicitly incorporated when it has one compatible alternative. If a literal or contextually constructible expression satisfies several, it is ambiguous:
 
 ```mud
-let value: Nat | Int = 2        # invalid
-let value: Nat | Int = 2 to Int # valid
+let payload: Nat | Int = 2        # invalid
+let payload: Nat | Int = 2 to Int # valid
 ```
 
 This is especially important for distinct aliases with the same representation. A union value retains the nominal alternative through which it entered. A union of `thing` types retains the original identity and is compatible with `Thing` exactly when all its alternatives are.
@@ -58,8 +62,8 @@ This is especially important for distinct aliases with the same representation. 
 Without further information, only operations with a result compatible with every possible alternative are admitted. `is` is extended to test nominal membership of an alternative, and `is not` is added as a canonical compound operator with the same precedence:
 
 ```mud
-rule IsPositive given value: Nat | String {
-    value is Nat and value > 0
+rule IsPositive given payload: Nat | String {
+    payload is Nat and payload > 0
 }
 ```
 

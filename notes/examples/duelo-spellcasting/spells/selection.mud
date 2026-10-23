@@ -4,10 +4,11 @@ action SelectSpell
 for magic: Magic [mut], caster: Spellcaster [mut]
 given requested: Spell {
     then {
-        let selection: Spell --> SelectionPlan [ordered] =
+        let selection: Spell --> SelectionPlan = first {
             caster.activeSpells has value --> SelectionPlan(cancel = [value]),
             caster.CanSelect(value) --> SelectionPlan(activate = [value]),
             _ --> SelectionPlan(reject = [value])
+        }
         let plan = selection[requested]
 
         (magic, caster).EndSpell(plan.cancel[?])

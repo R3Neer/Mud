@@ -13,6 +13,9 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-177
   - D-176
   - D-178
@@ -67,21 +70,16 @@ decisions:
 
 ## Functional input and comprehension scopes
 
-Each functional branch introduces one immutable LocalSymbol of kind
-functional-input named value, owned by the nearest anchored declaration and
-distinguished by the branch's source ordinal. The branch has a shared input
-scope containing the selector scope; the result scope extends its completed
-direct-preamble environment. Nested selector/RHS scopes are not exported. The
-implicit declaration retains
-branch SurfaceRef provenance and no public anchor. References to value and
-implicit .member receivers resolve to that symbol through ordinary lexical
-lookup. A visible outer value conflicts under no-shadowing; branch-local
-redeclaration also fails. Exact associations introduce no implicit input.
-The contextual keyword use of value retains this same symbol. In an ordering
-key, the source path value remains neutral until elaboration can choose an
-accessible member or the complete element; no fictitious member is introduced.
-Selector shorthand retains source references; operator interpretation, type
-membership, coverage and result joins belong to elaboration, not Nominal HIR.
+A functional definition introduces local parameter symbols and a reserved
+functional-input value symbol under [[types/functional-families]]. Named and
+inferred binders have source-ordered ordinals and no public anchors. Each
+branch's result extends its completed selector preamble; nested locals do not
+escape. An explicit nested policy begins a new parameter chain. .member retains
+candidate argument references until typing proves exactly one receiver. Exact
+associations introduce no implicit input. In ordered by value, the source path
+retains the member-versus-whole interpretation without a fictitious member.
+Selector interpretation, coverage, schemes and overloads are typing facts, not
+Nominal HIR effective-type fields.
 
 A comprehension checks its source/step in the outer scope, then introduces
 ordinary iterator LocalSymbol leaves in the shared iteration scope. Filter
@@ -306,6 +304,7 @@ The canonical form is `<category>::<qualified-name>` and, for a nested declarati
 |---|---|
 | `thing` and their fields | `thing` |
 | alias, their components and their derived fields | `alias` |
+| structural trait declarations | `trait` |
 | family, data and members | `family` |
 | magnitude | `magnitude` |
 | unit declared | `unit` |
@@ -466,7 +465,7 @@ The public identity is the original declaring alias, operator symbol, arity and 
 alias::path.Vector2::operator::*(path.Vector2, Num)
 ```
 
-The alias owner is explicit even when it also occurs among the operands. Declarations of A * B inside A and inside B have distinct identities; inherited declarations retain their original identity without descendant copies. Instantiating a generic follows existing declaration-origin identity rules rather than manufacturing application anchors. The encoding is complete, textual and collision-free, rather than a digest requiring an external identity registry. Formatting and equivalent normalized sugar do not change it. [[names/operator-contract-identity]] defines the complete canonical contract grammar, escaping and graph numbering, including generic slots, applications, symbolic domains and nested collection guarantees.
+The alias owner is explicit even when it also occurs among the operands. Declarations of A * B inside A and inside B would have distinct owner identities, but two explicit origins with the same complete ordered operand signature cannot coexist in one linked program. Inherited declarations retain their original identity without descendant copies. Instantiating a generic follows existing declaration-origin identity rules rather than manufacturing application anchors. The encoding is complete, textual and collision-free, rather than a digest requiring an external identity registry. Formatting and equivalent normalized sugar do not change it. [[names/operator-contract-identity]] defines the complete canonical contract grammar, escaping and graph numbering, including generic slots, applications, symbolic domains and nested collection guarantees.
 
 Alias~operators exposes own and inherited declaration descriptors, deduplicated by origin; Alias~declaredOperators exposes own declarations only. General and specific signatures both remain present. Operator descriptors have TypeKind DeclarationDescriptor, not a new callable kind. Reflection supports owner, anchor, symbol, ordered operand descriptors with source names and effective type contracts, result and configured metadata under ordinary visibility. A bulk reflective query that cannot guarantee all returned declarations/contracts are accessible is rejected statically; it does not silently filter hidden operators. The exact read-only property/type schema is specified in [[names/operator-contract-identity#Reflective schema]]. Descriptor inspection does not introduce first-class operator calls, special mathematical metadata or selection by metadata. Configured metadata describes the whole original declaration, not the returned alias value or a particular invocation. Its two syntax attachment forms preserve that owner. Operand descriptor names do not affect signature identity or create participant anchors. Metadata cannot capture the invocation's local operand bindings; references use the ordinary declaration metadata environment.
 
@@ -494,3 +493,16 @@ Tuple input labels belong to their anonymous product contract, not injected
 LocalSymbols. Functional .name/value.name resolve through the existing implicit
 value binding. Positional alias projection and optional omission are elaboration
 facts; they create no alias members, anchors or nominal-HIR type payloads.
+
+## Functional binders and structural trait declarations
+
+Trait declarations have PascalCase names, ordinary part/path visibility and
+trait::path.Name anchors. Requirement witnesses create no nominal ancestry.
+Functional named/inferred binders and reserved cumulative value have local
+symbols with source origins and deterministic first-occurrence ordinals; their
+names do not alter type identity. Unresolved free lowerCamel references become
+parameters only in the eligible immutable definition scopes of
+[[types/functional-families]]. Existing outer references are captures.
+.member and compact curried application retain unresolved nominal candidates
+until the static scheme discharges their unique interpretation. The Nominal HIR
+stores scopes/candidates/references, never effective types or selected overloads.

@@ -7,6 +7,30 @@ from validate_type_spec import includes
 
 
 class GenericContractWitnessTests(unittest.TestCase):
+    def test_normalized_trait_requirements_retain_authority(self):
+        graph = {
+            'Left': {'kind': 'trait', 'children': ['LField']},
+            'Right': {'kind': 'trait', 'children': ['RField']},
+            'LField': {'kind': 'field', 'contract': {'name': 'size', 'write': False}, 'children': ['Nat']},
+            'RField': {'kind': 'field', 'contract': {'name': 'size', 'write': False}, 'children': ['Nat']},
+            'Nat': {'kind': 'primitive', 'identity': 'Nat'},
+        }
+        self.assertTrue(structural_equal(graph, 'Left', 'Right'))
+        graph['RField']['contract']['write'] = True
+        self.assertFalse(structural_equal(graph, 'Left', 'Right'))
+
+    def test_normalized_family_scheme_retains_correlated_binder_positions(self):
+        graph = {
+            'Left': {'kind': 'functional-scheme', 'children': ['LX', 'LX']},
+            'Right': {'kind': 'functional-scheme', 'children': ['RX', 'RX']},
+            'LX': {'kind': 'bound-variable', 'contract': {'index': 0}},
+            'RX': {'kind': 'bound-variable', 'contract': {'index': 0}},
+            'RY': {'kind': 'bound-variable', 'contract': {'index': 1}},
+        }
+        self.assertTrue(structural_equal(graph, 'Left', 'Right'))
+        graph['Right']['children'][1] = 'RY'
+        self.assertFalse(structural_equal(graph, 'Left', 'Right'))
+
     def graph(self):
         return {
             "Nat": {"kind": "primitive", "identity": "type::Nat"},

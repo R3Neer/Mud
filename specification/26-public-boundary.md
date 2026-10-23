@@ -20,6 +20,9 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-169
   - D-167
   - D-168
@@ -64,10 +67,10 @@ action Withdraw for account: Account [mut] given amount: Money in [0..*] {
     then account.balance -= amount
     after account.balance >= 0
 }
-look Balance for account: Account { let value := account.balance }
+look Balance for account: Account { let balance := account.balance }
 message Overdrawn on account: Account {
     when account.balance < 0
-    let value := account.balance
+    let balance := account.balance
 }
 ```
 
@@ -311,3 +314,12 @@ and summaries cannot invent those certificates or a causal algorithm.
 nominal coverage and [[effects/README]] supply scoped static and reviewed boundary
 evidence. No compiler, adapter, scheduler, host transport or patch protocol is
 implemented by this chapter.
+
+## Structural and functional public contracts
+
+Trait views and functional schemes retain the ordinary public visibility,
+closed contract, authority and purity requirements. A view cannot launder an
+inaccessible concrete type/schema or expose private fields merely by naming
+public requirements. Families crossing a boundary expose their full static
+scheme, not arbitrary dynamically selected signatures. They are pure values,
+not new action endpoints, message activators or host callback protocols.

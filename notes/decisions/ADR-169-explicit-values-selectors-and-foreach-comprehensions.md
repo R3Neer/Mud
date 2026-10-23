@@ -25,6 +25,8 @@ affects:
 
 - Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Context
 
 The author accepts explicit let/mut markers to distinguish declarations from
@@ -49,8 +51,7 @@ Stored domain-only annotations constrain admission and never filter their values
 Functional selectors retain complete Bool predicates and add ordinary-value
 equality, abbreviated comparisons, nominal type tests, interval/domain membership,
 selector negation and logical combinations. Bool operands remain predicates;
-explicit == compares Bool/interval values. value contextually denotes the implicit
-immutable input variable; outside that context it remains an ordinary name.
+explicit == compares Bool/interval values. value is reserved for the cumulative functional input. Explicit member-name exceptions permit qualified .value without permitting ordinary local/argument shadowing.
 .member abbreviates its member access. Exact dictionaries
 do not inject it. No as input binding, structural patterns or additional guard
 syntax is accepted. D-172 extends each result scope with its own direct selector-preamble bindings
@@ -67,7 +68,8 @@ are retained; output uniqueness needs proof and collection results stay nested.
 This partially amends D-066, D-071, D-085, D-088, D-101, D-112, D-124 and D-137.
 Concrete collection-library APIs and an alternative modifier-only dictionary
 annotation are not selected by this decision. Input inference still needs unique
-evidence; Person --> _ [ordered] retains explicit branch-selection grouping.
+evidence; Person --> _ [ordered] retains an explicit output-order guarantee,
+independently of the first/all branch-selection constructor.
 
 ## Verification
 

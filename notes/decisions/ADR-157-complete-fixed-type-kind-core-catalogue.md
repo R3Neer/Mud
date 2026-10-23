@@ -15,6 +15,8 @@ affects:
 
 # ADR-157 — Complete fixed TypeKind core catalogue
 
+- Amended by: [[ADR-184-structural-traits-and-capability-views|D-184]].
+
 ## Decision and formalization
 
 The author accepts Name, Anchor, MudPath, MudFile, Cardinality and Order as immutable nominal aliases for TypeKind classification, and Prefix as the closed SI family. This does not invent their payload APIs or introduce any TypeKind. The finite core inventory covers every public type constructor and established descriptor/support type under the existing public-exterior policy.
@@ -28,3 +30,5 @@ A catalogue is fixed for the selected language version. Changing compiler releas
 ## Verification and provenance
 
 Completes [[ADR-148-fixed-type-kind-family-and-normalized-projection|D-148]] and [[ADR-144-public-type-kind-categories|D-144]]. Chapter 11's complete core table/projection, support inventory and contrasting corpus cases cover Q-060. The schema of support aliases remains independent library/specification work; classification does not choose new representations.
+
+The fixed target catalogue includes Trait for structural trait contracts and DeclarationKind.Trait for their declarations under D-184; trait declaration descriptors themselves remain DeclarationDescriptor. This is a language catalogue entry, not user extension.

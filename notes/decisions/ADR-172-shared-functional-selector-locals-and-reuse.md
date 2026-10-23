@@ -20,6 +20,8 @@ affects:
 
 # ADR-172 — Shared functional selector locals and demand-preserving reuse
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Accepted policy
 
 The author accepts sharing direct selector-preamble locals with the same branch's
@@ -39,7 +41,8 @@ No physical cache representation or host world-version protocol is chosen.
 
 AllMatches remains the unmodified default, useful for overlapping tags,
 modifiers, diagnostics and interactions; exhaustive coverage does not imply
-one applicable branch. FirstMatch remains the explicit ordered modality.
+one applicable branch. FirstMatch is selected by first { ... }, independently
+of output ordering.
 This partially amends D-085/D-169 scope wording without selecting runtime causal
 algorithms, stochastic caching or compiler/IR implementation.
 

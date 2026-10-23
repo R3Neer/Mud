@@ -188,3 +188,12 @@ expressions:
     section: 6. Collection and dictionary algebra
     cases:
     - composition-whole-result
+  FunctionalInputExpr:
+    section: 6. Collection and dictionary algebra
+    cases: [family-input-reference]
+  FunctionalPolicyExpr:
+    section: 6. Collection and dictionary algebra
+    cases: [family-explicit-first-mode]
+  OperatorReferenceExpr:
+    section: 6. Collection and dictionary algebra
+    cases: [operator-reference-family]

@@ -293,12 +293,21 @@ for readable headers, branches, constructors and private semantic helpers.
 | fixtures | entities.mud, feedback.mud, feedbackCapabilities.mud: concrete example configurations | None |
 | scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, feedbackCapabilities.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud, quantities.mud | All ten |
 
-Internal feedback policies infer their application cardinality from their bodies;
-[ordered] retains FirstMatch without imposing one result. Public/default-bearing
+Internal feedback policies infer their output cardinality from their bodies;
+`first { ... }` preserves branch priority and `[ordered]` states output order.
+Public/default-bearing
 maps (profiles, stage assets and borrowed effects) explicitly admit [*]
 associations. Their empty defaults do not restrict supplied configurations to
 zero associations. Mutable buffers/maps and domain optionality keep explicit
 bounds; those are storage or domain contracts rather than redundant inference.
+
+`FeedbackPhaseSource` states the two readable fields required by phase
+classification; the concrete event retains its nominal identity. `draftFor`
+names the event input and builds a request, while `requestFor` composes that
+pure calculation with the existing empty-work filter. Geometry declares its
+six affine operations as functional operator fields, preserving their operand
+and result contracts. These policies do not replace the actions and reactive
+rules that own domain changes.
 
 The root mud.part has no foreign dependencies. The 50 source scenarios cover
 selection, pair admission, effects, departure, cancellation, frozen occurrences

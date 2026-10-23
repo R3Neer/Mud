@@ -40,8 +40,8 @@ MUD already has `foreach`, quantifiers, pure selection and stepped domains, but 
 
 ```mud
 action Accumulate for values: Int [* ordered], mut total: Int {
-    then foreach value in values :
-        total += value
+    then foreach payload in values :
+        total += payload
 }
 ```
 
@@ -53,8 +53,8 @@ When a construct uses `:` to separate a header from a subordinate body, braces b
 
 ```mud
 action AccumulateDoubled for values: Int [* ordered], mut total: Int {
-    then foreach value in values : {
-        let doubled := value * 2
+    then foreach payload in values : {
+        let doubled := payload * 2
         total += doubled
     }
 }
@@ -98,14 +98,14 @@ A positive step is anchored at the lower bound; a negative one at the upper boun
 
 ```mud
 action Forward for mut total: Num {
-    then foreach value in [1..8] by 2 :
-        total += value
+    then foreach payload in [1..8] by 2 :
+        total += payload
 }
 # traversal: 1, 3, 5, 7
 
 action Backward for mut total: Num {
-    then foreach value in [1..8] by -3 :
-        total += value
+    then foreach payload in [1..8] by -3 :
+        total += payload
 }
 # traversal: 8, 5, 2
 ```

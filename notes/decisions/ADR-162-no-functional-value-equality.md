@@ -23,6 +23,8 @@ Functional algebra is extensional, but neither an extensional equality oracle
 nor structural/capture equality was specified. The author accepts prohibiting
 value ==/!= on FunctionalDictionary and comparisons that need it transitively.
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Decision
 
 A raw functional dictionary has no admitted value equality. Alias nominality
@@ -36,7 +38,7 @@ Functional values cannot be exact dictionary keys or ordinary unique criteria
 requiring that equality. Keyed uniqueness may use another supported projected
 key when its existing path/authority/stability requirements hold; that does not
 create whole-functional value equality or enable whole-value collection algebra.
-Automatic on binding sets and temporal changes must likewise not compare unsupported functional values. Thing identity and closed family member equality ignore ordinary fields/associated data. FirstMatch ordered policy mode, policy application and noncomparing traversal
+Automatic on binding sets and temporal changes must likewise not compare unsupported functional values. Thing identity and closed family member equality ignore ordinary fields/associated data. FirstMatch branch mode, policy application and noncomparing traversal
 retain their contracts. Type ===/!== remains normalized contract comparison and
 does not compare policy behavior or captured values.
 

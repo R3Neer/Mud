@@ -17,6 +17,9 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-182
   - D-181
   - D-180
@@ -1041,3 +1044,25 @@ The type cardinality [?] normalizes to finite bounds 0 and 1 with written origin
 CST retains its spelling. Deferred StoredFieldDecl defaults remain absent in
 Surface AST, not invented values. Typing checks the abstract/concrete boundary.
 Postfix Nat List(args) folds TypeApplicationExpr before the following CallExpr.
+
+
+## Functional families and trait projection
+
+TraitDecl and trait requirements retain names, optional operator signatures,
+read/write requirements and source metadata. Structural satisfaction and
+TypeKind/DeclarationKind checks occur after nominal resolution. Functional
+parameter annotations retain their binder and optional type; lowerCamel input
+references in an eligible defining signature normalize to FunctionalParameterType
+rather than a nominal generic type. Unconditional body sugar retains the value
+body until functional elaboration; it does not turn arbitrary literals into
+policies during parsing.
+
+FunctionalInputExpr preserves reserved value. FunctionalPolicyExpr records
+FirstMatch or AllMatches from first/all; DecisionDictionaryType has
+SelectionUnspecified because a type's ordered output is not body selection mode.
+OperatorReferenceExpr retains its symbol/family candidates; FunctionalOperatorDecl
+retains signature, stored/derived marker, implementation and whole-declaration
+metadata. Operand-header forms normalize to the same functional semantics.
+Input/output collection layers and explicit product/grouping boundaries survive
+projection. Full rules are in [[types/functional-families]] and
+[[types/structural-traits]] relative to specification/.

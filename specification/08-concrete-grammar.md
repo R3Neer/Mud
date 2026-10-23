@@ -18,6 +18,9 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-182
   - D-181
   - D-180
@@ -562,138 +565,64 @@ left ^ right   # AKey -> 1, CKey -> 3
 
 ### Functional dictionaries `-->`
 
-A functional dictionary is a pure case-defined policy.
-
-A functional branch has a pure selector and a ValueBlock result. Its input
-is the implicit immutable variable denoted contextually by `value`, visible in
-its selector and result scopes. This spelling is not globally reserved. Normal lookup,
-duplicate-name and no-shadowing rules apply; neither result nor selector may
-redeclare it. Direct selector-preamble bindings are visible in their own result;
-nested locals retain their inner scopes. Exact associations
-do not inject value: their values are computed at association construction,
-not recomputed for each lookup.
-
-Inside a functional branch, `.member` abbreviates `value.member`, including
-subsequent access/index/call suffixes and String interpolations. It supplies no
-receiver outside that branch and never picks a traversal binding implicitly.
-
-Interpret each selector operand with its established static category before
-combining selector `not`, `and` and `or`:
-
-| Written selector | Predicate |
-| --- | --- |
-| Ordinary singleton Bool expression | The expression itself. |
-| Ordinary non-Bool singleton value expression | `value == expression`. |
-| Interval/domain expression | `expression has value`, preserving all boundaries. |
-| Nominal type reference | `value is Type`. |
-| `== expected`, `!= expected`, `< limit`, `<= limit`, `> limit`, `>= limit` | The corresponding comparison with value. |
-| `is Type`, `is not Type`, `iis Type`, `iis not Type` | The explicit nominal test. |
-| `not selector` | Negation of the interpreted predicate. |
-| `_` | Residual fallback. |
-
-Bool operands keep their ordinary predicate meaning: `false` never applies;
-`== false` compares the input with false. For a non-Bool expected value,
-`not expected` means inequality. For an interval it means exclusion and for a
-type it means failed membership. Arbitrary collection expressions acquire no
-implicit membership. Explicit equality forces value comparison when supported;
-`== (1..10)` compares an interval value, whereas `(1..10)` tests membership in
-the open interval. Bare `1..10` retains closed-bound sugar. Type membership does
-not erase nominal identity or the distinction between is and iis.
-
-Logical operators combine the expanded predicates with their ordinary demand,
-pruning and narrowing rules. `Low or Medium` and `== Low or == Medium` compare
-family members, rather than applying Boolean or to member values. A complete
-condition such as `value.age >= 18 and value.hasPermit` needs no additional if.
-No as input binding, structural selector patterns or new guard form exists.
-Supported equality, singleton-Bool admission and purity remain mandatory.
-
-Composite application `policy[a, b]` supplies one complete contextual input,
-equivalent to `policy[(a, b)]`. The implicit value is that complete tuple or
-nominal product, not one independently dispatched argument. No argument names
-are injected as locals. Named components are accessible through value/.member;
-anonymous positional products use admitted positional binding.
+Functional signatures associate right and support named/inferred input binders:
 
 ```mud
-let total: (Int, Int) --> Int [ordered] =
-    _ --> {
-        let (left, right) = value
-        left + right
-    }
+let add: (a: Int) --> (b: Int) --> Int = a + b
+let generic: a --> b --> _ = a + b
+let inferred = a + b
+let addTwo = inferred[2]
+let label: Int --> String = first {
+    > 0 --> "positive",
+    _ --> "other"
+}
 ```
 
-total[2,3] applies this one tuple-input policy and produces 5 under its contract.
-A nominal named product cannot be opened with that positional binding; access
-its named components instead. Structural input identity and once-only input
-evaluation retain the ordinary contextual-construction rules.
+Named (a: A) in an input position is a functional parameter annotation, not a
+unit tuple. A lowerCamel input in a defining signature is an inferred binder.
+Type-only unbound input binders require a corresponding checked scheme. The
+Surface AST preserves signature names/omissions; later inference creates the
+relational scheme under [[types/functional-families]]. A plain expression or
+ValueBlock in a functional definition can omit its unconditional _ --> branch.
 
-When application cardinality excludes zero, coverage is universal over the admitted input contract and applicable views,
-not a check of one current world or runtime sample. State-dependent guards
-require fallback unless the version's finite static certificate procedure
-proves coverage independently of that sample. Finite family enumeration,
-nominal inclusion/exclusion, static domain coverage and propositional Boolean
-certificates use the existing static proof rules. No general theorem solver
-or type-based nominal guessing is introduced.
-
-A positive application-result minimum requires universal input coverage from
-declared finite families, nominal alternatives, admitted domains, supported
-Boolean facts or fallback. A zero-admitting application may be uncovered and
-returns ordinary empty when no branch applies. Unknown positive coverage is a
-static error; an inferred result cannot be guessed optional to avoid that error.
-
-Fallback is unique and last. It applies only when no ordinary selector applies.
-A selected result yielding empty has handled that input and does not trigger
-fallback. Exhaustive treatment is independent of output presence: `_ --> empty`
-is valid when the output admits absence. Selected computing faults propagate;
-they do not retry another branch or fallback. Ordered FirstMatch chooses the
-first applicable selector; unordered AllMatches evaluates all ordinary selectors
-in one snapshot and produces all applicable results. Coverage is required in
-both modes only when their application minimum is positive; unreachable/redundant cases are diagnosed when provable.
-
-Input and output types may be inferred only with unique evidence/context.
-`_ --> .name` alone does not establish an input type. An explicit input with
-an output hole can, as in `let naming: Person --> _ [ordered] = _ --> .name`.
-Output cardinality follows admitted branch results, not coverage alone; a
-covered FirstMatch returning optional values can still produce empty.
+first/all braced policy constructors contain comma-separated explicit branches.
+An unmarked branch list uses AllMatches. Mode is a policy-body property,
+independent of output ordered/unique specifications. Replacing first with all
+requires ordinary semantic checks, not a scalar-cardinality assumption.
+Selector shorthand retains the category-directed interpretation of
+[[17-dictionaries]]; branches keep independent locals and shared selector/result
+scope. value is reserved. Named and implicit parameters, cumulative value and
+unique .member resolution follow [[types/functional-families]].
 
 ### `FirstMatch`, `AllMatches`, fallback and cardinality
 
-In a functional `[ordered]` dictionary, ordinary `unique` and `unique by path` are valid but redundant and trigger a suggestion to remove the uniqueness modifier. A positive application minimum requires input coverage; a zero-admitting application may return empty when no branch matches. Result cardinality follows all reachable branch result contracts, including explicit empty results; fallback does not by itself establish presence.
+first tests ordinary selectors in source order and selects the first match;
+all tests applicable ordinary branches under its stable application view.
+Fallback is unique and last and is used only if no ordinary selector matches.
+A selected normal empty result never retries fallback. Pure computing errors
+remain errors. Application minima, coverage and inferred absence follow the
+complete result contract. A positive required minimum needs a universal proof.
+An unannotated partial definition may infer minimum zero.
 
-In an unordered functional dictionary, each matching ordinary branch contributes at most one result. With `n` potentially matching branches, the conservative cardinality is `[0..n]`; a fallback establishes coverage; the lower bound is 1 only when every reachable branch result guarantees a singleton value. `unique` deduplicates equal whole-value results from different branches. `unique by path` deduplicates equal projected result keys and retains the first result by stable occurrence provenance. Neither changes which branches applied.
-
-```mud
-let tagsOf: Creature --> Tag [unique] =
-    value is Dragon --> Magical,
-    value is FireCreature --> Magical,
-    value is Flying --> Aerial,
-    _ --> Ordinary
-```
-
-For a fire-breathing dragon, `Magical` appears only once. The union or symmetric difference of two `ordered` functional dictionaries loses `ordered` when it may produce two distinct results; intersection and difference preserve it when cardinality remains `[0..1]`.
+AllMatches collects each selected branch's exterior result members, preserving
+repetitions unless uniqueness is specified. It does not insert a wrapper around
+each branch or flatten members that are themselves collections. Aggregate result
+bounds and ordering follow [[types/functional-families]].
 
 ### Chaining dictionary types
 
-Arrows accept complete types and are right-associative:
+Both arrows associate right. Exact -> specifications retain association count
+ownership. Functional --> type-adjacent specifications describe input/output
+values: A[N] --> B[M] --> C[P] takes N As, then M Bs, then yields P Cs.
+A --> (B --> C)[3 ordered] returns three residual policies in sequence.
+A --> (B -> C[P]) returns one exact dictionary with P associations, while
+A --> (B -> C)[P] returns P exact dictionaries. Grouping and repeated collection
+layers are preserved; no type-driven flattening reassigns the brackets.
 
-```mud
-Square -> Piece [0..32 ordered]
-Name -> Coordinate -> Piece [*]
-Mode -> Product --> Money [2..4 ordered]
-```
-
-These are type-expression fragments. The second example is equivalent to `Name -> (Coordinate -> Piece [*])`. Each collection specification applies to the immediately preceding arrow. Parentheses are needed only to alter the natural grouping or delimit another complete construction.
-
-The chained application processes each level in turn:
-
-```mud
-let piece := boardByGame[game][coordinate]
-```
-
-Composition does not introduce an abstract function category. It is expressed by applying one dictionary's result as input to another:
-
-```mud
-let weather := weatherOf[capitalOf[country]]
-```
+f[a,b] retains one written list; typing checks its product and compact-curried
+interpretations. A unique static interpretation is admitted; multiple valid
+interpretations require explicit f[(a,b)] or f[a][b]. An explicit product is one
+argument. No implicit distribution over residual policy collections occurs.
 
 ### Anonymous structural products
 
@@ -1024,8 +953,8 @@ Outer mutability can be applied to a collection of any type:
 
 ```mud
 action Record for mut observations: Num [*]
-given value: Num {
-    then add value to observations
+given observation: Num {
+    then add observation to observations
 }
 ```
 
@@ -1406,8 +1335,8 @@ RemoveEffect always removes a value from a collection-compatible assignable targ
 foreach person in kingdom.people if person.hungry :
     person.health -= 1
 
-foreach value in [0..100] by 5 : {
-    let doubled := value * 2
+foreach number in [0..100] by 5 : {
+    let doubled := number * 2
     total += doubled
 }
 ```
@@ -1476,18 +1405,19 @@ unknown: Any
 A stored field of type `Any` must provide an initialiser. Equality requires compatible effective types and uses the effective type's equality relation. Any more specific operation requires narrowing:
 
 ```mud
-rule Positive given value: Any {
-    value is Nat and value > 0
+rule Positive given candidate: Any {
+    candidate is Nat and candidate > 0
 }
 ```
 
 Inside a functional branch, `is` and `iis` retain their narrowing in the result:
 
 ```mud
-let describeAny: Any --> String [ordered] =
+let describeAny: Any --> String [ordered] = first {
     value iis PersonId --> "Person id {value}",
-    value is Nat --> "Natural {value}",
-    _ --> "Other"
+        value is Nat --> "Natural {value}",
+        _ --> "Other"
+}
 ```
 
 `Money` remains a built-in type because of its materialisation rules, not as an exception to the openness of `Any`.

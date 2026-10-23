@@ -42,6 +42,12 @@ class SpellMetadataTests(unittest.TestCase):
         self.assertNotIn('fixtures.Player', world)
         self.assertNotIn('fixtures.Turret', world)
 
+    def test_structural_trait_is_a_declaration_boundary_not_activation_support(self):
+        declaration = self.inventory.declarations['FeedbackPhaseSource']
+        self.assertEqual(declaration.category, 'trait')
+        self.assertNotIn(declaration.qualified, self.inventory.support)
+        self.assertEqual(len(self.inventory.assets), 9)
+
     def test_union_selection_and_repeated_concerns(self):
         def roots(cs): return {w['root'] for w in self.inventory.plan(cs)['worlds']}
         self.assertEqual(roots(['Feedback', 'PairAdmission', 'Feedback']), roots(['Feedback']) | roots(['PairAdmission']))

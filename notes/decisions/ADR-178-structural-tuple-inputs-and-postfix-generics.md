@@ -12,6 +12,8 @@ affects:
 
 # ADR-178 — Structural tuple inputs and postfix generics
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Decision
 
 Prefer postfix generic application in examples, especially arity one: Nat List,

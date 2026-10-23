@@ -18,6 +18,8 @@ affects:
 
 # ADR-156 — Canonical operator contract encoding and reflection schema
 
+- Amended by: [[ADR-185-functional-operator-fields-and-global-signature-coherence|D-185]].
+
 ## Decision and formalization
 
 Add DeclarationKind.Operator for an operator declaration descriptor. Its own TypeKind remains DeclarationDescriptor; no OperatorCallable or new TypeKind is introduced. This category was explicitly accepted by the author while completing the reflective schema.

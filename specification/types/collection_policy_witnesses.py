@@ -19,8 +19,8 @@ def apply_first(item, branches, fallback=None):
 def apply_all(item, branches, fallback=None):
     matching = [result for predicate, result in branches if predicate(item)]
     if matching:
-        return [result(item) for result in matching]
-    return [] if fallback is None else [fallback(item)]
+        return [member for result in matching for member in result(item)]
+    return [] if fallback is None else list(fallback(item))
 
 
 def comprehension(source, body, predicate=lambda item: True):

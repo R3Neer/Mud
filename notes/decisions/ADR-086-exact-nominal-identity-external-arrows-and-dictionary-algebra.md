@@ -22,6 +22,8 @@ affects:
 
 - Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Context
 
 D-085 introduced exact dictionary types `A -> B` and branch-defined dictionaries `A --> B`, together with anonymous products, absence through `empty`, postfix metadata and right-associative arrows. The first integration left three issues incomplete:
@@ -74,7 +76,7 @@ is equivalent to:
 A -> (B -> C)
 ```
 
-Each cardinality, ordering, uniqueness or capability specification belongs exclusively to the immediately preceding arrow:
+Exact-arrow suffixes count associations; functional-arrow specifications belong to adjacent input/output values under D-183. Explicit groups preserve residual-policy collections:
 
 ```mud
 A -> B [2] --> C [3 ordered]
@@ -211,10 +213,11 @@ The right operand of `iis` cannot be an anonymous product, structural union, dic
 `iis` may select a branch and narrow `value` within its result:
 
 ```mud
-let describe: Identifier --> String [ordered] =
+let describe: Identifier --> String [ordered] = first {
     value iis EmployeeId --> "Employee {value}",
-    value iis PersonId --> "Person {value}",
-    value is Identifier --> "Identifier {value}"
+        value iis PersonId --> "Person {value}",
+        value is Identifier --> "Identifier {value}"
+}
 ```
 
 Order is significant because an `EmployeeId` also satisfies `value is PersonId`.
@@ -394,14 +397,9 @@ It retains results produced by exactly one of the operands and preserves the ord
 
 ### Ordering and cardinality
 
-Two `ordered` functionals individually produce at most one result. Their combination retains `ordered` only when maximum cardinality per application remains `[0..1]`.
+FirstMatch and AllMatches are policy body modes, independent of output collection ordering. Result algebra derives its own count/order/uniqueness guarantees without treating an output modifier as a branch mode.
 
-- `F | G` may produce two distinct results and generally loses `ordered`.
-- `F & G` produces at most one and may retain `ordered`.
-- `F -- G` produces at most `F`'s result and may retain `ordered`.
-- `F ^ G` may produce two and generally loses `ordered`.
-
-If one or both operands are not `ordered`, the compiler may retain it only when it proves the same maximum bound.
+Result count follows complete contribution populations, not the number of selected branches. Output order propagates by both/either/left/both for union/intersection/difference/symmetric difference, with compatible criteria, exactly as for ordinary collection results. A provenance-composed union retains left occurrences before required additional right occurrences. A two-member result does not lose ordered merely because it exceeds one member.
 
 For:
 

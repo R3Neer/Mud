@@ -19,6 +19,9 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-181
   - D-180
   - D-172
@@ -321,6 +324,11 @@ Defines:
 
 Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/sublook types are static and nominal per declaration and exact generic arguments; message/submessage types are static per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Things and aliases share contract-visible specialization across authorized parts.
 
+[[types/functional-families]] defines correlated functional schemes, curried
+inputs, partial application and branch contribution contracts.
+[[types/structural-traits]] defines minimum structural views and capability
+requirements without changing nominal inheritance or world authority.
+
 Main judgement:
 
 $$
@@ -396,7 +404,7 @@ Defines:
 - Associations, keys, iteration, ordering and algebraic operations.
 - Indexing within assignable paths, partial write-back on associated values and treatment of missing keys without confusing partial update with complete insertion.
 - Branch-selection modes, fallback, dependencies, recursion and termination of functional dictionaries.
-- Direct selector-preamble locals shared with their own result, definite availability after recovery and mandatory reuse of successful derivations while inputs/dependencies are unchanged; separate application/branch instances preserve laziness and full footprints. AllMatches remains the default; ordered explicitly selects FirstMatch.
+- Direct selector-preamble locals shared with their own result, definite availability after recovery and mandatory reuse of successful derivations while inputs/dependencies are unchanged; separate application/branch instances preserve laziness and full footprints. AllMatches remains the default; `first { ... }` explicitly selects FirstMatch independently of output order.
 
 ## 18. Domains and intervals
 

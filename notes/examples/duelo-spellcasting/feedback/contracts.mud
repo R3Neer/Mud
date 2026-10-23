@@ -37,6 +37,12 @@ family FeedbackAsset {
     }
 }
 
+# Phase classification needs event status, not caster/aim/link payloads.
+trait FeedbackPhaseSource {
+    kind: SpellEventKind
+    outcome: CastOutcome
+}
+
 family FeedbackStage { Selected, Rejected, Partial, Failed, Success, Cancelled }
 
 alias SpellFeedbackProfile {

@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 177.
-- Current: 173.
+- Total: 180.
+- Current: 176.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -196,6 +196,9 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-180 | current | 2026-10-16 | [[notes/decisions/ADR-180-uniform-dictionary-cardinality-inference|Uniform dictionary cardinality inference]] |
 | D-181 | current | 2026-10-23 | [[notes/decisions/ADR-181-string-primitive-spelling|String primitive spelling]] |
 | D-182 | current | 2026-10-23 | [[notes/decisions/ADR-182-whole-result-composition-and-pipe-continuation|Whole-result composition and pipe continuation]] |
+| D-183 | current | 2026-10-23 | [[notes/decisions/ADR-183-functional-families-currification-and-input-syntax|Functional families, currification and input syntax]] |
+| D-184 | current | 2026-10-23 | [[notes/decisions/ADR-184-structural-traits-and-capability-views|Structural traits and capability views]] |
+| D-185 | current | 2026-10-23 | [[notes/decisions/ADR-185-functional-operator-fields-and-global-signature-coherence|Functional operator fields and global signature coherence]] |
 
 ## Reserved identifiers
 

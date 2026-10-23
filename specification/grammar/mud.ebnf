@@ -46,6 +46,7 @@ using-declaration
 top-level-declaration
     ::= thing-declaration
       | alias-declaration
+      | trait-declaration
       | family-declaration
       | magnitude-declaration
       | boolean-rule-declaration
@@ -73,13 +74,13 @@ qualified-name
 
 nominal-name      ::= identifier ;
 lower-name        ::= identifier ;
-member-name       ::= identifier ;
-field-name        ::= identifier ;
+member-name       ::= identifier | "value" ;
+field-name        ::= identifier | "value" ;
 metadata-name     ::= identifier | "for" | "on" | "given" ;
 collection-key-path    ::= field-name , { "." , field-name } ;
 role-name         ::= identifier ;
 given-name        ::= identifier ;
-component-name    ::= identifier ;
+component-name    ::= identifier | "value" ;
 variable-name     ::= identifier ;
 declaration-reference ::= qualified-name ;
 type-reference    ::= qualified-name ;
@@ -260,8 +261,25 @@ alias-body-declaration
       | operator-declaration
         ;
 
+trait-declaration
+    ::= "trait" , nominal-name , { generic-parameter-group }
+        , "{" , declaration-layout
+        , trait-requirement , { required-separation , trait-requirement }
+        , [ required-separation ] , "}" ;
+
+trait-requirement
+    ::= [ "mut" ] , field-name , ":" , type-expression
+      | pure-operator-symbol , [ ":" , type-expression ] ;
+
+functional-parameter-type
+    ::= "(" , variable-name , ":" , type-expression , ")" ;
+
 operator-declaration
-    ::= operator-operand , overload-binary-operator , operator-operand
+    ::= overload-binary-operator , ":" , stored-type-expression
+        , ( "=" | ":=" ) , descriptor-value-body
+      | overload-unary-operator , ":" , stored-type-expression
+        , ( "=" | ":=" ) , descriptor-value-body
+      | operator-operand , overload-binary-operator , operator-operand
         , [ ":" , type-expression ] , ":=" , descriptor-value-body
       | overload-unary-operator , operator-operand
         , [ ":" , type-expression ] , ":=" , descriptor-value-body ;
@@ -453,7 +471,7 @@ type-inference-hole
 
 stored-type-expression
     ::= stored-union-type-expression
-        , ( { collection-specification } | stored-dictionary-type )
+        , { collection-specification } , [ stored-dictionary-type ]
         ;
 
 stored-union-type-expression
@@ -466,7 +484,8 @@ stored-type-alternative
         ;
 
 stored-declared-type
-    ::= type-inference-hole
+    ::= functional-parameter-type
+      | type-inference-hole
       | type-reference
       | stored-callable-type
       | reflected-type
@@ -537,7 +556,7 @@ stored-dictionary-type
 
 stored-dictionary-link
     ::= dictionary-arrow , stored-dictionary-value-type
-        , [ collection-specification ]
+        , { collection-specification }
       ;
 
 stored-dictionary-value-type
@@ -545,7 +564,7 @@ stored-dictionary-value-type
 
 type-expression
     ::= union-type-expression
-        , ( { collection-specification } | dictionary-type )
+        , { collection-specification } , [ dictionary-type ]
         ;
 
 union-type-expression
@@ -566,7 +585,8 @@ type-alternative-domain
         ;
 
 declared-type
-    ::= type-reference
+    ::= functional-parameter-type
+      | type-reference
       | callable-type
       | reflected-type
       | generic-type-application
@@ -614,7 +634,7 @@ dictionary-type
 
 dictionary-link
     ::= dictionary-arrow , dictionary-value-type
-        , [ collection-specification ]
+        , { collection-specification }
       ;
 
 dictionary-arrow
@@ -1271,7 +1291,7 @@ local-collection-modifier
       ;
 
 member-access
-    ::= "." , identifier ;
+    ::= "." , ( field-name | pure-operator-symbol ) ;
 
 metadata-access
     ::= "~" , metadata-name ;
@@ -1295,8 +1315,30 @@ receiver-entry
       | role-name , "=" , expression
       ;
 
+policy-expression
+    ::= policy-mode , "{" , declaration-layout , mapping-expression
+        , { "," , declaration-layout , mapping-expression }
+        , [ required-separation ] , "}" ;
+
+policy-mode
+    ::= "first" | "all" ;
+
+pure-operator-symbol
+    ::= overload-binary-operator | "==" | "!=" | "===" | "!=="
+      | "<" | ">" | "<=" | ">=" | "not" | "and" | "or" | "xor"
+      | "=>" | "<=>" | "is" | "iis" | "has" | "in" | ">>" | "<<" ;
+
+operator-reference
+    ::= "(" , pure-operator-symbol , ")" ;
+
+functional-input-reference
+    ::= "value" ;
+
 primary-expression
-    ::= generic-family-member
+    ::= policy-expression
+      | operator-reference
+      | functional-input-reference
+      | generic-family-member
       | explicit-generic-type-application
       | grouped-postfix-generic-type-application
       | literal
@@ -1313,7 +1355,7 @@ primary-expression
       | point-component-expression
       | quantifier-expression
       | random-expression
-      | "thing" | "alias" | "family" | "magnitude" | "rule"
+      | "thing" | "alias" | "family" | "magnitude" | "trait" | "rule"
       | "action" | "subaction" | "look" | "sublook" | "message" | "submessage" | "test"
       | "(" , expression , ")"
       ;
@@ -1327,7 +1369,7 @@ comprehension-expression
         , "-->" , [ required-separation ] , value-body ;
 
 implicit-member-expression
-    ::= "." , identifier ;
+    ::= "." , field-name ;
 
 selection-expression
     ::= iteration-binding , "in" , expression

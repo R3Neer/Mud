@@ -25,6 +25,8 @@ affects:
 
 MUD already distinguishes multiplicity from ordinary `unique`, retains stable provenance for occurrences and uses a stable member path for `ordered by`. Some models need a stronger invariant: several distinct values may be permitted in general, but only one may survive for each stable semantic key such as an e-mail address, external identifier or owning `thing`.
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Decision
 
 ### One uniqueness axis
@@ -108,7 +110,7 @@ For exact-dictionary algebra, let `N`, `V` and `K(p)` have the meanings defined 
 
 Analysis may strengthen these conservative guarantees only when it proves the necessary absence of projected-value collisions. Whenever the inferred exact-dictionary result has a value-uniqueness criterion, candidate associations are incorporated in D-086's established order and any later association violating that criterion is omitted as a no-op. In particular, the exact-dictionary `&` rule deliberately differs from ordinary collection `&`: the former keeps left associated values, while the latter is a subset of both operand values.
 
-In a functional dictionary, `unique by path` normalises the result collection of each application. In `FirstMatch` it is valid but redundant because at most one result is produced; tooling suggests its removal. In `AllMatches`, equal projected keys are deduplicated by stable result-occurrence provenance without changing which branches applied. Pointwise functional-dictionary algebra then follows the ordinary collection rules above.
+In a functional dictionary, `unique by path` normalises the result collection of each application independently of branch mode. FirstMatch can return several members from one selected branch; the modifier is redundant only when the admitted output already proves the guarantee. In AllMatches, equal projected keys are deduplicated by stable result-occurrence provenance without changing which branches applied. Pointwise functional-dictionary algebra follows the ordinary collection rules above.
 
 ## Consequences
 

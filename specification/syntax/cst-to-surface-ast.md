@@ -15,6 +15,9 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-181
   - D-180
   - D-179
@@ -270,7 +273,7 @@ An omitted type entry remains absent. The type is inferred.
 ### Cardinality omitted
 
 ```mud
-let value: Nat = 0
+let payload: Nat = 0
 let values: Nat = [1, 2, 3]
 ```
 
@@ -279,9 +282,11 @@ Both forms produce a `CollectionSpec` with `OmittedCardinality`. The Surface AST
 Dictionary entries/application specifications retain OmittedCardinality
 independently of the singleton exterior. The same owner-directed elaboration
 infers immutable association/application counts under [[../17-dictionaries#Omitted cardinality and owner contracts]].
-A mode-only [ordered] still leaves its cardinality omitted. The branches field
-of DecisionDictionaryType carries an application-result specification, not a
-branch-population count. No AST constructor or branch-selection default changes.
+An order-only [ordered] still leaves its cardinality omitted. The branches field
+of DecisionDictionaryType retains the final output specification, not a
+branch-population count; its name does not imply counting source branches.
+The type's mode is SelectionUnspecified. FunctionalPolicyExpr independently
+records an explicit first/all body constructor.
 
 ### Exact cardinality
 
@@ -358,7 +363,7 @@ Name -> Coordinate -> Piece [*]
 A -> B [2] --> C [3 ordered]
 ```
 
-Arrow chains fold inwards from the right. The first shape produces `ExactDictionaryType(Name, ExactDictionaryType(Coordinate, Piece, [*]), ...)`; the second produces an outer dictionary whose value is `DecisionDictionaryType(B, C, FirstMatch, [3])`, and `[2]` belongs to the outer arrow.
+Arrow chains fold inwards from the right. The first shape produces `ExactDictionaryType(Name, ExactDictionaryType(Coordinate, Piece, [*]), ...)`; the second produces an outer dictionary whose value is `DecisionDictionaryType(B, C, SelectionUnspecified, [3 ordered])`, and `[2]` belongs to the outer exact arrow. The decision node's output type and retained output specification describe the same written output layer, not two nested layers. Repeated specifications create NestedCollectionType layers; a single specification is never applied twice.
 
 `(A, B)` and `(name: A, value: B)` produce `PositionalProductType` and `NamedProductType`, respectively. Parentheses forming the product are retained by the constructor; parentheses used solely for grouping are discarded.
 
@@ -838,3 +843,25 @@ The type cardinality [?] normalizes to finite bounds 0 and 1 with written origin
 CST retains its spelling. Deferred StoredFieldDecl defaults remain absent in
 Surface AST, not invented values. Typing checks the abstract/concrete boundary.
 Postfix Nat List(args) folds TypeApplicationExpr before the following CallExpr.
+
+
+## Functional families and trait projection
+
+TraitDecl and trait requirements retain names, optional operator signatures,
+read/write requirements and source metadata. Structural satisfaction and
+TypeKind/DeclarationKind checks occur after nominal resolution. Functional
+parameter annotations retain their binder and optional type; lowerCamel input
+references in an eligible defining signature normalize to FunctionalParameterType
+rather than a nominal generic type. Unconditional body sugar retains the value
+body until functional elaboration; it does not turn arbitrary literals into
+policies during parsing.
+
+FunctionalInputExpr preserves reserved value. FunctionalPolicyExpr records
+FirstMatch or AllMatches from first/all; DecisionDictionaryType has
+SelectionUnspecified because a type's ordered output is not body selection mode.
+OperatorReferenceExpr retains its symbol/family candidates; FunctionalOperatorDecl
+retains signature, stored/derived marker, implementation and whole-declaration
+metadata. Operand-header forms normalize to the same functional semantics.
+Input/output collection layers and explicit product/grouping boundaries survive
+projection. Full rules are in [[../types/functional-families]] and
+[[../types/structural-traits]] relative to specification/.

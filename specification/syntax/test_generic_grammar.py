@@ -73,8 +73,8 @@ class GenericGrammarTests(unittest.TestCase):
 
     def test_reflected_primary_cannot_reintroduce_cycle(self):
         mutated = self.source.replace(
-            '    ::= generic-family-member\n      | explicit-generic-type-application',
-            '    ::= generic-family-member\n      | generic-type-application')
+            '      | generic-family-member\n      | explicit-generic-type-application',
+            '      | generic-family-member\n      | generic-type-application')
         self.assertTrue(generic_contract_problems(mutated, self.ast, self.lexicon))
 
     def test_ordinary_parameter_with_is_detected(self):

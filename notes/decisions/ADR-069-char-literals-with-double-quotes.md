@@ -30,7 +30,7 @@ Ordinary `Char` and `String` literals begin with double quotes. The same form is
 - When the context requires `Char`, it may be elaborated as `Char` if, after interpreting escapes, it contains exactly one Unicode scalar value.
 - The `Char` form requires an explicit closing quote and permits no value or anchor interpolation.
 - The multiline form is always `String`.
-- Without an expected type, `let value := "a"` infers `String`.
+- Without an expected type, `let payload := "a"` infers `String`.
 - An empty literal or one containing several scalars is invalid when `Char` is required.
 
 ```mud
@@ -62,7 +62,7 @@ Syntax highlighting classifies double-quoted forms as text because choosing `Cha
 ## Verification
 
 1. `"a"`, `"ñ"`, `"\n"` and `"\u{1F642}"` in a `Char` context.
-2. Inference of `String` for `let value := "a"`.
+2. Inference of `String` for `let payload := "a"`.
 3. Rejection of `""`, `"ab"`, multiline text and interpolations in a `Char` context.
 4. Resolution of `charValue == "x"` as a `Char` comparison.
 5. Lexical rejection of single-quoted forms.

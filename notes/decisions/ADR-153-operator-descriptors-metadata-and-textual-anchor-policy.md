@@ -19,6 +19,8 @@ affects:
 
 # ADR-153 — Operator descriptors metadata and textual anchor policy
 
+- Amended by: [[ADR-185-functional-operator-fields-and-global-signature-coherence|D-185]].
+
 ## Decision
 
 Operator reflection exposes ordered operand descriptors containing each source operand's name and effective type contract. Names are descriptive, not signature identity. They do not become alias fields or for/given participant descriptors. Existing access/visibility and source-owner rules apply.

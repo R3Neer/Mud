@@ -14,7 +14,8 @@ def structural_equal(nodes, left, right):
         raise ValueError("Undefined normalized type graph root")
     allowed = {"alias", "record", "field", "product", "collection", "union",
                "exact-dictionary", "functional-dictionary", "callable", "interval",
-               "primitive", "thing", "family", "produced"}
+               "primitive", "thing", "family", "produced", "trait", "functional-scheme",
+               "constraint", "bound-variable"}
     for name, node in nodes.items():
         children = node.get("children", [])
         if node.get("kind") not in allowed or not isinstance(children, list) or any(x not in nodes for x in children):

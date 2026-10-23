@@ -17,13 +17,15 @@ affects:
 
 # ADR-149 — Alias operator selection, inheritance and reflection
 
+- Amended by: [[ADR-185-functional-operator-fields-and-global-signature-coherence|D-185]].
+
 ## Decision
 
-Discover visible declarations from both operand aliases and their admissible ancestors. Deduplicate the same originating declaration, including diamonds; distinct declarations remain distinct even with equal bodies. Duplicate normalized ordered operand signatures inside one declaring alias are declaration errors, independent of use, result and argument names.
+Discover visible declarations from both operand aliases and their admissible ancestors. Deduplicate the same originating declaration, including diamonds. Distinct explicit origins with identical symbol, arity and normalized ordered operand contracts are a linked-program error, regardless of owner, use, result, argument names or equal bodies. An explicit definition takes precedence over an implicit generation of the same signature; equivalent generations from one semantic origin deduplicate, while incompatible implicit generations are invalid.
 
 For each effective static operand alternative, retain applicable complete signatures under ordinary compatibility and contextual literal rules. Do not unwrap aliases, erase dimensions or search conversions. Numeric representation widening and builtin dimension-preserving magnitude arithmetic retain their existing contracts. Magnitude representations remain Nat, Int, Num, Rum or Money; arbitrary payload magnitudes and generalized dimensional vectors are not introduced.
 
-Select the unique signature whose operand contracts are included in every other applicable signature, with at least one strict inclusion against each distinct competitor. Expected results do not select a signature. Equal or incomparable distinct signatures are ambiguous, without left-owner, import-order, runtime-subtype or body preference. Inheritance retains original owner, signature, body and result; it does not rebind an operation to a descendant or synthesize its extra components.
+Select the unique signature whose operand contracts are included in every other applicable signature, with at least one strict inclusion against each distinct competitor. Expected results do not select a signature. Incomparable applicable signatures are ambiguous, without left-owner, import-order, runtime-subtype or body preference. Inheritance retains original owner, signature, body and result; it does not rebind an operation to a descendant or synthesize its extra components.
 
 Check every pair of remaining static union alternatives after flow narrowing. Each pair must select uniquely; result contracts join normally. Runtime identification of an already checked union alternative is not new runtime overload discovery.
 
@@ -33,7 +35,7 @@ Resolve explicit signatures on complete operands first, then an applicable built
 
 An operator's identity includes its original alias owner, symbol, arity and ordered normalized operand contracts, preserving nominal identities. Parameter names, result and body do not distinguish signatures. The accepted simple anchor shape is `alias::path.Vector2::operator::*(path.Vector2, Num)`. Inherited declarations retain it. [[ADR-153-operator-descriptors-metadata-and-textual-anchor-policy|D-153]] requires self-contained complete textual encoding; its exact grammar for complex contracts, binders and escaping is specified by D-156. This shape is not a complete wire grammar.
 
-Alias~operators exposes own and inherited operator declaration descriptors, unique by origin. Alias~declaredOperators exposes only own declarations. General signatures remain in the catalogue even if more specific ones exist. Descriptor queries cover owner, anchor, symbol, ordered operand descriptors containing source names and effective types, result and metadata under ordinary visibility. D-153 fixes the metadata source attachment forms; operand names remain descriptive. TypeKind is DeclarationDescriptor unless a more specific established category applies; no OperatorCallable type or first-class operator invocation is introduced. User metadata has no algebraic or overload-selection privileges.
+Alias~operators exposes own and inherited operator declaration descriptors, unique by origin. Alias~declaredOperators exposes only own declarations. General signatures remain in the catalogue even if more specific ones exist. Descriptor queries cover owner, anchor, symbol, ordered operand descriptors containing source names and effective types, result and metadata under ordinary visibility. D-153 fixes the metadata source attachment forms; operand names remain descriptive. Descriptor TypeKind is DeclarationDescriptor. Operator references are separate functional values/families and do not make declaration descriptors callable. User metadata has no algebraic or overload-selection privileges.
 
 Nominal resolution retains source ownership, operand scopes and type-reference provenance. Signature-dependent selection and anchors are computed after typing and are not fabricated as nominal HIR fields. The full reflective property/type schema and encoding follow the complete D-156 contract; metadata attachment spelling is fixed by D-153.
 

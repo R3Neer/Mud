@@ -11,6 +11,9 @@ depends-on:
 questions:
   - Q-032
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-181
   - D-180
   - D-176
@@ -77,8 +80,7 @@ The physical container, traversal order or hash order is not semantic order.
 Bounds are nonnegative integers with l<=u; `*` denotes the applicable effective
 limit, not a guessed runtime population. Omitted ordinary shape means `[1]`.
 The stored immutable-field exception infers the exact outer initializer shape;
-outwardly mutable stored fields retain `[1]` when omitted. For dictionaries the same owner policy separately determines arrow-owned
-association/application counts under [[17-dictionaries#Omitted cardinality and owner contracts]].
+outwardly mutable stored fields retain `[1]` when omitted. For dictionaries the same owner policy separately determines exact association counts and functional input/output value counts under [[17-dictionaries#Omitted cardinality and owner contracts]].
 Dictionary exterior count remains one; no layer flattens implicitly.
 
 `empty` and `[]` contain zero outer members. `[empty]` and `[[]]` contain one

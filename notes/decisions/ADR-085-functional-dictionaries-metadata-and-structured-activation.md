@@ -38,6 +38,8 @@ Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensi
 
 - Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Context
 
 MUD already has collections, exact dictionaries, sequential composition through calls within `then`, nominal names, initial activation and `String` templates. Several later decisions show four related needs:
@@ -150,10 +152,10 @@ A functional dictionary:
 
 Every recursive component of the call graph must have a well-founded measure that decreases strictly along every edge continuing the cycle. D-167/D-168 specify the normative natural/structural/finite-order, lexicographic/phase and affine certificate procedure. Functional composite input sugar constructs one expected structural value, like composite exact keys. Absence of the required proof is a static error; independent owner-specific acyclicity remains mandatory.
 
-#### `ordered` mode
+#### FirstMatch body mode
 
 ```mud
-A --> B [ordered]
+first { selector --> result }
 ```
 
 - Ordinary branches are tested in source order.
@@ -162,23 +164,29 @@ A --> B [ordered]
 - `_` must be the last effective branch; every later branch is unreachable.
 - Without fallback, positive application minima require complete input coverage; zero-admitting applications may leave inputs uncovered. Selected output absence follows its result contract.
 - Fallback establishes coverage but not a singleton result when the output admits empty.
-- ordinary `unique` and `unique by path` are valid but redundant because at most one result is produced; either produces a removal suggestion.
+- Result ordered/unique modifiers are independent of branch selection. A uniqueness modifier is redundant only when all admitted output values already guarantee it.
 
 The elaborated mode is called `FirstMatch`.
 
-#### Unordered mode
+#### AllMatches body mode
 
 ```mud
 A --> B
 ```
 
 - All ordinary branches are evaluated.
-- Each matching branch contributes a result.
+- Each matching branch contributes the exterior occurrences of its result;
+  nested collection members retain their complete nested shape.
 - Selectors may overlap.
-- Source order is not semantic.
+- Source order supplies stable branch occurrence provenance. It supplies an
+  observable result sequence only when the output has an ordered contract;
+  an explicit ordered by criterion orders the aggregate by that criterion.
 - Coverage must be proved or supplied by a residual branch for a positive application minimum; zero-admitting applications need neither. Empty remains an admitted selected result without retry.
 - `_` contributes its admitted result only when no ordinary branch matches, including explicit empty when allowed.
-- Derived cardinality is `[0..n]`, where `n` is the demonstrable maximum of matching ordinary branches; fallback establishes coverage, while the lower bound depends on all reachable output contracts.
+- Derived cardinality sums admitted contribution populations conservatively,
+  accounting for overlaps, fallback and output normalization. A matching branch
+  may contribute zero, one or multiple members. Fallback establishes coverage,
+  while the lower bound depends on all reachable output contracts.
 - `unique` deduplicates equal whole-value results produced by different branches; `unique by path` deduplicates equal projected keys and retains the first result by stable occurrence provenance.
 
 The elaborated mode is called `AllMatches`.
@@ -191,7 +199,7 @@ The elaborated mode is called `AllMatches`.
 A -> B -> C
 ```
 
-is elaborated as `A -> (B -> C)`. The same applies to mixed chains. Each cardinality or modifier belongs exclusively to the immediately preceding arrow:
+is elaborated as `A -> (B -> C)`. The same applies to mixed chains. Exact-arrow suffixes count associations; functional-arrow suffixes qualify adjacent input/output values under D-183. Both arrows associate right:
 
 ```mud
 A -> B [2] -> C [3]

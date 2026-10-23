@@ -10,6 +10,9 @@ depends-on:
   - "[[11-type-system]]"
 questions: []
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-181
   - D-180
   - D-177
@@ -83,7 +86,8 @@ Omission and holes fail when evidence is insufficient; context-free empty or
 an input using only `.name` does not choose an arbitrary member/input type.
 The annotation `_ [ordered]` does not move a collection modifier into an
 inferred dictionary's branch-selection contract. Write its arrow explicitly;
-`Person --> _ [ordered]` declares FirstMatch, while a parenthesised dictionary
+`Person --> _ [ordered]` requires an ordered output; `first { ... }` selects
+FirstMatch independently. A parenthesised dictionary
 with an outer suffix describes a collection of dictionaries.
 
 Immutable positional patterns use `let (first, second) = source` or
@@ -99,8 +103,8 @@ This chapter defines stored/derived fields, writable places, capabilities, block
 
 ```mud
 thing Counter {
-    mut value: Nat = 0
-    let doubled := value * 2
+    mut count: Nat = 0
+    let doubled := count * 2
 }
 ```
 
@@ -254,3 +258,12 @@ supplies no runtime slot. Inherited origin/default conflict rules still apply;
 an abstract descendant may remain incomplete, a concrete descendant may not.
 A local property suffix cannot contain mut, even when restating source authority.
 Identity-preserving transformations may retain existing immediate-member rights.
+
+## Functional and trait authority
+
+[[types/functional-families]] preserves quantified constraints and captures when
+an immutable binding stores a family/residual. It does not create mutable
+functional dictionaries or freeze fields of a captured thing identity.
+[[types/structural-traits]] admits read/write requirements only with existing
+place/capability evidence. No structural view, composition or partial application
+grants new world authority or changes block purity.

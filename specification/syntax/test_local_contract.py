@@ -17,8 +17,8 @@ class LocalContractTests(unittest.TestCase):
         self.assertEqual(local_contract_problems(self.grammar, self.ast), [])
 
     def test_holes_cannot_leak_into_signatures(self):
-        grammar = self.grammar.replace('declared-type\n    ::= type-reference',
-                                       'declared-type\n    ::= type-inference-hole | type-reference')
+        grammar = self.grammar.replace('declared-type\n    ::= functional-parameter-type',
+                                       'declared-type\n    ::= type-inference-hole | functional-parameter-type')
         self.assertTrue(local_contract_problems(grammar, self.ast))
 
     def test_pure_patterns_cannot_allocate_value_storage(self):

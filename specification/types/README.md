@@ -4,6 +4,9 @@ status: current
 normative: true
 questions: []
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-180
   - D-174
   - D-173
@@ -121,3 +124,15 @@ mutable, derived and type-only owners; exterior versus association counts;
 partial/overlapping policies; explicit minima; state views and schema defaults.
 The corpus validator checks those certificates without inferring Mud branch
 conditions or pretending that a sample input proves universal coverage.
+
+
+[[functional-families]] and [[structural-traits]] specify correlated schemes,
+partial applications and minimum structural views. Their declarative corpus
+cases require the stated fixture/proof premises. No successful source inference,
+whole-program operator solver, parser or runtime is claimed by the corpus gate.
+
+`functional_trait_witnesses.py` and its tests check supplied family constraints,
+input interpretation, minimum field/authority requirements, exterior contribution
+shapes and global operator origins. Normalized graph regressions additionally
+retain trait authority and correlated scheme binder positions. These are bounded
+certificates, not executed Mud programs or a general constraint solver.

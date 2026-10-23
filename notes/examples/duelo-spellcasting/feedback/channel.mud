@@ -3,7 +3,6 @@
 using spells
 
 # Per-caster channel configuration and pure phase/merge policies.
-
 abstract thing FeedbackChannel {
     let magic: Magic
     let caster: Spellcaster
@@ -17,7 +16,7 @@ abstract thing FeedbackChannel {
     # A replaceable delivery batch, not an execution history.
     mut requests: FeedbackRequest [* ordered] = empty
 
-    let phasesFor: SpellEvent --> FeedbackStage [ordered] =
+    let phasesFor: FeedbackPhaseSource --> FeedbackStage [ordered] = first {
         .kind == SpellEventKind.Selected --> [FeedbackStage.Selected],
         .kind == SpellEventKind.Cancelled --> [FeedbackStage.Cancelled],
         .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Success -->
@@ -26,41 +25,42 @@ abstract thing FeedbackChannel {
             [FeedbackStage.Partial],
         .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Failed -->
             [FeedbackStage.Failed]
+    }
 
-    let phaseGroupsFor: SpellEvent --> FeedbackGroup [ordered] :=
-        _ --> {
-            let event = value
-            let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
-            mut groups: FeedbackGroup [* ordered] = empty
-            foreach profile in profiles[event.spell] : {
-                groups = foreach stage in phasesFor[event] --> {
-                    let globalAssets = global[stage][unique] -- profile.excluded
-                    let phaseAssets = globalAssets | profile.byStage[stage][unique]
-                    let permitted := foreach asset in phaseAssets
-                        if allowedAssets has asset --> asset
-                    FeedbackGroup(stage, permitted)
-                }
+    let phaseGroupsFor: (event: SpellEvent) --> FeedbackGroup [ordered] := {
+        let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
+        mut groups: FeedbackGroup [* ordered] = empty
+        foreach profile in profiles[event.spell] : {
+            groups = foreach stage in phasesFor[event] --> {
+                let globalAssets = global[stage][unique] -- profile.excluded
+                let phaseAssets = globalAssets | profile.byStage[stage][unique]
+                let permitted := foreach asset in phaseAssets
+                    if allowedAssets has asset --> asset
+                FeedbackGroup(stage, permitted)
             }
-            groups
         }
+        groups
+    }
 
-    let rejectionAssetsFor: SpellEvent --> FeedbackAsset [ordered] :=
+    let rejectionAssetsFor: SpellEvent --> FeedbackAsset [ordered] := first {
         .kind == SpellEventKind.SelectionRejected --> {
             let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
             foreach asset in selectionRejected
                 if allowedAssets has asset --> asset
         }
+    }
 
-    let requestFor: SpellEvent --> FeedbackRequest [ordered] := {
-        let groups := phaseGroupsFor[value]
-        let rejected := rejectionAssetsFor[value]
-        (exists group in groups : group.effects != empty)
-            or rejected != empty
-    } --> FeedbackRequest(
-        value.caster,
-        value.spell,
-        value.aim,
-        groups,
-        rejected
+    let draftFor: (event: SpellEvent) --> FeedbackRequest := FeedbackRequest(
+        event.caster,
+        event.spell,
+        event.aim,
+        phaseGroupsFor[event],
+        rejectionAssetsFor[event]
     )
+
+    let requestFor := draftFor
+        >> all {
+            (exists group in .groups : group.effects != empty)
+                or .rejected != empty --> value
+        }
 }

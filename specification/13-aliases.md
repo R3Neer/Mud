@@ -11,6 +11,9 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-181
   - D-178
   - D-171
@@ -342,3 +345,23 @@ An anonymous dictionary input tuple separately admits the positional projection
 specified in [[17-dictionaries#Anonymous tuple input projection]], using target
 labels and discarding no stored components. This does not make two nominal
 aliases interchangeable or extend tuple component indexing to aliases.
+
+## Structural traits and functional operator fields
+
+A trait is a minimum structural view, not a nominal alias or an as ancestor;
+[[types/structural-traits]] defines satisfaction. A nominal alias retains its
+identity and constructor contract even when it supplies a trait's fields.
+
+An operator can be declared as a symbol-named functional field:
+
+```mud
++: (a: Vector2) --> (b: Vector2) --> Vector2 = Vector2(a.x+b.x,a.y+b.y)
+```
+
+It belongs to the declaring alias, and at least one operand has that owner
+applied type. It is a type-owned pure capability, not an extra stored component
+of every alias value; ordinary structural alias equality does not compare the
+operator closure. An ordinary stored functional component still has the usual
+no-functional-equality consequences. The operand-header spelling normalizes to
+the same functional operator definition. Parentheses in (+) denote an operator
+value reference; they are not part of the bare operator field name.

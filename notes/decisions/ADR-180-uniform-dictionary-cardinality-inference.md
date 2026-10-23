@@ -24,6 +24,8 @@ affects:
 
 # ADR-180 — Uniform dictionary cardinality inference
 
+- Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
+
 ## Context
 
 The author accepts reuse of ordinary omitted-cardinality rules for exact and
@@ -44,8 +46,8 @@ inference applies. A receiving contract is not widened from a caller's value.
 
 An immutable functional definition with omitted application cardinality infers
 bounds from its complete body, branch-selection mode and admitted input/view
-contracts. An uncovered case contributes zero. Ordered selection remains
-FirstMatch; an unannotated partial FirstMatch can therefore infer [0..1]. An
+contracts. An uncovered case contributes zero. Explicit first selects
+FirstMatch; a partial singleton-returning body can therefore infer [0..1]. An
 AllMatches body can infer several results. Positive written or expected minima
 require proved coverage and enough admitted results; omission does not create
 an implicit exhaustivity requirement. Type-only functional contracts default

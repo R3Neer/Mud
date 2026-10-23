@@ -7,6 +7,9 @@ depends-on:
   - "[[../11-type-system]]"
 questions: []
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-181
   - D-156
   - D-153
@@ -31,7 +34,7 @@ Every node has a constructor tag, an ordered vector of scalar labels and labelle
 | Structural tuple | Named versus positional form, ordered member names, stored/calculated kind and complete member-contract edges. |
 | Produced type | Original producer anchor and category, exact argument edges and ordered effective public schema. |
 | Union | The normalized distinct alternatives as an unordered edge set. |
-| Exact/functional dictionary | Key/value contracts, association specification or selection mode and applicable complete callable/authority guarantees. |
+| Exact/functional dictionary | Key/value contracts, exact association specification or functional input/output specifications, and applicable complete callable/authority guarantees. Branch-selection mode belongs to the policy value, not its type identity. |
 | Interval/domain | Member type and complete normalized domain: exact segment endpoints/open flags/steps, or symbolic expression graph. |
 | Magnitude/point | Nominal identity, representation, nominal dimensional factors, point/cycle contract and exact arguments where applicable. |
 | Descriptor | Specific descriptor category and statically refined target contract where present. |
@@ -82,4 +85,27 @@ Operator descriptor admission is MUD-TYPE-036 in [[../11-type-system]].
 
 The operand descriptions have ordinary `.name` and `.type` components and TypeKind.Tuple. They have no own anchor, metadata, participant clause, writable authority or invocation value. Their record type does not introduce OperandDescriptor or another TypeKind. The operator descriptor has no source identifier, `~for`, `~on`, `~given`, default arguments or first-class callable signature; unsupported intrinsic accesses are static errors, not empty results. Its `~type` denotes the descriptor's own type, not its result or an OperatorCallable.
 
-`Alias~operators` and `Alias~declaredOperators` return unique operator declaration descriptors, respectively own-plus-inherited and own-only, without selecting a best overload. Their collection order is unspecified. Deduplicate by original declaration identity. Different declaring aliases remain distinct even with equal operand signatures. A bulk query lacking access to any returned contract is rejected statically, never silently filtered. Inactive declarations retain their descriptors and configured metadata.
+`Alias~operators` and `Alias~declaredOperators` return unique operator declaration descriptors, respectively own-plus-inherited and own-only, without selecting a best overload. Their collection order is unspecified. Deduplicate by original declaration identity. Distinct explicit declarations with equal global signatures are rejected at linkage, not retained as independent valid overloads. Source-owned anchors still distinguish declaration origins for diagnostics; inheritance deduplicates the original declaration. A bulk query lacking access to any returned contract is rejected statically, never silently filtered. Inactive declarations retain their descriptors and configured metadata.
+
+
+## Functional operator fields and global coherence
+
+Symbol-named declarations use ordinary curried functional signatures and bodies;
+operand-header forms normalize to the same operation. (+) and Type.+ retain a
+functional reference family, separate from the noncallable declaration descriptor.
+Global signature identity comprises symbol, arity and ordered full operand
+contracts, excluding parameter names and result. Across the linked program reject
+distinct explicit duplicates, prefer explicit over identical implicit signatures,
+deduplicate one semantic generation origin and reject incompatible implicit
+collisions. This check does not replace ordinary specificity for distinct
+applicable signatures or rename source-owned operator anchors.
+
+
+Normalized contract graphs include Trait requirements sorted by member/symbol
+name and quantified FunctionalScheme nodes. Scheme binders use ordered static
+indices, retaining correlated references and normalized constraint tags/edges;
+source parameter names do not enter labels. Trait read requirements omit the
+stored/calculated implementation kind; writable requirements retain invariant
+place/authority contracts. Constraints and symbolic domains are normalized only
+by the established exact rules, never by comparing sampled behavior. These nodes
+use the same finite graph framing/canonical serialization as other contracts.

@@ -123,7 +123,13 @@ module MUDSurface {
     -- Declaraciones de primer nivel
     -- -----------------------------------------------------------------
 
-    top_level_decl = ThingDecl(flag is_abstract,
+    trait_requirement = TraitFieldRequirement(field_name name, flag replacement_required, type_expr contract)
+                      | TraitOperatorRequirement(string symbol, type_expr? signature)
+        attributes (source_origin origin)
+
+    top_level_decl = TraitDecl(nominal_name name, generic_parameter* parameters,
+                              trait_requirement* requirements)
+                  | ThingDecl(flag is_abstract,
                                nominal_name name,
                                generic_parameter* parameters,
                                declared_type* direct_ancestors,
@@ -263,7 +269,9 @@ module MUDSurface {
                                         value_block value)
         attributes (source_origin origin)
 
-    operator_decl = UnaryOperatorDecl(prefix_operator operator, operator_operand operand,
+    operator_decl = FunctionalOperatorDecl(string symbol, type_expr signature, flag derived,
+                                               value_block value, metadata_assignment* metadata)
+                  | UnaryOperatorDecl(prefix_operator operator, operator_operand operand,
                                       type_expr? result, value_block value,
                                       metadata_assignment* metadata)
                   | BinaryOperatorDecl(operator_operand left, binary_operator operator,
@@ -318,7 +326,8 @@ module MUDSurface {
     generic_application_form = ExplicitGenericWith | PostfixSingleGeneric
                              | PostfixGroupedGeneric
 
-    declared_type = NestedCollectionType(type_expr inner)
+    declared_type = FunctionalParameterType(variable_name name, type_expr? contract)
+                  | NestedCollectionType(type_expr inner)
                   | TypeInferenceHole
                   | NamedType(type_ref name)
                   | CallableType(callable_kind kind,
@@ -393,7 +402,7 @@ module MUDSurface {
                           | UniqueBy(collection_key_path key)
         attributes (source_origin origin)
 
-    decision_mode = FirstMatch | AllMatches
+    decision_mode = SelectionUnspecified | FirstMatch | AllMatches
 
     callable_kind = ActionCallable | RuleCallable | LookCallable
 
@@ -658,6 +667,9 @@ module MUDSurface {
 
     expr = ComprehensionExpr(iteration_binding binding, expr source, expr? step,
                              expression_block? filter, value_block body)
+         | FunctionalInputExpr
+         | FunctionalPolicyExpr(decision_mode mode, expr* branches)
+         | OperatorReferenceExpr(string symbol)
          | CompositionExpr(expr left, composition_direction direction, expr right)
          | ImplicitMemberExpr(identifier_name member)
          | SelectorExpr(selector_syntax selector)

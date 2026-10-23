@@ -12,6 +12,9 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-183
+  - D-184
+  - D-185
   - D-182
   - D-181
   - D-176
@@ -98,21 +101,21 @@ A name that does not follow the capitalisation rules is a static error, not an a
 
 ## Reserved and contextual words
 
-`let` and `foreach` are hard reserved words. `each` is an ordinary identifier.
-`value` is contextual when denoting a functional branch's implicit input or the
-single-component ordering criterion in `ordered by value`. It remains available
-as an ordinary declaration/member name elsewhere. Input injection, .member
-abbreviation and member-versus-whole ordering-key resolution retain their
-nominal/elaboration contracts; token classification does not prove a binding.
+let, foreach, value and trait are hard reserved words. first is contextual before a policy-constructor body. value denotes the
+functional cumulative input and cannot name an ordinary local, argument or
+implicit parameter. Explicit member-name grammar exceptions permit .value and
+schema components named value, including intrinsic diagnostics; they do not
+permit lexical shadowing. ordered by value still gives an accessible member
+named value priority over the whole-element criterion. each remains ordinary.
 
 Reserved words cannot be used as identifiers. The standard catalogue is:
 
 ```text
 using
-thing as alias family magnitude
+thing as alias family magnitude trait
 rule action subaction look sublook message submessage test
 for on given when changes if then after with otherwise raise
-let mut unique ordered
+let mut unique ordered value
 create destroy add to remove from foreach by take
 eventually through imagine old
 is iis in has
@@ -131,9 +134,6 @@ The scanner applies the longest match: `a--b` contains the operator `--`, whilst
 
 They are contextual:
 
-- `value` for a functional branch's implicit input and the `ordered by value`
-  criterion; an applicable member named value takes precedence in that criterion.
-
 - `part` and `only` in the initial `.mud` header `part only`; `uses` in a `mud.part` manifest.
 
 - `abstract` in front of `thing` or a structural `alias`.
@@ -144,6 +144,8 @@ They are contextual:
 - `name`, `path`, `anchor`, `file`, `plural`, `abbreviation`, `prefixes` and `format` after `~` in the permitted positions.
 - `root`, `unit`, `point`, `over` and `cycle` in their own productions.
 - `Interval` as the builtin generic constructor in postfix `Nat Interval` or explicit `Interval with Nat` application.
+
+The member/field/component-name exception for value is syntactic, just as metadata names can accept selected reserved tokens. A standalone value outside a functional input scope cannot read an ordinary local or silently become a parameter.
 
 `for`, `on` and `given` remain hard reserved words, but `metadata-name` explicitly permits them after `~` for the reflexive properties `~for`, `~on` and `~given`. This syntactic exception does not make them `IDENTIFIER` nor does it allow them to be used as ordinary names.
 

@@ -152,11 +152,11 @@ reserved-word
 
 keyword-word
     ::= "using"
-      | "thing" | "as" | "alias" | "family" | "magnitude"
+      | "thing" | "as" | "alias" | "family" | "magnitude" | "trait"
       | "rule" | "action" | "subaction" | "look" | "sublook" | "message" | "submessage" | "test"
       | "for" | "on" | "given" | "when" | "changes"
       | "if" | "then" | "after" | "with" | "otherwise" | "raise"
-      | "let" | "mut" | "unique" | "ordered"
+      | "let" | "mut" | "unique" | "ordered" | "value"
       | "create" | "destroy" | "add" | "remove" | "from"
       | "foreach" | "by" | "through" | "take"
       | "exists" | "forall" | "count" | "min" | "max"
@@ -181,7 +181,7 @@ constant-word
    mud.ebnf reserves contextually. The production makes the catalogue
    enumerable without turning entries into hard reserved words. *)
 contextual-word
-    ::= "abstract" | "part" | "only" | "uses" | "always" | "start" | "value"
+    ::= "abstract" | "part" | "only" | "uses" | "always" | "start" | "first"
       | "mud"
       | "type"
       | "name" | "path" | "anchor" | "file"

@@ -28,7 +28,17 @@ class CollectionPolicyWitnesses(unittest.TestCase):
             self.fail('A matching empty result must not invoke fallback')
         branches = [(lambda _: True, lambda _: [])]
         self.assertEqual(apply_first(1, branches, forbidden), [])
-        self.assertEqual(apply_all(1, branches, forbidden), [[]])
+        self.assertEqual(apply_all(1, branches, forbidden), [])
+
+    def test_allmatches_aggregates_only_exterior_results(self):
+        branches = [(lambda _: True, lambda _: [1, 2]),
+                    (lambda _: True, lambda _: [2, 3])]
+        self.assertEqual(apply_all(1, branches), [1, 2, 2, 3])
+        nested = [(lambda _: True, lambda _: [[1, 2]])]
+        self.assertEqual(apply_all(1, nested), [[1, 2]])
+
+    def test_allmatches_fallback_contributes_without_a_wrapper(self):
+        self.assertEqual(apply_all(0, [], lambda _: [1, 2]), [1, 2])
 
     def test_bool_predicate_and_explicit_equality_differ(self):
         condition = lambda _: False

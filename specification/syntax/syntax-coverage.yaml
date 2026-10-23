@@ -1583,3 +1583,43 @@ productions:
     ast:
       disposition: normalized
       target: composition_direction
+  trait-declaration:
+    cst: TraitDeclarationSyntax
+    ast:
+      disposition: normalized
+      target: TraitDecl
+  trait-requirement:
+    cst: TraitRequirementSyntax
+    ast:
+      disposition: normalized
+      target: trait_requirement
+  functional-parameter-type:
+    cst: FunctionalParameterTypeSyntax
+    ast:
+      disposition: normalized
+      target: FunctionalParameterType
+  policy-expression:
+    cst: PolicyExpressionSyntax
+    ast:
+      disposition: normalized
+      target: FunctionalPolicyExpr
+  policy-mode:
+    cst: PolicyModeSyntax
+    ast:
+      disposition: normalized
+      target: decision_mode
+  operator-reference:
+    cst: OperatorReferenceSyntax
+    ast:
+      disposition: normalized
+      target: OperatorReferenceExpr
+  functional-input-reference:
+    cst: FunctionalInputReferenceSyntax
+    ast:
+      disposition: normalized
+      target: FunctionalInputExpr
+  pure-operator-symbol:
+    cst: PureOperatorSymbolSyntax
+    ast:
+      disposition: normalized
+      target: string

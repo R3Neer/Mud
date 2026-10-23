@@ -23,13 +23,15 @@ affects:
 
 # ADR-146 — Alias operator signatures and derived updates
 
+- Amended by: [[ADR-185-functional-operator-fields-and-global-signature-coherence|D-185]].
+
 ## Context
 
 The author accepts alias-owned operators with explicit public signatures, no proof-generated inverse signatures and derived updates. This extends the existing operator, alias, construction and write-back contracts without selecting unresolved lookup/inheritance/descriptor rules.
 
 ## Decision
 
-Declarations use `a * (factor: Num): Vector2 := value-body`. Bare operands have the enclosing applied alias type; explicit operands use `(name: type)`. At least one operand has the owner alias type, explicitly or by omission. Unary + and - and binary +, -, *, /, %, |, &, ^, -- are the closed overloadable set. Keep existing precedence/grouping. Logical, comparison, type/membership, conversion, contextual and assignment operations cannot be directly overloaded. Equality and ordering retain their existing representation/nominal contracts.
+Canonical declarations use a symbol-named functional field such as `*: (a: Vector2) --> (factor: Num) --> Vector2 = body`. The operand-header form `a * (factor: Num): Vector2 := body` remains sugar; its bare operands have the enclosing applied alias type and explicit operands use `(name: type)`. At least one operand has the owner alias type, explicitly or by omission. Unary + and - and binary +, -, *, /, %, |, &, ^, -- are the closed overloadable set. Keep existing precedence/grouping. Logical, comparison, type/membership, conversion, contextual and assignment operations cannot be directly overloaded. Equality and ordering retain their existing representation/nominal contracts.
 
 A declaration introduces only its written ordered signature. The inverse is explicitly declared and can delegate: `(factor: Num) * b: Vector2 := b * factor`. Same-type signatures already admit exchanged values without guaranteeing equal results. No algebraic metadata is special; no proof creates signatures or resolves ambiguity. Valid optimizations preserve ordinary result/error/observation contracts.
 
