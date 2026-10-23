@@ -13,6 +13,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -55,16 +56,17 @@ to admitted containing bodies; let/mut are not file-root declarations.
 
 ```mud
 let labels: Int -> String = 1 -> "one", 2 -> "two"
-let describe: Int --> String [ordered] = first {
+let describe: Int -->[ordered] String [ordered] =
     value > 0 --> "positive",
         _ --> "other"
-}
 ```
 
 `->` and `-->` admit complete key/input and value/output types. Arrows associate
-right: A -> B -> C is A -> (B -> C). An exact arrow's trailing specification constrains associations:
-A -> B[2] -> C[3] groups as A -> (B -> C[3])[2]. A functional arrow instead
-uses type-adjacent input/output specifications under [[types/functional-families]].
+right: A -> B -> C is A -> (B -> C). Intrinsic specifications immediately follow
+their arrow: A ->[2] B ->[3] C groups as A ->[2] (B ->[3] C).
+Type-adjacent specifications always describe input/output value collections.
+A -->[ordered] B selects branches by priority independently of B's shape.
+Full stage/ownership rules are in [[types/functional-families]].
 Grouping distinguishes a residual policy from a collection of policies;
 A --> (B --> C)[3 ordered] produces three residual values. A dictionary itself is one outer value.
 
@@ -111,21 +113,19 @@ Resolve the member/input/output types and written structure without prematurely
 supplying a singleton for an omitted inference slot. Then infer the counted
 layer using the owner's initializer/body. A modifier-only specification such
 as [ordered] or [unique] still has omitted cardinality. It preserves the written output guarantee without imposing a singleton count;
-first/all independently selects branch mode. Existing nested
+-->[ordered] independently selects branch priority. Existing nested
 value contracts and arrow grouping remain independent; a receiving type-only
 contract is not inferred anew from every supplied value.
 
 ```mud
 let names: Int -> String = 1 -> "one", 2 -> "two"  # two associations
 let noNames: Int -> String = empty                 # zero associations
-mut growing: Int -> String [*] = empty             # explicit variable capacity
-let partial: Int --> String [ordered] = first {
+mut growing: Int ->[*] String = empty             # explicit variable capacity
+let partial: Int -->[ordered] String [ordered] =
     > 0 --> "positive"  # [0..1]
-}
-let total: Int --> String [1 ordered] = first {
+let total: Int -->[ordered] String [1 ordered] =
     > 0 --> "positive",
         _ --> "other"
-}
 ```
 
 Without [*], growing defaults to one association and cannot initialize from
@@ -358,8 +358,8 @@ Fallback is unique and last. It applies only when no ordinary selector applies.
 A selected result yielding empty has handled that input and does not trigger
 fallback. Exhaustive treatment is independent of output presence: `_ --> empty`
 is valid when the output admits absence. Selected computing faults propagate;
-they do not retry another branch or fallback. The first constructor chooses FirstMatch and the
-first applicable selector; all or unmarked branches use AllMatches, evaluating all ordinary selectors
+they do not retry another branch or fallback. An arrow marked -->[ordered] uses FirstMatch and the
+first applicable selector; an unmarked branch definition uses AllMatches, evaluating all ordinary selectors
 in one snapshot and produces all applicable results. Positive-minimum coverage is required in
 both modes; unreachable/redundant cases are diagnosed when provable.
 
@@ -374,7 +374,7 @@ fallback and finite occurrence evidence follow [[types/functional-families]].
 
 Input and output types may be inferred only with unique evidence/context.
 `_ --> .name` alone does not establish an input type. An explicit input with
-an output hole can, as in `let naming: Person --> _ = first { _ --> .name }`.
+an output hole can, as in `let naming: Person --> _ = .name`.
 Output cardinality follows admitted branch results, not coverage alone; a
 covered FirstMatch returning optional values can still produce empty.
 
@@ -484,10 +484,9 @@ Distinct outer aliases with equal projected contents address the same key.
 ```mud
 alias Journey { let departure: City; let arrival: City }
 # Within an admitted owner:
-let sameCity: (origin: City, destination: City) --> Bool [ordered] = first {
+let sameCity: (origin: City, destination: City) -->[ordered] Bool [ordered] =
     _ --> .origin == .destination
     # sameCity[journey] exposes origin/destination, not departure/arrival.
-}
 ```
 
 A zero-admitting application-result contract permits uncovered inputs, producing

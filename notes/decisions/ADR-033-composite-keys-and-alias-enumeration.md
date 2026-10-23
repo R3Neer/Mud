@@ -32,7 +32,7 @@ alias Square {
     let rank: Rank
 }
 
-board: Square -> Piece [0..32 ordered]
+board: Square ->[0..32 ordered] Piece
 ```
 
 Ordinary access constructs a single contextual key:

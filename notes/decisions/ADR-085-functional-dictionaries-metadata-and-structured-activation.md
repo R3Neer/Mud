@@ -13,6 +13,8 @@ affects:
 
 # ADR-085 — Functional dictionaries, metadata and structured activation
 
+- Amended by: [[ADR-186-arrow-owned-dictionary-specifications|D-186]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
@@ -155,7 +157,7 @@ Every recursive component of the call graph must have a well-founded measure tha
 #### FirstMatch body mode
 
 ```mud
-first { selector --> result }
+A -->[ordered] B = selector --> result
 ```
 
 - Ordinary branches are tested in source order.
@@ -199,13 +201,13 @@ The elaborated mode is called `AllMatches`.
 A -> B -> C
 ```
 
-is elaborated as `A -> (B -> C)`. The same applies to mixed chains. Exact-arrow suffixes count associations; functional-arrow suffixes qualify adjacent input/output values under D-183. Both arrows associate right:
+is elaborated as `A -> (B -> C)`. The same applies to mixed chains. Exact-arrow ->[...] specifications count associations; functional-arrow suffixes qualify adjacent input/output values under D-183. Both arrows associate right:
 
 ```mud
-A -> B [2] -> C [3]
+A ->[2] B ->[3] C
 ```
 
-is elaborated as `A -> (B -> C [3]) [2]`.
+is elaborated as `A ->[2] (B ->[3] C)`.
 
 Parentheses remain mandatory to change that grouping, to use a complete dictionary as a key, or to apply an outer collection to the complete dictionary value.
 

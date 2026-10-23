@@ -343,15 +343,16 @@ module MUDSurface {
                                           type_expr* remaining)
                   | NamedProductType(named_product_component first,
                                      named_product_component* remaining)
-                  -- Arrow-owned omitted counts are elaborated by owner/body.
-                  -- Decision branches specifies application results, not branch count.
+                  -- Exact entries belongs to ->[...]; functional policy belongs
+                  -- to -->[...]. Input/output type expressions retain their own
+                  -- collection layers. Policy modifiers never count branches.
                   | ExactDictionaryType(type_expr key_type,
                                         type_expr value_type,
                                         collection_spec entries)
                   | DecisionDictionaryType(type_expr input_type,
                                            type_expr output_type,
                                            decision_mode mode,
-                                           collection_spec branches)
+                                           collection_spec policy)
         attributes (source_origin origin)
 
     named_product_component = (component_name name, type_expr type)
@@ -668,7 +669,6 @@ module MUDSurface {
     expr = ComprehensionExpr(iteration_binding binding, expr source, expr? step,
                              expression_block? filter, value_block body)
          | FunctionalInputExpr
-         | FunctionalPolicyExpr(decision_mode mode, expr* branches)
          | OperatorReferenceExpr(string symbol)
          | CompositionExpr(expr left, composition_direction direction, expr right)
          | ImplicitMemberExpr(identifier_name member)

@@ -152,7 +152,6 @@ fixed_tokens:
 - spelling: foreach
 - spelling: '<<'
 - spelling: '>>'
-- spelling: first
 - spelling: trait
 - spelling: value
 named_tokens:
@@ -418,10 +417,9 @@ lexical_forms:
     rhs: '"true" | "false" | "empty" | "all" | "_"'
     references: []
   contextual-word:
-    rhs: "\"abstract\" | \"part\" | \"only\" | \"uses\" | \"always\" | \"start\" | \"first\"\n      | \"\
-      mud\"\n      | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" |\
-      \ \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\"\
-      \ | \"cycle\""
+    rhs: "\"abstract\" | \"part\" | \"only\" | \"uses\" | \"always\" | \"start\"\n      | \"mud\"\n    \
+      \  | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\"\
+      \ | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
     references: []
   identifier:
     rhs: "contextual-word\n      | identifier-form"
@@ -540,10 +538,12 @@ syntax_nodes:
     - type-reference
   stored-dictionary-link:
     kind: StoredDictionaryLinkSyntax
-    rhs: "dictionary-arrow , stored-dictionary-value-type\n        , { collection-specification }"
+    rhs: "\"->\" , [ collection-specification ] , stored-dictionary-value-type\n        , { collection-specification\
+      \ }\n      | \"-->\" , [ functional-policy-specification ] , stored-dictionary-value-type\n      \
+      \  , { collection-specification }"
     references:
     - collection-specification
-    - dictionary-arrow
+    - functional-policy-specification
     - stored-dictionary-value-type
   stored-dictionary-type:
     kind: StoredDictionaryTypeSyntax
@@ -1335,15 +1335,13 @@ syntax_nodes:
     - dictionary-link
   dictionary-link:
     kind: DictionaryLinkSyntax
-    rhs: "dictionary-arrow , dictionary-value-type\n        , { collection-specification }"
+    rhs: "\"->\" , [ collection-specification ] , dictionary-value-type\n        , { collection-specification\
+      \ }\n      | \"-->\" , [ functional-policy-specification ] , dictionary-value-type\n        , { collection-specification\
+      \ }"
     references:
     - collection-specification
-    - dictionary-arrow
     - dictionary-value-type
-  dictionary-arrow:
-    kind: DictionaryArrowSyntax
-    rhs: '"->" | "-->"'
-    references: []
+    - functional-policy-specification
   dictionary-value-type:
     kind: DictionaryValueTypeSyntax
     rhs: union-type-expression
@@ -1980,15 +1978,14 @@ syntax_nodes:
     - role-name
   primary-expression:
     kind: PrimaryExpressionSyntax
-    rhs: "policy-expression\n      | operator-reference\n      | functional-input-reference\n      | generic-family-member\n\
-      \      | explicit-generic-type-application\n      | grouped-postfix-generic-type-application\n   \
-      \   | literal\n      | take-expression\n      | raise-expression\n      | selection-expression\n \
-      \     | comprehension-expression\n      | implicit-member-expression\n      | qualified-name\n   \
-      \   | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n\
-      \      | point-component-expression\n      | quantifier-expression\n      | random-expression\n  \
-      \    | \"thing\" | \"alias\" | \"family\" | \"magnitude\" | \"trait\" | \"rule\"\n      | \"action\"\
-      \ | \"subaction\" | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n      | \"(\"\
-      \ , expression , \")\""
+    rhs: "operator-reference\n      | functional-input-reference\n      | generic-family-member\n      |\
+      \ explicit-generic-type-application\n      | grouped-postfix-generic-type-application\n      | literal\n\
+      \      | take-expression\n      | raise-expression\n      | selection-expression\n      | comprehension-expression\n\
+      \      | implicit-member-expression\n      | qualified-name\n      | structural-literal\n      | collection-literal\n\
+      \      | interval-expression\n      | quantity-expression\n      | point-component-expression\n  \
+      \    | quantifier-expression\n      | random-expression\n      | \"thing\" | \"alias\" | \"family\"\
+      \ | \"magnitude\" | \"trait\" | \"rule\"\n      | \"action\" | \"subaction\" | \"look\" | \"sublook\"\
+      \ | \"message\" | \"submessage\" | \"test\"\n      | \"(\" , expression , \")\""
     references:
     - collection-literal
     - comprehension-expression
@@ -2002,7 +1999,6 @@ syntax_nodes:
     - literal
     - operator-reference
     - point-component-expression
-    - policy-expression
     - qualified-name
     - quantifier-expression
     - quantity-expression
@@ -2636,19 +2632,6 @@ syntax_nodes:
     references:
     - type-expression
     - variable-name
-  policy-expression:
-    kind: PolicyExpressionSyntax
-    rhs: "policy-mode , \"{\" , declaration-layout , mapping-expression\n        , { \",\" , declaration-layout\
-      \ , mapping-expression }\n        , [ required-separation ] , \"}\""
-    references:
-    - declaration-layout
-    - mapping-expression
-    - policy-mode
-    - required-separation
-  policy-mode:
-    kind: PolicyModeSyntax
-    rhs: '"first" | "all"'
-    references: []
   operator-reference:
     kind: OperatorReferenceSyntax
     rhs: '"(" , pure-operator-symbol , ")"'
@@ -2665,3 +2648,15 @@ syntax_nodes:
       has\" | \"in\" | \">>\" | \"<<\""
     references:
     - overload-binary-operator
+  functional-policy-specification:
+    kind: FunctionalPolicySpecificationSyntax
+    rhs: "\"[\" , functional-policy-modifier\n        , { optional-comma , functional-policy-modifier }\
+      \ , \"]\""
+    references:
+    - functional-policy-modifier
+    - optional-comma
+  functional-policy-modifier:
+    kind: FunctionalPolicyModifierSyntax
+    rhs: '"ordered" | "unique" , [ "by" , collection-key-path ]'
+    references:
+    - collection-key-path

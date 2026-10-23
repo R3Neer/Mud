@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -387,8 +388,9 @@ An exact association checks one key and one complete value against its contextua
 Exact dictionary operators operate on complete associations with their defined shared-key precedence; ordered equality and value-uniqueness requirements remain part of the contract. Functional operators are extensional combinations of result computations, not implicit edits or concatenation of branch lists. Their operand/result contracts and termination proofs must all remain valid.
 
 FunctionalInputExpr obtains the available cumulative input contract.
-FunctionalPolicyExpr checks its supplied/inferred input scheme, selector scopes
-and contribution contracts under [[types/functional-families]]. AllMatches sums
+Functional branch formation checks its input scheme, selector scopes and
+contribution contracts under [[types/functional-families]]. Intrinsic arrow
+modifiers select priority and aggregate uniqueness separately from type suffixes. AllMatches sums
 exterior contribution populations; a branch need not meet the aggregate's
 minimum independently. OperatorReferenceExpr retains a constrained visible
 signature family until static use determines a specialization. Constructing or

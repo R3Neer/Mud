@@ -633,11 +633,6 @@ productions:
     ast:
       disposition: normalized
       target: declared_type
-  dictionary-arrow:
-    cst: DictionaryArrowSyntax
-    ast:
-      disposition: enum-or-property
-      target: declared_type
   dictionary-value-type:
     cst: DictionaryValueTypeSyntax
     ast:
@@ -1598,16 +1593,6 @@ productions:
     ast:
       disposition: normalized
       target: FunctionalParameterType
-  policy-expression:
-    cst: PolicyExpressionSyntax
-    ast:
-      disposition: normalized
-      target: FunctionalPolicyExpr
-  policy-mode:
-    cst: PolicyModeSyntax
-    ast:
-      disposition: normalized
-      target: decision_mode
   operator-reference:
     cst: OperatorReferenceSyntax
     ast:
@@ -1623,3 +1608,13 @@ productions:
     ast:
       disposition: normalized
       target: string
+  functional-policy-specification:
+    cst: FunctionalPolicySpecificationSyntax
+    ast:
+      disposition: normalized
+      target: collection_spec
+  functional-policy-modifier:
+    cst: FunctionalPolicyModifierSyntax
+    ast:
+      disposition: normalized
+      target: collection_uniqueness

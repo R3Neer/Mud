@@ -44,6 +44,9 @@
 -- No quantified scheme, runtime dispatch or selected type is stored here.
 
 module MUDNominalHIR {
+    -- Arrow-owned specifications retain SurfaceRef provenance only. Their
+    -- association counts, policy mode and result guarantees are typed facts;
+    -- they create no symbols/scopes or effective-contract HIR payloads.
     source_span = SourceSpan(string file, int start_byte, int end_byte)
     anchor = Anchor(string value)
     scope_id = ScopeId(int value)

@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -506,3 +507,7 @@ parameters only in the eligible immutable definition scopes of
 .member and compact curried application retain unresolved nominal candidates
 until the static scheme discharges their unique interpretation. The Nominal HIR
 stores scopes/candidates/references, never effective types or selected overloads.
+
+Intrinsic arrow specifications create no symbol, scope or anchor. Their key
+paths retain source references for later typed validation. first is an ordinary
+identifier; removing a body constructor does not remove lexical user bindings.

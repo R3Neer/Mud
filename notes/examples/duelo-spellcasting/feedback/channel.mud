@@ -10,13 +10,13 @@ abstract thing FeedbackChannel {
     let allowedModalities: FeedbackModality [* unique] = [
         FeedbackModality.Visual, FeedbackModality.Audio, FeedbackModality.Haptic
     ]
-    let profiles: Spell -> SpellFeedbackProfile [*] = empty
-    let global: FeedbackStage -> (FeedbackAsset [*]) [*] = empty
+    let profiles: Spell ->[*] SpellFeedbackProfile = empty
+    let global: FeedbackStage ->[*] (FeedbackAsset [*]) = empty
     let selectionRejected: FeedbackAsset [* ordered] = empty
     # A replaceable delivery batch, not an execution history.
     mut requests: FeedbackRequest [* ordered] = empty
 
-    let phasesFor: FeedbackPhaseSource --> FeedbackStage [ordered] = first {
+    let phasesFor: FeedbackPhaseSource -->[ordered] FeedbackStage [ordered] =
         .kind == SpellEventKind.Selected --> [FeedbackStage.Selected],
         .kind == SpellEventKind.Cancelled --> [FeedbackStage.Cancelled],
         .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Success -->
@@ -25,7 +25,6 @@ abstract thing FeedbackChannel {
             [FeedbackStage.Partial],
         .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Failed -->
             [FeedbackStage.Failed]
-    }
 
     let phaseGroupsFor: (event: SpellEvent) --> FeedbackGroup [ordered] := {
         let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
@@ -42,13 +41,12 @@ abstract thing FeedbackChannel {
         groups
     }
 
-    let rejectionAssetsFor: SpellEvent --> FeedbackAsset [ordered] := first {
+    let rejectionAssetsFor: SpellEvent -->[ordered] FeedbackAsset [ordered] :=
         .kind == SpellEventKind.SelectionRejected --> {
             let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
             foreach asset in selectionRejected
                 if allowedAssets has asset --> asset
         }
-    }
 
     let draftFor: (event: SpellEvent) --> FeedbackRequest := FeedbackRequest(
         event.caster,
@@ -59,8 +57,8 @@ abstract thing FeedbackChannel {
     )
 
     let requestFor := draftFor
-        >> all {
+        >> (
             (exists group in .groups : group.effects != empty)
                 or .rejected != empty --> value
-        }
+        )
 }

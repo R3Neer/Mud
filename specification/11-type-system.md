@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -150,7 +151,7 @@ The following constructors are metalanguage, not new source syntax. $\mathsf{Man
 
 An ordinary omitted collection specification means $[1,1]$; the omission remains source provenance. In an immutable stored field with an initialiser, omitted outer cardinality instead inherits the exact external shape of that initial value. A dictionary remains one outer value independently of its association count. An outwardly mutable field keeps $[1,1]$ when omitted. A bare star is resolved against the applicable effective limits, not against a guessed finite runtime population. All actual collections are finite even when their static upper bound is unbounded. Nested collections occupy members without implicit flattening.
 
-For exact dictionaries the bracketed specification following the arrow constrains associations, not a collection of independent dictionaries. For functional dictionaries type-adjacent specifications constrain complete input/output values, independently of residual-policy population and selection mode. Each arrow-owned omitted cardinality follows the owner matrix in [[17-dictionaries#Omitted cardinality and owner contracts]]: infer immutable initializers and derived bodies, retain [1] for mutable stored exact dictionaries and type-only contracts. Inference is static over admitted inputs/views, not the first invocation. Written bounds are checked before an inferred policy can satisfy a positive-minimum receiving contract. The value contract may itself contain a collection or another dictionary. String is a positional sequence as one basic value, not Char with a collection-order modifier.
+For exact dictionaries the bracketed specification immediately following -> constrains associations, not a collection of independent dictionaries. For functional dictionaries type-adjacent specifications constrain complete input/output values, independently of residual-policy population and selection mode. Each arrow-owned omitted cardinality follows the owner matrix in [[17-dictionaries#Omitted cardinality and owner contracts]]: infer immutable initializers and derived bodies, retain [1] for mutable stored exact dictionaries and type-only contracts. Inference is static over admitted inputs/views, not the first invocation. Written bounds are checked before an inferred policy can satisfy a positive-minimum receiving contract. The value contract may itself contain a collection or another dictionary. String is a positional sequence as one basic value, not Char with a collection-order modifier.
 
 > [!rule] MUD-TYPE-002 — Well-formed type constructors
 > Every referenced declaration must be visible and have the required category. Cardinalities have nonnegative integral lower bounds and upper bounds no smaller than their lower bounds. Keyed paths and order paths must be statically meaningful and satisfy their stability contracts. Dictionary arrows must be the complete outer form, including after resolving representation aliases. A collection specification after a complete union qualifies that union; it does not qualify only its last alternative.

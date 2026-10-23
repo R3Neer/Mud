@@ -19,7 +19,7 @@ abstract thing Entity {
     mut grabbed: Bool = false
     mut shape: Shape [?] = empty
     mut kinds: SympathyKind [* unique] = empty
-    mut ownEffects: String -> EffectValue [*] = empty
+    mut ownEffects: String ->[*] EffectValue = empty
 }
 
 abstract thing Creature as Entity {

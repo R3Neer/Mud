@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 180.
-- Current: 176.
+- Total: 181.
+- Current: 177.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -199,6 +199,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-183 | current | 2026-10-23 | [[notes/decisions/ADR-183-functional-families-currification-and-input-syntax|Functional families, currification and input syntax]] |
 | D-184 | current | 2026-10-23 | [[notes/decisions/ADR-184-structural-traits-and-capability-views|Structural traits and capability views]] |
 | D-185 | current | 2026-10-23 | [[notes/decisions/ADR-185-functional-operator-fields-and-global-signature-coherence|Functional operator fields and global signature coherence]] |
+| D-186 | current | 2026-10-23 | [[notes/decisions/ADR-186-arrow-owned-dictionary-specifications|Arrow-owned dictionary specifications]] |
 
 ## Reserved identifiers
 

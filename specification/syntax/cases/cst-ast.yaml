@@ -576,9 +576,9 @@ cases:
   produces_ast: true
 - id: dictionary-chain-right-associative
   category: type
-  source: "thing Tables {\n    table: A -> B [2] --> C [3 ordered]\n}\n"
+  source: "thing Tables {\n    table: A ->[2] B --> C [3 ordered]\n}\n"
   cst_root: MudFileSyntax
-  ast: ExactDictionaryType(A, DecisionDictionaryType(B, C, branches=[3 ordered], mode=SelectionUnspecified), entries=[2])
+  ast: ExactDictionaryType(A, DecisionDictionaryType(B, C[3 ordered], policy=omitted, mode=SelectionUnspecified), entries=[2])
   normalizations:
   - fold-dictionary-chain-right
   produces_ast: true
@@ -615,10 +615,9 @@ cases:
   produces_ast: true
 - id: decision-fallback
   category: dictionary
-  source: "thing Policies {\n    let policy: Any --> String [ordered] = first {\n        value is Nat --> \"\
-    number\",\n            _ --> \"other\"\n    }\n}\n"
+  source: "thing Policies {\n    let policy: Any -->[ordered] String [ordered] =\n        value is Nat --> \"number\",\n            _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Any, String, SelectionUnspecified) with DecisionBranchExpr and FallbackLiteral
+  ast: "DecisionDictionaryType(Any, String, FirstMatch) with DecisionBranchExpr and FallbackLiteral"
   produces_ast: true
 - id: decision-mut-rejected
   category: validation-before-ast
@@ -711,8 +710,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-set-union
   category: expression
-  source: "rule Merge for left: Key -> Value [*], right: Key -> Value [*] {\n    let (left | right) == (left | right)\n\
-    }\n"
+  source: "rule Merge for left: Key ->[*] Value, right: Key ->[*] Value {\n    let (left | right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolOr)
   normalizations:
@@ -720,8 +718,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-symmetric-difference
   category: expression
-  source: "rule Exclusive for left: Key -> Value [*], right: Key -> Value [*] {\n    let (left ^ right) == (left\
-    \ ^ right)\n}\n"
+  source: "rule Exclusive for left: Key ->[*] Value, right: Key ->[*] Value {\n    let (left ^ right) == (left ^ right)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolXor)
   normalizations:
@@ -738,8 +735,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-intersection-and-difference
   category: expression
-  source: "rule ExactAlgebra for left: Key -> Value [*], right: Key -> Value [*] {\n    let (left & right) == (left\
-    \ & right) and\n    let (left -- right) == (left -- right)\n}\n"
+  source: "rule ExactAlgebra for left: Key ->[*] Value, right: Key ->[*] Value {\n    let (left & right) == (left & right) and\n    let (left -- right) == (left -- right)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolAnd) with ExactDictionarySetOperationExpr expectations
   normalizations:
@@ -769,20 +765,16 @@ cases:
   produces_ast: true
 - id: functional-ordered-union-preserves-output-order
   category: dictionary
-  source: "thing Policies {\n    let first: A --> B [ordered] = first {\n        _ --> FirstValue\n    }\n\
-    \    let second: A --> B [ordered] = first {\n        _ --> SecondValue\n    }\n    let combined: A -->\
-    \ B [ordered] = first | second\n}\n"
+  source: "thing Policies {\n    let first: A -->[ordered] B [ordered] =\n        _ --> FirstValue\n    let second: A -->[ordered] B [ordered] =\n        _ --> SecondValue\n    let combined: A --> B [ordered] = first | second\n}\n"
   cst_root: MudFileSyntax
   normalizations:
   - preserve-compatible-output-order-independently-of-branch-mode
   produces_ast: true
 - id: iis-functional-narrowing
   category: dictionary
-  source: "thing Descriptions {\n    let describe: Identifier --> String [ordered] = first {\n        value\
-    \ iis EmployeeId --> \"Employee {value}\",\n            value iis PersonId --> \"Person {value}\",\n  \
-    \          value is Identifier --> \"Identifier {value}\"\n    }\n}\n"
+  source: "thing Descriptions {\n    let describe: Identifier -->[ordered] String [ordered] =\n        value iis EmployeeId --> \"Employee {value}\",\n            value iis PersonId --> \"Person {value}\",\n            value is Identifier --> \"Identifier {value}\"\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Identifier, String, SelectionUnspecified) with ExactTypeTestExpr
+  ast: "DecisionDictionaryType(Identifier, String, FirstMatch) with ExactTypeTestExpr"
   produces_ast: true
 - id: mud-path-membership
   category: expression
@@ -893,7 +885,7 @@ cases:
   produces_ast: false
 - id: exact-dictionary-substitution
   category: effect
-  source: "action ChangeCapital for mut capitals: Country -> City [*] {\n    then add (Spain -> Barcelona) to capitals\n}\n"
+  source: "action ChangeCapital for mut capitals: Country ->[*] City {\n    then add (Spain -> Barcelona) to capitals\n}\n"
   cst_root: MudFileSyntax
   ast: AddValueEffect(ExactAssociationExpr)
   normalizations:
@@ -901,8 +893,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-iterate-keys
   category: iteration
-  source: "action Visit for capitals: Country -> City [*],\n    mut visited: Country [* unique] {\n    then\
-    \ foreach country in capitals: {\n        add country to visited\n    }\n}\n"
+  source: "action Visit for capitals: Country ->[*] City,\n    mut visited: Country [* unique] {\n    then foreach country in capitals: {\n        add country to visited\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=IterationBinding(NameBinding(country)), source=capitals)
   normalizations:
@@ -910,8 +901,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-iterate-associations
   category: iteration
-  source: "action Visit for capitals: Country -> City [*],\n    mut visited: City [* unique] {\n    then foreach\
-    \ (country, city) in capitals: {\n        add city to visited\n    }\n}\n"
+  source: "action Visit for capitals: Country ->[*] City,\n    mut visited: City [* unique] {\n    then foreach (country, city) in capitals: {\n        add city to visited\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=IterationBinding(PositionalBinding(NameBinding(country), NameBinding(city))), source=capitals)
   normalizations:
@@ -919,7 +909,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-unique-collision-noop
   category: execution-contract
-  source: "thing Registry {\n    mut rooms: Person -> Room [* unique] = Ana -> BlueRoom\n}\naction AddRoom for registry: Registry [mut] {\n    then add (Luis -> BlueRoom) to registry.rooms\n}\n"
+  source: "thing Registry {\n    mut rooms: Person ->[* unique] Room = Ana -> BlueRoom\n}\naction AddRoom for registry: Registry [mut] {\n    then add (Luis -> BlueRoom) to registry.rooms\n}\n"
   cst_root: MudFileSyntax
   ast: AddValueEffect(ExactAssociationExpr)
   normalizations:
@@ -927,7 +917,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-missing-key-empty
   category: expression
-  source: "rule Missing for capitals: Country -> City [*] {\n    capitals[Italy] == empty\n}\n"
+  source: "rule Missing for capitals: Country ->[*] City {\n    capitals[Italy] == empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(capitals, Italy)
   normalizations:
@@ -943,49 +933,43 @@ cases:
   produces_ast: true
 - id: functional-explicit-value-selector
   category: dictionary
-  source: "thing Seasons {\n    let season: Month --> String [ordered] = first {\n        value == January\
-    \ --> \"winter\",\n            _ --> \"other\"\n    }\n}\n"
+  source: "thing Seasons {\n    let season: Month -->[ordered] String [ordered] =\n        value == January --> \"winter\",\n            _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=ComparisonChainExpr(value, Equal, January))
   produces_ast: true
 - id: functional-explicit-interval-selector
   category: dictionary
-  source: "thing Seasons {\n    let season: Month --> String [ordered] = first {\n        [March..May] has\
-    \ value --> \"spring\",\n            _ --> \"other\"\n    }\n}\n"
+  source: "thing Seasons {\n    let season: Month -->[ordered] String [ordered] =\n        [March..May] has value --> \"spring\",\n            _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=ComparisonChainExpr(Interval, HasMember, value))
   produces_ast: true
 - id: functional-implicit-selector-rejected
   category: typing-after-ast
-  source: "thing Seasons {\n    let season: Month --> String [ordered] = first {\n        January --> \"winter\"\
-    ,\n            _ --> \"other\"\n    }\n}\n"
+  source: "thing Seasons {\n    let season: Month -->[ordered] String [ordered] =\n        January --> \"winter\",\n            _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - functional-selector-must-be-bool
   produces_ast: true
 - id: functional-boolean-selector
   category: dictionary
-  source: "thing Seasons {\n    let season: Month --> String [ordered] = first {\n        value == June or\
-    \ value == July --> \"summer\",\n            _ --> \"other\"\n    }\n}\n"
+  source: "thing Seasons {\n    let season: Month -->[ordered] String [ordered] =\n        value == June or value == July --> \"summer\",\n            _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=BooleanExpr)
   produces_ast: true
 - id: functional-applicable-empty-fallback
   category: execution-contract
-  source: "thing Labels {\n    let label: Person --> String [ordered] = first {\n        value is Person -->\
-    \ value.nickname,\n            _ --> value~name\n    }\n}\n"
+  source: "thing Labels {\n    let label: Person -->[ordered] String [ordered] =\n        value is Person --> value.nickname,\n            _ --> value~name\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Person, String, SelectionUnspecified)
+  ast: "DecisionDictionaryType(Person, String, FirstMatch)"
   normalizations:
   - distinguish-applicable-branch-from-produced-result
   - fallback-only-when-no-ordinary-result
   produces_ast: true
 - id: functional-external-read-dependencies
   category: semantic-graph
-  source: "thing Pricing {\n    let price: Product --> Money [ordered] = first {\n        value in Shop.discounted\
-    \ --> value.basePrice * Shop.discount,\n            _ --> value.basePrice\n    }\n}\n"
+  source: "thing Pricing {\n    let price: Product -->[ordered] Money [ordered] =\n        value in Shop.discounted --> value.basePrice * Shop.discount,\n            _ --> value.basePrice\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Product, Money, SelectionUnspecified)
+  ast: "DecisionDictionaryType(Product, Money, FirstMatch)"
   normalizations:
   - record-branch-external-read-dependencies
   - evaluate-on-one-world-snapshot
@@ -1000,17 +984,15 @@ cases:
   produces_ast: true
 - id: functional-recursion-decreasing
   category: termination
-  source: "thing Policies {\n    let depth: Nat --> Nat [ordered] = first {\n        0 --> 0,\n           \
-    \ value > 0 --> depth[value - 1],\n            _ --> 0\n    }\n}\n"
+  source: "thing Policies {\n    let depth: Nat -->[ordered] Nat [ordered] =\n        0 --> 0,\n            value > 0 --> depth[value - 1],\n            _ --> 0\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Nat, Nat, SelectionUnspecified)
+  ast: "DecisionDictionaryType(Nat, Nat, FirstMatch)"
   normalizations:
   - prove-recursion-by-numeric-descent
   produces_ast: true
 - id: functional-recursion-without-descent-rejected
   category: validation-after-resolution
-  source: "thing Policies {\n    let loop: Nat --> Nat [ordered] = first {\n        value >= 0 --> loop[value]\n\
-    \    }\n}\n"
+  source: "thing Policies {\n    let loop: Nat -->[ordered] Nat [ordered] =\n        value >= 0 --> loop[value]\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - functional-recursion-termination-not-proven
@@ -1039,8 +1021,7 @@ cases:
   produces_ast: true
 - id: functional-branch-after-fallback-rejected
   category: validation-before-ast
-  source: "thing Broken {\n    let policy: A --> B [ordered] = first {\n        _ --> DefaultB,\n         \
-    \   value is A --> OtherB\n    }\n}\n"
+  source: "thing Broken {\n    let policy: A -->[ordered] B [ordered] =\n        _ --> DefaultB,\n            value is A --> OtherB\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - branch-after-fallback-unreachable
@@ -1054,20 +1035,19 @@ cases:
   produces_ast: false
 - id: firstmatch-fallback-cardinality
   category: dictionary
-  source: "thing Policies {\n    let policy: A --> B [ordered] = first {\n        _ --> DefaultB\n    }\n}\n"
+  source: "thing Policies {\n    let policy: A -->[ordered] B [ordered] =\n        _ --> DefaultB\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(A, B, SelectionUnspecified)
+  ast: "DecisionDictionaryType(A, B, FirstMatch)"
   normalizations:
   - derive-application-cardinality-one-from-fallback
   produces_ast: true
 - id: firstmatch-unique-redundant
   category: diagnostic
-  source: "thing Policies {\n    let policy: A --> B [ordered unique] = first {\n        _ --> DefaultB\n \
-    \   }\n}\n"
+  source: "thing Policies {\n    let policy: A -->[ordered] B [ordered unique] =\n        _ --> DefaultB\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - redundant-unique-on-first-match
-  ast: DecisionDictionaryType(A, B, SelectionUnspecified)
+  ast: "DecisionDictionaryType(A, B, FirstMatch)"
   produces_ast: true
 - id: allmatches-overlap-deduplicated
   category: dictionary
@@ -1089,22 +1069,20 @@ cases:
   produces_ast: true
 - id: functional-ordered-xor-preserves-output-order
   category: dictionary
-  source: "thing Policies {\n    let first: A --> B [ordered unique] = first {\n        _ --> FirstB\n    }\n\
-    \    let second: A --> B [ordered unique] = first {\n        _ --> SecondB\n    }\n    let combined: A\
-    \ --> B [ordered unique] = first ^ second\n}\n"
+  source: "thing Policies {\n    let first: A -->[ordered] B [ordered unique] =\n        _ --> FirstB\n    let second: A -->[ordered] B [ordered unique] =\n        _ --> SecondB\n    let combined: A --> B [ordered unique] = first ^ second\n}\n"
   cst_root: MudFileSyntax
   normalizations:
   - preserve-compatible-output-order-independently-of-branch-mode
   produces_ast: true
 - id: nested-dictionary-application
   category: expression
-  source: "rule Occupied for boardByGame: Game -> (Coordinate -> Piece [*]) [*], game: Game, square: Coordinate {\n    boardByGame[game][square] != empty\n}\n"
+  source: "rule Occupied for boardByGame: Game ->[*] (Coordinate -> Piece [*]) game: Game, square: Coordinate {\n    boardByGame[game][square] != empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(IndexExpr(boardByGame, game), square)
   produces_ast: true
 - id: dictionary-composition-by-application
   category: expression
-  source: "rule Weather for capitalOf: Country -> City [*], weatherOf: City -> Weather [*], country: Country {\n    weatherOf[capitalOf[country]] != empty\n}\n"
+  source: "rule Weather for capitalOf: Country ->[*] City, weatherOf: City ->[*] Weather, country: Country {\n    weatherOf[capitalOf[country]] != empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(weatherOf, IndexExpr(capitalOf, country))
   produces_ast: true
@@ -1125,10 +1103,9 @@ cases:
   produces_ast: true
 - id: product-as-functional-input
   category: dictionary
-  source: "thing Routes {\n    let route: (origin: City, destination: City) --> Route [ordered] = first {\n\
-    \        value.origin == value.destination --> EmptyRoute,\n            _ --> DefaultRoute\n    }\n}\n"
+  source: "thing Routes {\n    let route: (origin: City, destination: City) -->[ordered] Route [ordered] =\n        value.origin == value.destination --> EmptyRoute,\n            _ --> DefaultRoute\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(NamedProductType, Route, SelectionUnspecified)
+  ast: "DecisionDictionaryType(NamedProductType, Route, FirstMatch)"
   produces_ast: true
 - id: selection-direct-filter
   category: selection
@@ -1194,11 +1171,9 @@ cases:
   produces_ast: true
 - id: any-functional-narrowing
   category: dictionary
-  source: "thing Descriptions {\n    let describe: Any --> String [ordered] = first {\n        value iis PersonId\
-    \ --> \"Person {value}\",\n            value is Nat --> \"Natural {value}\",\n            _ --> \"Other\"\
-    \n    }\n}\n"
+  source: "thing Descriptions {\n    let describe: Any -->[ordered] String [ordered] =\n        value iis PersonId --> \"Person {value}\",\n            value is Nat --> \"Natural {value}\",\n            _ --> \"Other\"\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Any, String, SelectionUnspecified)
+  ast: "DecisionDictionaryType(Any, String, FirstMatch)"
   normalizations:
   - preserve-narrowing-in-branch-result
   produces_ast: true
@@ -1326,10 +1301,9 @@ cases:
   produces_ast: true
 - id: functional-branch-edit-operations
   category: semantic-operator
-  source: "thing Policies {\n    let policy: A --> B [ordered] = first {\n        value is SpecialA --> SpecialB,\n\
-    \            _ --> DefaultB\n    }\n}\n"
+  source: "thing Policies {\n    let policy: A -->[ordered] B [ordered] =\n        value is SpecialA --> SpecialB,\n            _ --> DefaultB\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(A, B, SelectionUnspecified)
+  ast: "DecisionDictionaryType(A, B, FirstMatch)"
   normalizations:
   - create-branch-before-fallback-by-default
   - update-branch-by-stable-anchor
@@ -1347,9 +1321,7 @@ cases:
   produces_ast: true
 - id: functional-ordered-intersection-preserves-order
   category: dictionary
-  source: "thing Policies {\n    let first: A --> B [ordered] = first {\n        _ --> SharedB\n    }\n   \
-    \ let second: A --> B [ordered] = first {\n        _ --> SharedB\n    }\n    let common: A --> B [ordered]\
-    \ = first & second\n}\n"
+  source: "thing Policies {\n    let first: A -->[ordered] B [ordered] =\n        _ --> SharedB\n    let second: A -->[ordered] B [ordered] =\n        _ --> SharedB\n    let common: A --> B [ordered] = first & second\n}\n"
   cst_root: MudFileSyntax
   ast: FunctionalDictionarySetOperationExpr(DictionaryIntersection)
   normalizations:
@@ -1357,9 +1329,7 @@ cases:
   produces_ast: true
 - id: functional-ordered-difference-preserves-order
   category: dictionary
-  source: "thing Policies {\n    let first: A --> B [ordered] = first {\n        _ --> FirstB\n    }\n    let\
-    \ second: A --> B [ordered] = first {\n        _ --> SecondB\n    }\n    let remaining: A --> B [ordered]\
-    \ = first -- second\n}\n"
+  source: "thing Policies {\n    let first: A -->[ordered] B [ordered] =\n        _ --> FirstB\n    let second: A -->[ordered] B [ordered] =\n        _ --> SecondB\n    let remaining: A --> B [ordered] = first -- second\n}\n"
   cst_root: MudFileSyntax
   ast: FunctionalDictionarySetOperationExpr(DictionaryDifference)
   normalizations:
@@ -1367,8 +1337,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-operation-order
   category: dictionary
-  source: "rule Merge for left: Key -> Value [* ordered], right: Key -> Value [* ordered] {\n    let (left |\
-    \ right) == (left | right)\n}\n"
+  source: "rule Merge for left: Key ->[* ordered] Value, right: Key ->[* ordered] Value {\n    let (left | right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionarySetOperationExpr(DictionaryUnion)
   normalizations:
@@ -1377,8 +1346,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-operation-unique-noop
   category: execution-contract
-  source: "rule Merge for left: Key -> Value [* unique], right: Key -> Value [* unique] {\n    let (left | right)\
-    \ == (left | right)\n}\n"
+  source: "rule Merge for left: Key ->[* unique] Value, right: Key ->[* unique] Value {\n    let (left | right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionarySetOperationExpr(DictionaryUnion)
   normalizations:
@@ -1387,8 +1355,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-operation-cardinality-derived
   category: typing-after-ast
-  source: "rule Merge for left: Key -> Value [2..4], right: Key -> Value [3..5] {\n    let (left | right)\
-    \ == (left | right)\n}\n"
+  source: "rule Merge for left: Key ->[2..4] Value, right: Key ->[3..5] Value {\n    let (left | right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionarySetOperationExpr(DictionaryUnion)
   normalizations:
@@ -1396,10 +1363,9 @@ cases:
   produces_ast: true
 - id: firstmatch-no-match-empty
   category: execution-contract
-  source: "thing Policies {\n    let policy: A --> B [ordered] = first {\n        SpecialA --> SpecialB\n \
-    \   }\n}\n"
+  source: "thing Policies {\n    let policy: A -->[ordered] B [ordered] =\n        SpecialA --> SpecialB\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(A, B, SelectionUnspecified)
+  ast: "DecisionDictionaryType(A, B, FirstMatch)"
   normalizations:
   - no-first-match-produces-empty
   - derive-application-cardinality-zero-to-one
@@ -1422,8 +1388,7 @@ cases:
   produces_ast: true
 - id: firstmatch-empty-rejected-by-required-result
   category: validation-after-resolution
-  source: "thing Sample {\n    let policy: A --> B [ordered] = first {\n        SpecialA --> SpecialB\n   \
-    \ }\n    let result: B [1] = policy[OtherA]\n}\n"
+  source: "thing Sample {\n    let policy: A -->[ordered] B [ordered] =\n        SpecialA --> SpecialB\n    let result: B [1] = policy[OtherA]\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - partial-result-may-violate-required-cardinality
@@ -1928,7 +1893,7 @@ cases:
   produces_ast: true
 - id: given-dictionary-mut-rejected
   category: validation-after-ast
-  source: "rule BadPrices given prices: Product -> Money [mut] {\n    true\n}\n"
+  source: "rule BadPrices given prices: Product ->[mut] Money {\n    true\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - given-mutability-forbidden
@@ -2432,7 +2397,7 @@ cases:
   required_contract: authorised stored collection removal; declaration and descriptor remain
 - id: dictionary-association-add-preserved
   category: static-field-schema
-  source: "thing Inventory {\n mut shields: Int -> Nat [*] = empty\n}\naction Equip for inventory: Inventory [mut] {\n then add (1 -> 20) to inventory.shields\n}\n"
+  source: "thing Inventory {\n mut shields: Int ->[*] Nat = empty\n}\naction Equip for inventory: Inventory [mut] {\n then add (1 -> 20) to inventory.shields\n}\n"
   cst_root: MudFileSyntax
   ast: AddValueEffect(value=ExactAssociationExpr, target=inventory.shields)
   produces_ast: true
@@ -3205,7 +3170,7 @@ cases:
   produces_ast: true
 - id: functional-selector-sugar
   category: expression
-  source: "let describe: Int --> String [ordered] = first {\n    == 0 --> \"zero\", _ --> \"other\"\n}"
+  source: "let describe: Int -->[ordered] String [ordered] =\n    == 0 --> \"zero\", _ --> \"other\""
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=SelectorComparison)
   normalizations:
@@ -3213,7 +3178,7 @@ cases:
   produces_ast: true
 - id: implicit-input-member
   category: expression
-  source: "let naming: Person --> String [ordered] = first {\n    _ --> .name\n}"
+  source: "let naming: Person -->[ordered] String [ordered] =\n    _ --> .name"
   cst_root: MudFileSyntax
   ast: ImplicitMemberExpr(name)
   normalizations:
@@ -3251,9 +3216,9 @@ cases:
   produces_ast: true
 - id: functional-omission-mode-only-infers-partial
   category: typing-after-ast
-  source: "thing Sample { let positive: Int --> String [ordered] = first {\n    > 0 --> \"positive\"\n}}"
+  source: "thing Sample { let positive: Int -->[ordered] String [ordered] =\n    > 0 --> \"positive\"}"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(mode=SelectionUnspecified, branches=OmittedCardinality)
+  ast: DecisionDictionaryType(mode=FirstMatch, policy=ordered, output=OmittedCardinality)
   normalizations:
   - derive-application-cardinality-zero-to-one
   produces_ast: true

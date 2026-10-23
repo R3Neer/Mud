@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -946,7 +947,7 @@ produces `StartSet(contributions=[AllLiteral, EmptyLiteral])`.
 A chain folds inwards from the right:
 
 ```text
-A -> B [2] --> C [3 ordered]
+A ->[2] B --> C [3 ordered]
 ```
 
 conceptually produces:
@@ -1057,9 +1058,11 @@ rather than a nominal generic type. Unconditional body sugar retains the value
 body until functional elaboration; it does not turn arbitrary literals into
 policies during parsing.
 
-FunctionalInputExpr preserves reserved value. FunctionalPolicyExpr records
-FirstMatch or AllMatches from first/all; DecisionDictionaryType has
-SelectionUnspecified because a type's ordered output is not body selection mode.
+FunctionalInputExpr preserves reserved value. DecisionDictionaryType retains
+the intrinsic -->[...] policy specification separately from the complete output
+type. Its mode records explicit FirstMatch or an unspecified body default;
+ordinary output ordering never sets that mode. Unmarked branch definitions
+default to AllMatches; standalone branches retain DecisionBranchExpr syntax.
 OperatorReferenceExpr retains its symbol/family candidates; FunctionalOperatorDecl
 retains signature, stored/derived marker, implementation and whole-declaration
 metadata. Operand-header forms normalize to the same functional semantics.

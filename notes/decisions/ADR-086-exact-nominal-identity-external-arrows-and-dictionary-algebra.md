@@ -12,6 +12,8 @@ affects:
 
 # ADR-086 — Exact nominal identity, outer arrows and dictionary algebra
 
+- Amended by: [[ADR-186-arrow-owned-dictionary-specifications|D-186]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
@@ -76,16 +78,16 @@ is equivalent to:
 A -> (B -> C)
 ```
 
-Exact-arrow suffixes count associations; functional-arrow specifications belong to adjacent input/output values under D-183. Explicit groups preserve residual-policy collections:
+Exact-arrow ->[...] specifications count associations; functional-arrow specifications belong to adjacent input/output values under D-183. Explicit groups preserve residual-policy collections:
 
 ```mud
-A -> B [2] --> C [3 ordered]
+A ->[2] B --> C [3 ordered]
 ```
 
 is elaborated as:
 
 ```mud
-A -> (B --> C [3 ordered]) [2]
+A ->[2] (B --> C [3 ordered])
 ```
 
 ### The arrow as a complete outer form
@@ -213,11 +215,10 @@ The right operand of `iis` cannot be an anonymous product, structural union, dic
 `iis` may select a branch and narrow `value` within its result:
 
 ```mud
-let describe: Identifier --> String [ordered] = first {
+let describe: Identifier -->[ordered] String [ordered] =
     value iis EmployeeId --> "Employee {value}",
         value iis PersonId --> "Person {value}",
         value is Identifier --> "Identifier {value}"
-}
 ```
 
 Order is significant because an `EmployeeId` also satisfies `value is PersonId`.
@@ -337,10 +338,10 @@ Set-theoretic key selection first determines candidate associations. Result valu
 Analysis may strengthen those guarantees only when it proves the required absence of cross-association collisions. Whenever the effective result has a value-uniqueness criterion, candidate associations are incorporated in the operation's established order: surviving left associations first, then surviving right associations where that operation includes them. A later association that violates ordinary `unique` or the projected `unique by` key is omitted as a no-op and produces no `Errors`.
 
 ```mud
-let left: Person -> Room [unique] =
+let left: Person ->[unique] Room =
     Ana -> BlueRoom
 
-let right: Person -> Room [unique] =
+let right: Person ->[unique] Room =
     Luis -> BlueRoom,
     Marta -> RedRoom
 ```

@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -496,7 +497,7 @@ Exact key/value scopes are independent. Functional result scopes extend their ow
 An exact dictionary is queried by key equality, is countable and permits outer mutability. Associations are written with the same arrow:
 
 ```mud
-mut capitalOf: Country -> City [* ordered] =
+mut capitalOf: Country ->[* ordered] City =
     Spain -> Madrid,
     France -> Paris
 ```
@@ -519,7 +520,7 @@ Exact dictionaries are countable. A simple traversal goes through keys, whilst a
 
 ```mud
 action CollectCapitalData
-for capitalOf: Country -> City [*],
+for capitalOf: Country ->[*] City,
     mut visitedCountries: Country [* unique],
     mut visitedCapitals: City [* unique] {
     then {
@@ -572,10 +573,9 @@ let add: (a: Int) --> (b: Int) --> Int = a + b
 let generic: a --> b --> _ = a + b
 let inferred = a + b
 let addTwo = inferred[2]
-let label: Int --> String = first {
+let label: Int -->[ordered] String =
     > 0 --> "positive",
     _ --> "other"
-}
 ```
 
 Named (a: A) in an input position is a functional parameter annotation, not a
@@ -585,10 +585,11 @@ Surface AST preserves signature names/omissions; later inference creates the
 relational scheme under [[types/functional-families]]. A plain expression or
 ValueBlock in a functional definition can omit its unconditional _ --> branch.
 
-first/all braced policy constructors contain comma-separated explicit branches.
-An unmarked branch list uses AllMatches. Mode is a policy-body property,
-independent of output ordered/unique specifications. Replacing first with all
-requires ordinary semantic checks, not a scalar-cardinality assumption.
+An intrinsic specification immediately follows its arrow. ->[...] admits exact
+association cardinality and modifiers; -->[...] admits ordered and unique/by,
+without cardinality or mut. A -->[ordered] B selects by priority; an unmarked
+branch definition selects all matches. Input/output suffixes retain their own
+collection contracts. There are no first/all braced policy constructors.
 Selector shorthand retains the category-directed interpretation of
 [[17-dictionaries]]; branches keep independent locals and shared selector/result
 scope. value is reserved. Named and implicit parameters, cumulative value and
@@ -596,8 +597,8 @@ unique .member resolution follow [[types/functional-families]].
 
 ### `FirstMatch`, `AllMatches`, fallback and cardinality
 
-first tests ordinary selectors in source order and selects the first match;
-all tests applicable ordinary branches under its stable application view.
+-->[ordered] tests ordinary selectors in source order and selects the first
+match; unmarked branches test all ordinary selectors in their stable view.
 Fallback is unique and last and is used only if no ordinary selector matches.
 A selected normal empty result never retries fallback. Pure computing errors
 remain errors. Application minima, coverage and inferred absence follow the
@@ -611,11 +612,10 @@ bounds and ordering follow [[types/functional-families]].
 
 ### Chaining dictionary types
 
-Both arrows associate right. Exact -> specifications retain association count
-ownership. Functional --> type-adjacent specifications describe input/output
+Both arrows associate right. Exact ->[...] specifications own association counts. Functional --> type-adjacent specifications describe input/output
 values: A[N] --> B[M] --> C[P] takes N As, then M Bs, then yields P Cs.
 A --> (B --> C)[3 ordered] returns three residual policies in sequence.
-A --> (B -> C[P]) returns one exact dictionary with P associations, while
+A --> (B ->[P] C) returns one exact dictionary with P associations, while
 A --> (B -> C)[P] returns P exact dictionaries. Grouping and repeated collection
 layers are preserved; no type-driven flattening reassigns the brackets.
 
@@ -669,7 +669,7 @@ If a member is a union, the path must exist across all feasible alternatives. Ev
 alias PlayerName := String
 alias UserName as PlayerName
 
-alias Board := Square -> Piece [0..32 ordered]
+alias Board := Square ->[0..32 ordered] Piece
 
 alias Square {
     let file: File
@@ -1413,11 +1413,10 @@ rule Positive given candidate: Any {
 Inside a functional branch, `is` and `iis` retain their narrowing in the result:
 
 ```mud
-let describeAny: Any --> String [ordered] = first {
+let describeAny: Any -->[ordered] String [ordered] =
     value iis PersonId --> "Person id {value}",
         value is Nat --> "Natural {value}",
         _ --> "Other"
-}
 ```
 
 `Money` remains a built-in type because of its materialisation rules, not as an exception to the openness of `Any`.

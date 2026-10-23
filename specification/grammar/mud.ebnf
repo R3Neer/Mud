@@ -555,7 +555,9 @@ stored-dictionary-type
     ::= stored-dictionary-link , { stored-dictionary-link } ;
 
 stored-dictionary-link
-    ::= dictionary-arrow , stored-dictionary-value-type
+    ::= "->" , [ collection-specification ] , stored-dictionary-value-type
+        , { collection-specification }
+      | "-->" , [ functional-policy-specification ] , stored-dictionary-value-type
         , { collection-specification }
       ;
 
@@ -633,12 +635,18 @@ dictionary-type
     ::= dictionary-link , { dictionary-link } ;
 
 dictionary-link
-    ::= dictionary-arrow , dictionary-value-type
+    ::= "->" , [ collection-specification ] , dictionary-value-type
+        , { collection-specification }
+      | "-->" , [ functional-policy-specification ] , dictionary-value-type
         , { collection-specification }
       ;
 
-dictionary-arrow
-    ::= "->" | "-->" ;
+functional-policy-specification
+    ::= "[" , functional-policy-modifier
+        , { optional-comma , functional-policy-modifier } , "]" ;
+
+functional-policy-modifier
+    ::= "ordered" | "unique" , [ "by" , collection-key-path ] ;
 
 dictionary-value-type
     ::= union-type-expression ;
@@ -1315,14 +1323,6 @@ receiver-entry
       | role-name , "=" , expression
       ;
 
-policy-expression
-    ::= policy-mode , "{" , declaration-layout , mapping-expression
-        , { "," , declaration-layout , mapping-expression }
-        , [ required-separation ] , "}" ;
-
-policy-mode
-    ::= "first" | "all" ;
-
 pure-operator-symbol
     ::= overload-binary-operator | "==" | "!=" | "===" | "!=="
       | "<" | ">" | "<=" | ">=" | "not" | "and" | "or" | "xor"
@@ -1335,8 +1335,7 @@ functional-input-reference
     ::= "value" ;
 
 primary-expression
-    ::= policy-expression
-      | operator-reference
+    ::= operator-reference
       | functional-input-reference
       | generic-family-member
       | explicit-generic-type-application

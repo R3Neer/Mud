@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -101,7 +102,7 @@ A name that does not follow the capitalisation rules is a static error, not an a
 
 ## Reserved and contextual words
 
-let, foreach, value and trait are hard reserved words. first is contextual before a policy-constructor body. value denotes the
+let, foreach, value and trait are hard reserved words. value denotes the
 functional cumulative input and cannot name an ordinary local, argument or
 implicit parameter. Explicit member-name grammar exceptions permit .value and
 schema components named value, including intrinsic diagnostics; they do not

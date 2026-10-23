@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -282,11 +283,11 @@ Both forms produce a `CollectionSpec` with `OmittedCardinality`. The Surface AST
 Dictionary entries/application specifications retain OmittedCardinality
 independently of the singleton exterior. The same owner-directed elaboration
 infers immutable association/application counts under [[../17-dictionaries#Omitted cardinality and owner contracts]].
-An order-only [ordered] still leaves its cardinality omitted. The branches field
-of DecisionDictionaryType retains the final output specification, not a
-branch-population count; its name does not imply counting source branches.
-The type's mode is SelectionUnspecified. FunctionalPolicyExpr independently
-records an explicit first/all body constructor.
+An output order-only [ordered] still leaves its cardinality omitted.
+DecisionDictionaryType.output_type owns that value shape. Its policy field
+retains -->[...] intrinsic modifiers with no cardinality and records explicit
+FirstMatch only for intrinsic ordered. The exact entries field owns ->[...]
+association counts. No output suffix is duplicated into an intrinsic field.
 
 ### Exact cardinality
 
@@ -359,11 +360,11 @@ Every `type-reference` produces `NamedType(TypeRef(...))`. The AST has not yet c
 ### Products and dictionaries
 
 ```mud
-Name -> Coordinate -> Piece [*]
-A -> B [2] --> C [3 ordered]
+Name -> Coordinate ->[*] Piece
+A ->[2] B --> C [3 ordered]
 ```
 
-Arrow chains fold inwards from the right. The first shape produces `ExactDictionaryType(Name, ExactDictionaryType(Coordinate, Piece, [*]), ...)`; the second produces an outer dictionary whose value is `DecisionDictionaryType(B, C, SelectionUnspecified, [3 ordered])`, and `[2]` belongs to the outer exact arrow. The decision node's output type and retained output specification describe the same written output layer, not two nested layers. Repeated specifications create NestedCollectionType layers; a single specification is never applied twice.
+Arrow chains fold inwards from the right. The first shape produces `ExactDictionaryType(Name, ExactDictionaryType(Coordinate, Piece, [*]), ...)`; the second produces an outer dictionary whose value is `DecisionDictionaryType(B, C[3 ordered], SelectionUnspecified, policy=omitted)`, and `[2]` belongs to the outer exact arrow. The decision node's output type owns the written output layer; policy owns only intrinsic modifiers. Repeated specifications create NestedCollectionType layers; a single specification is never applied twice.
 
 `(A, B)` and `(name: A, value: B)` produce `PositionalProductType` and `NamedProductType`, respectively. Parentheses forming the product are retained by the constructor; parentheses used solely for grouping are discarded.
 
@@ -856,9 +857,11 @@ rather than a nominal generic type. Unconditional body sugar retains the value
 body until functional elaboration; it does not turn arbitrary literals into
 policies during parsing.
 
-FunctionalInputExpr preserves reserved value. FunctionalPolicyExpr records
-FirstMatch or AllMatches from first/all; DecisionDictionaryType has
-SelectionUnspecified because a type's ordered output is not body selection mode.
+FunctionalInputExpr preserves reserved value. DecisionDictionaryType retains
+the intrinsic -->[...] policy specification separately from the complete output
+type. Its mode records explicit FirstMatch or an unspecified body default;
+ordinary output ordering never sets that mode. Unmarked branch definitions
+default to AllMatches; standalone branches retain DecisionBranchExpr syntax.
 OperatorReferenceExpr retains its symbol/family candidates; FunctionalOperatorDecl
 retains signature, stored/derived marker, implementation and whole-declaration
 metadata. Operand-header forms normalize to the same functional semantics.

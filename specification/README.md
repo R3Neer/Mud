@@ -19,6 +19,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -404,7 +405,7 @@ Defines:
 - Associations, keys, iteration, ordering and algebraic operations.
 - Indexing within assignable paths, partial write-back on associated values and treatment of missing keys without confusing partial update with complete insertion.
 - Branch-selection modes, fallback, dependencies, recursion and termination of functional dictionaries.
-- Direct selector-preamble locals shared with their own result, definite availability after recovery and mandatory reuse of successful derivations while inputs/dependencies are unchanged; separate application/branch instances preserve laziness and full footprints. AllMatches remains the default; `first { ... }` explicitly selects FirstMatch independently of output order.
+- Direct selector-preamble locals shared with their own result, definite availability after recovery and mandatory reuse of successful derivations while inputs/dependencies are unchanged; separate application/branch instances preserve laziness and full footprints. AllMatches remains the default; `-->[ordered]` explicitly selects FirstMatch independently of output order.
 
 ## 18. Domains and intervals
 

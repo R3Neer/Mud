@@ -40,7 +40,7 @@ alias PlayerName :=
     String
 
 alias Board :=
-    Square -> Piece [0..32 ordered]
+    Square ->[0..32 ordered] Piece
 
 alias Path :=
     Position [* ordered]

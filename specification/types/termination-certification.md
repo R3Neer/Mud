@@ -11,6 +11,7 @@ questions:
   - Q-030
   - Q-072
 decisions:
+  - D-186
   - D-183
   - D-170
   - D-169
@@ -32,11 +33,10 @@ functional dictionaries, Boolean rules, looks/sublooks and alias operator bodies
 
 ```mud
 alias Counters { let major: Nat; let minor: Nat }
-let finish: Counters --> Nat [ordered] = first {
+let finish: Counters -->[ordered] Nat [ordered] =
     value.minor > 0 --> finish[value.major, value.minor - 1],
         value.major > 0 --> finish[value.major - 1, value.major],
         _ --> 0
-}
 ```
 
 Composite functional input sugar constructs one contextual value, just like a

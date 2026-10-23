@@ -21,6 +21,8 @@ affects:
 
 # ADR-169 — Explicit value declarations, exhaustive selector shorthand and foreach comprehensions
 
+- Amended by: [[ADR-186-arrow-owned-dictionary-specifications|D-186]].
+
 - Amended by: [[ADR-178-structural-tuple-inputs-and-postfix-generics|D-178]].
 
 - Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
@@ -69,7 +71,7 @@ This partially amends D-066, D-071, D-085, D-088, D-101, D-112, D-124 and D-137.
 Concrete collection-library APIs and an alternative modifier-only dictionary
 annotation are not selected by this decision. Input inference still needs unique
 evidence; Person --> _ [ordered] retains an explicit output-order guarantee,
-independently of the first/all branch-selection constructor.
+independently of the intrinsic arrow specification.
 
 ## Verification
 

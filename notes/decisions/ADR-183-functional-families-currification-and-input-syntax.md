@@ -24,6 +24,8 @@ affects:
 
 # ADR-183 — Functional families, currification and input syntax
 
+- Amended by: [[ADR-186-arrow-owned-dictionary-specifications|D-186]].
+
 ## Decision
 
 The author accepts first-class correlated functional families, partial
@@ -36,7 +38,7 @@ retain contextual numeric possibilities until a static use requires selection.
 
 Functional --> now gives type-adjacent input/output cardinalities; -> retains
 association counts. Both associate right and grouping preserves residual policy
-collections. first/all constructors select branches independently of result order;
+collections. intrinsic arrow modifiers select branch priority and aggregate uniqueness independently of output order;
 unmarked branches use AllMatches. A plain body can omit its unconditional branch.
 AllMatches aggregates exterior result occurrences from matching branches,
 preserving repetitions unless explicit uniqueness removes them. It does not

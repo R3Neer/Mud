@@ -12,7 +12,7 @@ class FunctionalTraitSyntax(unittest.TestCase):
 
     def accepts(self,start,source):
         raw=re.findall(r'-->|:=|->|===|!==|>>|<<|>=|<=|==|!=|[A-Za-z][A-Za-z0-9]*|[0-9]+|[^\s]',source)
-        keywords={'let','mut','trait','value','first','all','ordered','unique','by','in','as','with','alias','thing','true','false','empty','_'}
+        keywords={'let','mut','trait','value','all','ordered','unique','by','in','as','with','alias','thing','true','false','empty','_','not'}
         tokens=[];depth=0
         for index,t in enumerate(raw):
             if t==';':tokens.append('TERMINATOR')
@@ -39,11 +39,23 @@ class FunctionalTraitSyntax(unittest.TestCase):
                        'let policies: A --> (B --> C) [3 ordered] = body'):
             self.assertTrue(self.accepts('stored-field-declaration',source),source)
 
-    def test_policy_modes_and_operator_reference(self):
-        for source in ('first { value > 0 --> Positive, _ --> Other }',
-                       'all { > 0 --> Positive, >= 0 --> Nonnegative }','(+)','(===)',
+    def test_branch_expression_and_operator_reference(self):
+        for source in ('(value > 0 --> Positive)','(+)','(===)',
                        'f >> g[x]','f[x] >> g[y]','f[(a,b),c]','value[1]'):
             self.assertTrue(self.accepts('expression',source),source)
+
+    def test_dictionary_specifications_have_unambiguous_owners(self):
+        for source in ('A ->[3 ordered] B', 'A ->[3] B [3]',
+                       'A [3] -->[ordered unique] B [3 ordered]',
+                       '(A -->[ordered] B [3]) [3 ordered]',
+                       'A ->[3] B -->[ordered] C [3]',
+                       'A --> B -->[ordered] C',
+                       'A -->[unique by id] B [*]'):
+            self.assertTrue(self.accepts('type-expression',source),source)
+        for source in ('A -->[3] B','A -->[mut] B','A -->[ordered by id] B'):
+            self.assertFalse(self.accepts('type-expression',source),source)
+        for source in ('first { value > 0 --> Positive }','all { value > 0 --> Positive }'):
+            self.assertFalse(self.accepts('expression',source),source)
 
     def test_symbol_named_operator_implementation_and_projection(self):
         self.assertTrue(self.accepts('operator-declaration','+: (a: V) --> (b: V) --> V = a'))

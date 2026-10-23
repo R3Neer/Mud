@@ -10,6 +10,7 @@ depends-on:
   - "[[termination-certification]]"
 questions: []
 decisions:
+  - D-186
   - D-183
   - D-182
   - D-180
@@ -181,31 +182,51 @@ admitted. No union of a scalar result and a callable is invented to hide it.
 
 ## 5. Arrows, count ownership and branch selection
 
-Both arrows associate right. For -->, each adjacent type's specifications belong
-to that input/output value. Thus A[N] --> B[M] --> C[P] takes N As, then M Bs,
-and finally produces P Cs. It returns one intermediate residual policy unless
-a collection suffix explicitly wraps that result. A --> (B --> C)[3 ordered]
-returns three residual policies in sequence. Repeated specifications are distinct
-nested collection layers. Parenthesized result dictionaries preserve their own
-constructor category and counts.
+Both arrows associate right. A specification immediately after -> belongs to
+that exact dictionary: A ->[2 ordered] B has two associations in observable
+association order. Its value is B, not a two-member B collection. Specifications
+following the input/output types always describe those value layers. Thus
+A ->[2] B[3] has two associations, each storing three Bs; A[2] --> B[3]
+receives two As and produces three Bs.
 
-For ->, the first trailing specification still counts associations of that exact
-arrow. Mixed chains elaborate from the right, preserving explicit grouping and
-the class of each arrow. A --> (B -> C[P]) returns one exact dictionary with P
-associations; A --> (B -> C)[P] returns P exact dictionaries. Explicit grouping
-is required to alter ownership, not a type-driven greedy reassignment of counts.
-In --> annotations, ordered describes the output collection only and never
-selects a branch mode.
+A functional arrow admits -->[ordered], -->[unique] or their combination.
+ordered selects the first matching branch in source order. Without it, a newly
+formed branch policy selects all matching branches. unique and unique by p
+normalize the aggregate output under the ordinary supported equality/key rules.
+The arrow specification admits no cardinality, mut or ordered by criterion.
+Neither the number of branches nor input/output population is counted there.
+The output type can independently require B[* ordered], B[* unique] or a keyed
+criterion. Each modifier axis may appear only once in its owning specification.
 
-first { selector --> result, ... } constructs FirstMatch. all { ... } constructs
-AllMatches. Unmarked explicit branches use AllMatches. In a functional expected
-context a plain ValueBlock/expression is one unconditional case and may omit
-_ -->. The selection mode belongs to the policy value/body, not the function
-signature's collection-order field. Bodies/returned values retain ordinary
-termination and error rules. A mode is redundant only when changing it preserves
-result, faults, demand, dependencies and termination; cardinality alone is not
-such a proof. AllMatches output ordering follows its actual declared collection
-construction/explicit criterion and never an internal hash enumeration.
+```mud
+let select: A -->[ordered] B =
+    SpecialA --> SpecialB,
+    _ --> DefaultB
+# Four policy values, each selecting by priority and producing three Bs:
+let policies: (A -->[ordered] B[3]) [4 ordered] = source
+```
+
+The mode is attached to the particular arrow/stage, not the entire chain.
+A --> B -->[ordered] C constructs an unconditional outer residual and uses
+priority in the stage receiving B. A -->[ordered] (B --> C) selects which
+residual to produce when A is supplied. Every intermediate policy population
+is singular unless an explicit exterior suffix wraps that result.
+
+A --> (B --> C)[3 ordered] returns three residual policies in sequence.
+A --> (B ->[3] C) returns one exact dictionary containing three associations;
+A --> (B -> C)[3] returns three exact dictionaries. Repeated suffixes retain
+independent collection layers. Parentheses only group: they never silently
+reinterpret a collection suffix as an intrinsic dictionary modifier.
+
+Unmarked branches use AllMatches. A plain ValueBlock/expression in a functional
+expected context is one unconditional case and may omit _ -->. Standalone
+parenthesized branch expressions can form anonymous policies under their checked
+input context, including composition operands. There are no first/all body
+constructors. all keeps its existing domain/enumeration meaning; first is an
+ordinary identifier. Policy construction and copied values retain ordinary
+capture, termination, error and snapshot contracts. Type-adjacent collection
+order never chooses branch mode. Copying/assigning a policy never changes its
+established branch behaviour; selection is a property of the policy value.
 
 For AllMatches, each selected branch contributes its exterior result members,
 not a new wrapper containing its complete result. If selected contributions are
@@ -219,15 +240,13 @@ final cardinality contract are checked. A final positive minimum does not
 require every individual contribution to meet that minimum.
 
 ```mud
-let contributions: Int --> Int [*] = all {
+let contributions: Int --> Int [*] =
     > 0 --> [1, 2],
     >= 0 --> [3, 4]
-}
 # contributions[1] contains four exterior occurrences, not two collections.
-let nested: Int --> Int [*] [*] = all {
+let nested: Int --> Int [*] [*] =
     > 0 --> [[1, 2]],
     >= 0 --> [[3, 4]]
-}
 # nested[1] contains two collection members; neither member is flattened.
 ```
 

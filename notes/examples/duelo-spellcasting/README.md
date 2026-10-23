@@ -294,7 +294,8 @@ for readable headers, branches, constructors and private semantic helpers.
 | scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, feedbackCapabilities.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud, quantities.mud | All ten |
 
 Internal feedback policies infer their output cardinality from their bodies;
-`first { ... }` preserves branch priority and `[ordered]` states output order.
+`-->[ordered]` preserves branch priority; a suffix on the output type states
+output order. Exact association counts/modifiers immediately follow `->`.
 Public/default-bearing
 maps (profiles, stage assets and borrowed effects) explicitly admit [*]
 associations. Their empty defaults do not restrict supplied configurations to

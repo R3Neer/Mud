@@ -1877,7 +1877,7 @@ cases:
 - id: hole-partial-dictionary
   rules:
   - MUD-TYPE-021
-  source: 'let table: _ -> String [*] = knownMap'
+  source: "let table: _ ->[*] String = knownMap"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: knownMap has an exact Int->String dictionary contract; solve key Int without changing association
@@ -2779,7 +2779,7 @@ cases:
 - id: expression-implicit-member-expr
   rules:
   - MUD-TYPE-008
-  source: "let naming: Person --> String [ordered] = first {\n    _ --> .name\n}"
+  source: "let naming: Person -->[ordered] String [ordered] =\n    _ --> .name"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Person has a visible singleton String name; the omitted receiver resolves to the ordinary implicit
@@ -2787,21 +2787,21 @@ cases:
 - id: expression-selector-expr
   rules:
   - MUD-TYPE-008
-  source: "let describe: Int --> String [ordered] = first {\n    == 0 --> \"zero\", < 0 --> \"negative\", _ --> \"positive\"\n}"
+  source: "let describe: Int -->[ordered] String [ordered] =\n    == 0 --> \"zero\", < 0 --> \"negative\", _ --> \"positive\""
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Abbreviated comparisons expand against the input; explicit residual supplies coverage.
 - id: policy-incomplete-family-coverage
   rules:
   - MUD-TYPE-008
-  source: "let describe: Severity --> String [1 ordered] = first {\n    Severity.Low --> \"low\"\n}"
+  source: "let describe: Severity -->[ordered] String [1 ordered] =\n    Severity.Low --> \"low\""
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Severity has Low, Medium and High; the explicit positive minimum requires coverage, but no residual or proof covers the omitted members.
 - id: policy-bool-equality
   rules:
   - MUD-TYPE-008
-  source: "let describe: Bool --> String [ordered] = first {\n    == false --> \"false\", _ --> \"true\"\n}"
+  source: "let describe: Bool -->[ordered] String [ordered] =\n    == false --> \"false\", _ --> \"true\""
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Bare false would be a false condition; explicit equality covers only the false input.
@@ -2990,7 +2990,7 @@ cases:
 - id: optional-functional-coverage
   rules:
   - MUD-TYPE-050
-  source: "let positive: Int --> Int [0..1 ordered] = first {\n    value > 0 --> value\n}"
+  source: "let positive: Int -->[ordered] Int [0..1 ordered] =\n    value > 0 --> value"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Negative and zero inputs have no applicable branch and return normal empty. A positive minimum
@@ -3043,7 +3043,7 @@ cases:
 - id: dictionary-mutable-explicit-growing
   rules:
   - MUD-TYPE-008
-  source: 'mut table: Int -> String [*] = empty'
+  source: "mut table: Int ->[*] String = empty"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The written zero-admitting association capacity admits initialization and later insertions.
@@ -3090,7 +3090,7 @@ cases:
 - id: dictionary-schema-explicit-variable-capacity
   rules:
   - MUD-TYPE-008
-  source: 'let table: Int -> String [*] = empty'
+  source: "let table: Int ->[*] String = empty"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: A written component capacity permits constructor arguments with a different count from its empty
@@ -3110,7 +3110,7 @@ cases:
 - id: functional-inferred-partial-firstmatch
   rules:
   - MUD-TYPE-008
-  source: "let positive: Int --> String [ordered] = first {\n    > 0 --> \"positive\"\n}"
+  source: "let positive: Int -->[ordered] String [ordered] =\n    > 0 --> \"positive\""
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Uncovered inputs contribute zero; no implicit positive application minimum is introduced.
@@ -3126,7 +3126,7 @@ cases:
 - id: functional-written-positive-rejects-partial
   rules:
   - MUD-TYPE-008
-  source: "let positive: Int --> String [1 ordered] = first {\n    > 0 --> \"positive\"\n}"
+  source: "let positive: Int -->[ordered] String [1 ordered] =\n    > 0 --> \"positive\""
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The explicit positive minimum cannot admit the supplied uncovered-input interval.
@@ -3191,7 +3191,7 @@ cases:
 - id: functional-derived-views-include-absence
   rules:
   - MUD-TYPE-008
-  source: "let positive: Int --> String [ordered] := first {\n    gate.enabled and value > 0 --> \"positive\"\n}"
+  source: "let positive: Int -->[ordered] String [ordered] :=\n    gate.enabled and value > 0 --> \"positive\""
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The supplied proof accounts for enabled and disabled views, not only the first invocation.
@@ -3231,7 +3231,7 @@ cases:
 - id: family-explicit-first-mode
   rules:
   - MUD-TYPE-053
-  source: 'let label: Int --> String = first { > 0 --> "positive", _ --> "other" }'
+  source: "let label: Int -->[ordered] String =\n    > 0 --> \"positive\", _ --> \"other\""
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Body mode is FirstMatch; output ordering does not choose branch evaluation.
@@ -3329,13 +3329,13 @@ cases:
   contract: The supplied visible family admits both unary numeric negation and a binary subtraction residual. No expected contract fixes the result shape; an explicit arity/signature is required.
 - id: allmatches-exterior-contributions
   rules: [MUD-TYPE-002, MUD-TYPE-053]
-  source: 'let f: Int --> Int [*] = all { > 0 --> [1,2], >= 0 --> [3,4] }'
+  source: "let f: Int --> Int [*] =\n    > 0 --> [1,2], >= 0 --> [3,4]"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: At input 1 the supplied branches contribute four exterior occurrences. No wrapper or uniqueness is inferred; nested members require a nested output contract.
 - id: allmatches-nested-contributions
   rules: [MUD-TYPE-002, MUD-TYPE-053]
-  source: 'let f: Int --> Int [*] [*] = all { > 0 --> [[1,2]], >= 0 --> [[3,4]] }'
+  source: "let f: Int --> Int [*] [*] =\n    > 0 --> [[1,2]], >= 0 --> [[3,4]]"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: At input 1 two collection members are contributed. Exterior aggregation preserves the inner collections and does not flatten to four Int members.

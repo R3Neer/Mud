@@ -10,6 +10,7 @@ depends-on:
   - "[[11-type-system]]"
 questions: []
 decisions:
+  - D-186
   - D-183
   - D-184
   - D-185
@@ -86,8 +87,8 @@ Omission and holes fail when evidence is insufficient; context-free empty or
 an input using only `.name` does not choose an arbitrary member/input type.
 The annotation `_ [ordered]` does not move a collection modifier into an
 inferred dictionary's branch-selection contract. Write its arrow explicitly;
-`Person --> _ [ordered]` requires an ordered output; `first { ... }` selects
-FirstMatch independently. A parenthesised dictionary
+`Person --> _ [ordered]` requires an ordered output; `Person -->[ordered] _`
+selects FirstMatch independently. A parenthesised dictionary
 with an outer suffix describes a collection of dictionaries.
 
 Immutable positional patterns use `let (first, second) = source` or
