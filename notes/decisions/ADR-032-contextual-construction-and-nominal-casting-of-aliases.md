@@ -44,7 +44,7 @@ Without this separation, writing ordinary values would be unnecessarily cumberso
 
 ```mud
 rawText to PlayerName
-playerName to Text
+playerName to String
 cityName to PlayerName
 coordinate to Square
 ```
@@ -98,7 +98,7 @@ let playerName: PlayerName = "Ada"
 This contextual construction does not require `to`. By contrast, a type-checked expression retains its type and requires explicit conversion:
 
 ```mud
-let rawName: Text = "Ada"
+let rawName: String = "Ada"
 let playerName: PlayerName =
     rawName to PlayerName
 ```
@@ -161,9 +161,9 @@ For example, if `playerName` has type `PlayerName`, the literal from:
 playerName == "Ada"
 ```
 
-can be constructed contextually as `PlayerName`. On the other hand, if `rawText` is a variable of type `Text`, `playerName == rawText` remains invalid without `to`.
+can be constructed contextually as `PlayerName`. On the other hand, if `rawText` is a variable of type `String`, `playerName == rawText` remains invalid without `to`.
 
-The text of `Bool` and the basic numeric types have type sufficient contextual basis to allow for a direct comparison. A standard form in double quotation marks is preferred `Text`, but it can be prepared as `Char` when the context requires precisely a scalar in accordance with D-069.
+The text of `Bool` and the basic numeric types have type sufficient contextual basis to allow for a direct comparison. A standard form in double quotation marks is preferred `String`, but it can be prepared as `Char` when the context requires precisely a scalar in accordance with D-069.
 
 After evaluating the expressions, both operands must be exactly the same type nominal. Compare different aliases or a alias where the expression is already typed as its underlying representation is a error:
 
@@ -176,7 +176,7 @@ One of the operands must be explicitly converted:
 
 ```mud
 square == coordinate to Square
-playerName to Text == rawText
+playerName to String == rawText
 ```
 
 ### Equality and order

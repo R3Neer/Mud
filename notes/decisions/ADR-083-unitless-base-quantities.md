@@ -7,13 +7,13 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "magnitudes, types, quantitative conversions, `Text` templates and public boundary"
+  - "magnitudes, types, quantitative conversions, `String` templates and public boundary"
 ---
 # ADR-083 — Unitless base quantities
 
 - Modified by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Modifies: [[notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]], [[notes/decisions/ADR-028-system-of-quantities-and-units|D-028]], [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]] and [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]].
-- Affected documents: magnitudes, types, quantitative conversions, `Text` templates and public boundary.
+- Affected documents: magnitudes, types, quantitative conversions, `String` templates and public boundary.
 
 ## Context
 

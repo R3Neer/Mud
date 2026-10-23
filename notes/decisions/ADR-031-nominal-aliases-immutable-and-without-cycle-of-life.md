@@ -37,7 +37,7 @@ A alias defined by an expression of type USA `:=`:
 
 ```mud
 alias PlayerName :=
-    Text
+    String
 
 alias Board :=
     Square -> Piece [0..32 ordered]
@@ -82,13 +82,13 @@ Everything alias enter a type New name. Two different aliases are not automatica
 
 ```mud
 alias PlayerName :=
-    Text
+    String
 
 alias CityName :=
-    Text
+    String
 ```
 
-`PlayerName`, `CityName` and `Text` are three different types. Their common representation allows explicit nominal conversion in accordance with D-032, not implicit assignment.
+`PlayerName`, `CityName` and `String` are three different types. Their common representation allows explicit nominal conversion in accordance with D-032, not implicit assignment.
 
 ### Immutability
 

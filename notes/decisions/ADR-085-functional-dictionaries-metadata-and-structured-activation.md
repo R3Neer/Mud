@@ -40,7 +40,7 @@ Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensi
 
 ## Context
 
-MUD already has collections, exact dictionaries, sequential composition through calls within `then`, nominal names, initial activation and `Text` templates. Several later decisions show four related needs:
+MUD already has collections, exact dictionaries, sequential composition through calls within `then`, nominal names, initial activation and `String` templates. Several later decisions show four related needs:
 
 1. Express pure policies defined by cases without introducing a general function category.
 2. Uniformly separate world content from nominal and provenance metadata.
@@ -302,7 +302,7 @@ The initial built-in types are:
 - `Anchor` for `~anchor`;
 - `MudFile` for `~file`.
 
-They are nominal types, not implicit aliases of `Text`. They may declare explicit conversions to `Text`. Templates may render them contextually without introducing general nominal compatibility.
+They are nominal types, not implicit aliases of `String`. They may declare explicit conversions to `String`. Templates may render them contextually without introducing general nominal compatibility.
 
 #### `~name`
 

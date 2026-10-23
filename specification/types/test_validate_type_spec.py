@@ -93,12 +93,12 @@ class FiniteWitnessTests(unittest.TestCase):
         self.assertIn("Set", productive(nodes))
 
     def test_recursive_pairs_cannot_hide_a_mismatched_leaf(self):
-        nodes = {"A": {"kind": "product", "children": ["A", "Text"]},
+        nodes = {"A": {"kind": "product", "children": ["A", "String"]},
                  "B": {"kind": "product", "children": ["B", "Int"]},
-                 "Text": {"kind": "leaf", "label": "Text"},
+                 "String": {"kind": "leaf", "label": "String"},
                  "Int": {"kind": "leaf", "label": "Int"}}
         self.assertFalse(equivalent(nodes, "A", "B"))
-        nodes["B"]["children"][1] = "Text"
+        nodes["B"]["children"][1] = "String"
         self.assertTrue(equivalent(nodes, "A", "B"))
 
     def test_shape_equivalence_does_not_prove_inhabitation(self):

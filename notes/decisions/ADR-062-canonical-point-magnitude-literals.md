@@ -40,7 +40,7 @@ When the expected type declares `~format`, the literal must exactly match the ca
 
 Alternative spellings are not accepted even if they produce the same components. For example, where the canonical format produces `07:05:00`, `7:05:00` is not the same literal.
 
-A point `~format` must be statically invertible: its fragments and holes must make it possible to reconstruct one point. A declaration whose format does not have an unambiguous inverse is invalid. This obligation constrains arbitrary expressions within a point magnitude's `~format`, even when they are renderable in an ordinary `Text` template.
+A point `~format` must be statically invertible: its fragments and holes must make it possible to reconstruct one point. A declaration whose format does not have an unambiguous inverse is invalid. This obligation constrains arbitrary expressions within a point magnitude's `~format`, even when they are renderable in an ordinary `String` template.
 
 The canonical check is equivalent to:
 
@@ -71,7 +71,7 @@ Cyclic normalisation continues to apply to runtime operations under the point-ma
 
 - `~format` is both the canonical representation and, when present, the source form of the point type.
 - `POINT_LITERAL` is a D-089 contextual classification over the source span; the base scanner does not require the expected type or the resolved magnitude declaration.
-- Point formats have an invertibility constraint that does not affect general `Text` templates.
+- Point formats have an invertibility constraint that does not affect general `String` templates.
 - Format collisions are resolved by expected type, not global lexical priority.
 - Unwritten precision has a defined, reproducible value.
 - Cycles do not turn source errors into valid values.

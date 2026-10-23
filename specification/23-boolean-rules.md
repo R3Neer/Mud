@@ -14,6 +14,7 @@ depends-on:
 questions:
   - Q-030
 decisions:
+  - D-181
   - D-176
   - D-167
   - D-168
@@ -183,7 +184,7 @@ cache layout, invalidation protocol or causal scheduler is defined here.
 ## Counterexamples and evidence
 
 `rule Bad for mut total: Num { total += 1 }` violates pure receiver/body rules.
-`on` cannot replace `for` in a query signature. Text-only recovery and returning
+`on` cannot replace `for` in a query signature. String-only recovery and returning
 empty instead of singleton Bool are invalid. An inactive call containing an
 invalid argument remains statically invalid even though it skips argument
 evaluation at runtime. Two accepted homonymous signatures cannot be selected

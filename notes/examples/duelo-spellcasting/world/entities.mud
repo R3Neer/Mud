@@ -5,7 +5,7 @@ family Shape { Cube, Sphere }
 family SympathyKind { Motion, SharedEffects }
 
 alias EffectValue {
-    let kind: Text
+    let kind: String
     let duration: Time in [0 s..*]
     let intensity: EffectIntensity
 }
@@ -19,7 +19,7 @@ abstract thing Entity {
     mut grabbed: Bool = false
     mut shape: Shape [?] = empty
     mut kinds: SympathyKind [* unique] = empty
-    mut ownEffects: Text -> EffectValue [*] = empty
+    mut ownEffects: String -> EffectValue [*] = empty
 }
 
 abstract thing Creature as Entity {

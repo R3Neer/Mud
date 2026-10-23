@@ -40,7 +40,7 @@ MUD needs to distinguish between:
 The basic non-numeric data types are:
 
 ```mud
-Text
+String
 Bool
 Char
 ```

@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-181
   - D-180
   - D-179
   - D-178
@@ -648,7 +649,7 @@ A `qualified-name` used as an expression produces `DottedPathExpr`, not a resolv
 
 Underscores are removed and exponent and mantissa are normalised to canonical form. Provenance to the CST lexeme is retained.
 
-### `Char` and `Text`
+### `Char` and `String`
 
 Every ordinary double-quoted literal initially produces `TextTemplateExpr`. Later contextual elaboration turns it into `Char` when the expected type is `Char` and the decoded text contains exactly one Unicode scalar value. Single quotation marks do not produce a character literal.
 

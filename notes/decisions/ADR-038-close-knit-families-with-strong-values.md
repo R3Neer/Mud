@@ -62,7 +62,7 @@ The declaration enter a type finite nominal and a anchor static `family::*`. Eac
 - It’s the same as another one member if, and only if, both belong to the same nominal family and have the same name.
 - It only supports order operators if the declaration use `ordered family`.
 
-Every member has the metadata standard `~name: Name`, whose default value is derived from its name identifier. It can be configured via `~name = "..."` without changing identity, equality, anchor or order. A configuration identical to the default is flagged for deletion. In a template `Text`, interpolate a member generates the textual representation of its `~name` cash.
+Every member has the metadata standard `~name: Name`, whose default value is derived from its name identifier. It can be configured via `~name = "..."` without changing identity, equality, anchor or order. A configuration identical to the default is flagged for deletion. In a template `String`, interpolate a member generates the textual representation of its `~name` cash.
 
 The declaration order is the default listing order for a `family`, but it is only one aspect of the `<`, `<=`, `>` and `>=` relationships available when `ordered` appears.
 
@@ -162,5 +162,5 @@ A family type does not select a default member.
 11. Collection from `ordered family` sorted by one path associated data, with ties due to provenance stability and preservation of multiplicity.
 12. Inference from type, assessment by member and acyclic dependencies on computed data.
 13. Rejection of allocations of member aimed at calculated data.
-14. Rendering using `~name` of a member and explicit access to a piece of data `Text` alternative.
+14. Rendering using `~name` of a member and explicit access to a piece of data `String` alternative.
 

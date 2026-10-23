@@ -87,7 +87,7 @@ speed in km/h
 
 It applies to both linear quantities and quantities of point. In a magnitude from point transforms the full coordinate and prevents its `format`: yes `time` is 1.30 pm, `time in hour` expresses `13.5 h`, not the time component `13`.
 
-The selected value can be observed by converting it to a numerical representation and interpolating it in `Text`, or by publishing it in a field of `look` or `message`:
+The selected value can be observed by converting it to a numerical representation and interpolating it in `String`, or by publishing it in a field of `look` or `message`:
 
 ```mud
 speed in km/h to Rum

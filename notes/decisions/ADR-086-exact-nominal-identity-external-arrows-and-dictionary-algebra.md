@@ -211,7 +211,7 @@ The right operand of `iis` cannot be an anonymous product, structural union, dic
 `iis` may select a branch and narrow `value` within its result:
 
 ```mud
-let describe: Identifier --> Text [ordered] =
+let describe: Identifier --> String [ordered] =
     value iis EmployeeId --> "Employee {value}",
     value iis PersonId --> "Person {value}",
     value is Identifier --> "Identifier {value}"

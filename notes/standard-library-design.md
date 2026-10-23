@@ -23,7 +23,7 @@ introduce new TypeKind categories or erase nominal alias contracts.
 | Theme | Candidate capabilities |
 | --- | --- |
 | Collections and algorithms | Transform, group, partition, search, combine, accumulate; stacks, queues and priority queues using existing collection contracts. |
-| Text | Unicode scalar/grapheme operations, search, substitution, split/join, formatting, parsing and regular expressions. |
+| String | Unicode scalar/grapheme operations, search, substitution, split/join, formatting, parsing and regular expressions. |
 | Mathematics and statistics | Exact calculation, explicit approximation, intervals, magnitudes and descriptive statistics. |
 | Randomness and probability | Reproducible sampling, distributions, weighted choices and shuffling; separate cryptographic randomness. |
 | Time and calendars | Durations, civil dates, time zones, clocks and temporal scheduling; distinguish model time and exterior time. |
@@ -55,7 +55,7 @@ Settle dependency boundaries and formalise causal execution before asynchronous 
 ## Native-construction audit boundary
 
 The current audit keeps take native. Prefix/sampling experiments do not yet
-preserve all occurrence provenance, generic guarantees, exact-dictionary/Text
+preserve all occurrence provenance, generic guarantees, exact-dictionary/String
 contracts or stochastic identity through ordinary library code. No wrapper API,
 shuffle/forget-order operation or replacement syntax is accepted. Evaluate
 native forms by observable guarantees, composition and accessibility of basic

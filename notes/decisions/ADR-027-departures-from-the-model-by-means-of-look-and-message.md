@@ -62,7 +62,7 @@ message KingChanged on kingdom: Kingdom {
     if kingdom.visible
 
     let kingdomName := kingdom.name
-    let kingName: Text := kingdom.king.name
+    let kingName: String := kingdom.king.name
 }
 ```
 
@@ -101,7 +101,7 @@ None of these organisations authorises the examination of details relating to ar
 - A `message` requires exactly one `when` and no more than one `if`.
 - Public statements by a `message` must continue to be assessable in the stable state end date for retained links.
 - A field audience whose value direct is a magnitude you can choose one presentation available via `in`. If units are supported and this is omitted, the output uses the canonical projection and the compiler issues a warning. A magnitude 'Sin Unidades' publishes its issue without prior notice.
-- One magnitude from point published directly is a numerical coordinate in the unit chosen; her `format` It is only published by explicitly constructing a field `Text`.
+- One magnitude from point published directly is a numerical coordinate in the unit chosen; her `format` It is only published by explicitly constructing a field `String`.
 
 ## Issues still to be resolved
 
@@ -138,7 +138,7 @@ Until further notice Q-052, the standard merely stipulates that the published fi
 4. Rejection of headings and incompatible clauses.
 5. A case where the value when detecting, it differs from the value published stable version.
 6. Rollback without premature external output.
-7. Notice regarding a magnitude public with unit selectable but without `in`, no notification when there are no units available, and formatted display of a point by means of `Text`.
+7. Notice regarding a magnitude public with unit selectable but without `in`, no notification when there are no units available, and formatted display of a point by means of `String`.
 
 ## State rear
 

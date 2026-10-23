@@ -54,7 +54,7 @@ presence of a value field is introduced by this decision.
 Int [* ordered] can preserve [3,1,2]. Int [* ordered by value] establishes [1,2,3].
 An ordered family's member comparison does not force collections of those
 members into declaration order. Char collections can preserve arbitrary
-sequences; Text remains a distinct basic value. Collection uniqueness remains
+sequences; String remains a distinct basic value. Collection uniqueness remains
 an independent axis.
 
 Syntax Highlight should expose a configurable contextual-value category.

@@ -65,7 +65,7 @@ Minimum standards:
 | assignment with arithmetic update | replacement first, then compatible relative updates |
 | additive update with multiplicative or divisive update | compatible; standard form `((x + Δ) * P) / Q` |
 | updates `|=` consistent across collections | union of operands |
-| concatenations `|=` consistent data on `Text` | compatible only with a specific total order amount |
+| concatenations `|=` consistent data on `String` | compatible only with a specific total order amount |
 | updates `&=` homogeneous | intersection of operands |
 | updates `--=` homogeneous | sum of removed multiplicities and final truncation |
 | updates `^=` consistent data with a whole-value uniqueness guarantee | symmetric difference by parity |

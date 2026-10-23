@@ -45,7 +45,7 @@ Multiline comment.
 
 The `###` The opening tag must be the last non-blank element on the line. The content begins on the following line. The `###` The closing tag must appear on its own line, with no horizontal spacing. The opening and closing tags do not form part of the comment. The form `### comentario ###` is invalid.
 
-Multi-line comments are not nested. The lexer recognises `###` rather than `#`. Within a textual element enclosed in double quotation marks, it should be written as `Text` or as `Char`, the delimiters for comment have no lexical meaning.
+Multi-line comments are not nested. The lexer recognises `###` rather than `#`. Within a textual element enclosed in double quotation marks, it should be written as `String` or as `Char`, the delimiters for comment have no lexical meaning.
 
 The content of a comment It does not generate tokens, instructions or terminators. After removing it, the remaining text must remain syntactically valid.
 
@@ -53,7 +53,7 @@ A comment A line that is explicitly closed does not cross a jump. A delimiter a 
 
 ### Textual forms
 
-A literal 'ordinary' begins with `"` and prefers the type `Text`. It can be closed with another one `"` along the same line, or close implicitly upon reaching the break:
+A literal 'ordinary' begins with `"` and prefers the type `String`. It can be closed with another one `"` along the same line, or close implicitly upon reaching the break:
 
 ```mud
 name = "Ada"
@@ -73,7 +73,7 @@ description = """
 
 The haemorrhage from the delimiter The closing tag defines the margin that is removed from each non-empty line. A non-empty line with less indentation than the margin is a error. The first line following the start and the line immediately preceding the close are structural and do not form part of the value. The additional indentation is retained. The omissions and insertions of D-061 remain active.
 
-A literal 'ordinary' in double quotation marks prefers `Text` and can be prepared as `Char` when the context requires it and contains exactly one value Unicode scaling in accordance with D-069. Single quotation marks do not delimit literals.
+A literal 'ordinary' in double quotation marks prefers `String` and can be prepared as `Char` when the context requires it and contains exactly one value Unicode scaling in accordance with D-069. Single quotation marks do not delimit literals.
 
 ### Terminators
 

@@ -47,7 +47,7 @@ python specification/syntax/validate_syntax_model.py --help
 python tooling/examples/spell_metadata.py --help
 ```
 
-Text displayed to users is in British English. Source documents, generated
+String displayed to users is in British English. Source documents, generated
 migration indexes and other temporary migration content retain their current
 language until the corresponding repository migration phase changes them.
 

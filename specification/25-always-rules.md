@@ -16,6 +16,7 @@ questions:
   - Q-020
   - Q-072
 decisions:
+  - D-181
   - D-167
   - D-168
   - D-166
@@ -110,7 +111,7 @@ before rollback and retain it as immutable data.
 Computing failures, invalid writes/domains and effect conflicts retain their
 Error contracts. A handler can recover a computing fault to the required Bool
 without gaining authority; if it recovers false, the invariant still refuses.
-Text-only false diagnostics and Refusal on bindings are invalid. There is no
+String-only false diagnostics and Refusal on bindings are invalid. There is no
 missing-otherwise warning, no implicit false-to-Error conversion and no finally.
 The exhaustive error subtype/technical-defect boundary remains
 [[../notes/questions/Q-007-f-technical-failures|Q-007]].

@@ -376,7 +376,7 @@ lexical_forms:
       \ | \"in\" | \"has\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
     references: []
   builtin-word:
-    rhs: "\"Text\" | \"Char\" | \"Bool\" | \"Thing\" | \"Any\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\" | \"Rand\"\n      | \"Name\" | \"MudPath\" | \"Anchor\" | \"MudFile\" | \"Prefix\""
+    rhs: "\"String\" | \"Char\" | \"Bool\" | \"Thing\" | \"Any\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\" | \"Rand\"\n      | \"Name\" | \"MudPath\" | \"Anchor\" | \"MudFile\" | \"Prefix\""
     references: []
   constant-word:
     rhs: '"true" | "false" | "empty" | "all" | "_"'

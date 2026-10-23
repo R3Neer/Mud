@@ -9,7 +9,7 @@ questions:
   - "Q-041"
   - "Q-047"
 affects:
-  - "thing ontology, specialisation, built-in types, thing bodies, Text representation and tools"
+  - "thing ontology, specialisation, built-in types, thing bodies, String representation and tools"
 ---
 # ADR-068 — Universal `Thing` and intrinsic name
 
@@ -19,7 +19,7 @@ affects:
 - Amends: [[notes/decisions/ADR-014-unified-ontology-of-thing|D-014]], [[notes/decisions/ADR-015-acyclic-specialisation-and-state-independent|D-015]], [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|D-018]], [[notes/decisions/ADR-035-organisation-names-using-and-anchors|D-035]], [[notes/decisions/ADR-036-participants-recipients-and-calls|D-036]], [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]] and [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Related question: [[notes/questions/Q-041-o-thing-ontology|Q-041]]
 - Related pending question: [[notes/questions/Q-047-s-selection-of-defaults-by-type|Q-047]]
-- Affected documents: `thing` ontology, specialisation, built-in types, `thing` bodies, `Text` representation and tools
+- Affected documents: `thing` ontology, specialisation, built-in types, `thing` bodies, `String` representation and tools
 
 ## Context
 
@@ -75,7 +75,7 @@ thing BlackCastle {
 4. `on Thing` and `for` roles typed `Thing` over any concrete active `thing`.
 5. `Thing [*]` collection containing identities from unrelated branches.
 6. Default `name` equal to the unqualified nominal name.
-7. Override using one interpolation-free `Text` literal.
+7. Override using one interpolation-free `String` literal.
 8. Rejection of redeclaration, mutability, computation, runtime writing and interpolation in the override.
 9. No inheritance of an overridden `name`.
 10. `{value~name}` uses configured presentation and `{value~anchor}` retains canonical identity.
@@ -83,4 +83,4 @@ thing BlackCastle {
 
 ## Clarification by D-084
 
-Aliases do not receive an intrinsic `name` property. Their declaration retains a nominal name and type anchor, but each alias value has only its declared components. A structural alias may declare an ordinary `name: Text` component. `family` members retain their own intrinsic name.
+Aliases do not receive an intrinsic `name` property. Their declaration retains a nominal name and type anchor, but each alias value has only its declared components. A structural alias may declare an ordinary `name: String` component. `family` members retain their own intrinsic name.

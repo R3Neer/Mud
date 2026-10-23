@@ -35,9 +35,9 @@ class OperatorIdentityWitnesses(unittest.TestCase):
 
     def test_unordered_alternatives_and_ordered_positions(self):
         union = [('union', [], [('alternative', 1), ('alternative', 2)]),
-                 ('basic', ['Int'], []), ('basic', ['Text'], [])]
+                 ('basic', ['Int'], []), ('basic', ['String'], [])]
         reverse = [('union', [], [('alternative', 2), ('alternative', 1)]),
-                   ('basic', ['Text'], []), ('basic', ['Int'], [])]
+                   ('basic', ['String'], []), ('basic', ['Int'], [])]
         self.assertEqual(canonical_supplied_graph(union), canonical_supplied_graph(reverse))
         ordered = [('tuple', ['positional'], [('0', 1), ('1', 2)]), *union[1:]]
         swapped = [('tuple', ['positional'], [('0', 2), ('1', 1)]), *union[1:]]

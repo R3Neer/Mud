@@ -17,7 +17,7 @@ affects:
 
 ## Decision
 
-Every unit declares a `lowerCamel` identifier that participates in its anchor. D-087 integrates unit configuration into the general metadata system: `~name: Name`, `~plural: Text`, `~abbreviation: Text` and `~prefixes: Prefix [* unique] = empty`. None of these properties uses a special unit syntax production.
+Every unit declares a `lowerCamel` identifier that participates in its anchor. D-087 integrates unit configuration into the general metadata system: `~name: Name`, `~plural: String`, `~abbreviation: String` and `~prefixes: Prefix [* unique] = empty`. None of these properties uses a special unit syntax production.
 
 ```mud
 root unit meter {

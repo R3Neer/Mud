@@ -9,7 +9,7 @@ questions:
   - "Q-028"
   - "Q-032"
 affects:
-  - "collections, dictionaries, Text, domains, randomness, ordering, grammar and AST"
+  - "collections, dictionaries, String, domains, randomness, ordering, grammar and AST"
 ---
 
 # ADR-081 — Filtering, `take` and collection indexing
@@ -98,7 +98,7 @@ An unordered `take` is a random point even though it does not write `Rand`: it h
 
 - `all D` materialisations of finite enumerable domains, taking their first canonical values;
 - dictionaries, preserving complete associations;
-- `Text`, producing a prefix of up to `n` `Char` values as another `Text`.
+- `String`, producing a prefix of up to `n` `Char` values as another `String`.
 
 A bare domain is not a direct source for `take`: when producing a collection, materialisation must be explicit in the programme.
 
@@ -142,7 +142,7 @@ queue[2..5]
 
 A singular index produces a `[1]` collection when the source cardinality proves that the position exists, and `[0..1]` otherwise. An index range produces the positions existing within the range and never fails for exceeding the end. It preserves ordering, multiplicity, the exact uniqueness criterion, member type and inner capability.
 
-On an unordered collection, positional access is invalid; use `take` when the intent is to select a quantity. Dictionaries retain key indexing and `Text` retains sequence indexing; type resolution distinguishes these forms.
+On an unordered collection, positional access is invalid; use `take` when the intent is to select a quantity. Dictionaries retain key indexing and `String` retains sequence indexing; type resolution distinguishes these forms.
 
 ### `ordered by` over unions
 
@@ -171,7 +171,7 @@ A `unique by` path over a union obeys the same totality, singularity and transit
 
 1. Ordered and unordered filtering, exact uniqueness criteria, multiplicities and dictionaries.
 2. Union narrowing within the predicate.
-3. `take` over ordered and unordered collections, `all D`, dictionaries and `Text`, and rejection of a bare domain as a collection-producing source.
+3. `take` over ordered and unordered collections, `all D`, dictionaries and `String`, and rejection of a bare domain as a collection-producing source.
 4. Sampling without replacement, reproducibility and snapshot stability.
 5. Deterministic simplification when no real choice exists.
 6. Composition of `take` before and after filtering.

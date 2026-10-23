@@ -88,7 +88,7 @@ class GenericGrammarTests(unittest.TestCase):
 
     def test_explicit_postfix_nested_product_union_and_callable_arguments(self):
         for source in ('Box with Cat', 'Cat Box', 'Pair with Cat, Dog', '(Cat, Dog) Pair',
-                       '(Nat, Nat) Wrapper', 'Cat Box Wrapper', 'Box with (Nat | Text)',
+                       '(Nat, Nat) Wrapper', 'Cat Box Wrapper', 'Box with (Nat | String)',
                        'Box with (Pair with Cat, Dog)', '(Box with Cat) Wrapper',
                        'Cat.action() Box', 'Box with Cat.action()',
                        '(Cat Box).action() Wrapper', 'Cat Box.action() Wrapper',
@@ -141,7 +141,7 @@ class GenericGrammarTests(unittest.TestCase):
                        'Slot with Cat.Empty', '(a, b).Equal() with Person',
                        'Cat.action() Box', 'Cat Box.action() Wrapper',
                        '(Cat.action()) Box', '(Cat [*], Dog) Wrapper',
-                       '(Cat in Animals, Dog) Wrapper', '(Nat | Text) Box',
+                       '(Cat in Animals, Dog) Wrapper', '(Nat | String) Box',
                        '(Cat [*], Dog) Pair.action() Wrapper',
                        '(key: Cat, value: Dog) Wrapper',
                        '(Cat -> Dog, Nat) Wrapper',

@@ -13,6 +13,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-181
   - D-180
   - D-176
   - D-178
@@ -49,8 +50,8 @@ computations, not mutable associations. Value declarations in examples belong
 to admitted containing bodies; let/mut are not file-root declarations.
 
 ```mud
-let labels: Int -> Text = 1 -> "one", 2 -> "two"
-let describe: Int --> Text [ordered] =
+let labels: Int -> String = 1 -> "one", 2 -> "two"
+let describe: Int --> String [ordered] =
     value > 0 --> "positive",
     _ --> "other"
 ```
@@ -110,11 +111,11 @@ value contracts and arrow grouping remain independent; a receiving type-only
 contract is not inferred anew from every supplied value.
 
 ```mud
-let names: Int -> Text = 1 -> "one", 2 -> "two"  # two associations
-let noNames: Int -> Text = empty                 # zero associations
-mut growing: Int -> Text [*] = empty             # explicit variable capacity
-let partial: Int --> Text [ordered] = > 0 --> "positive"  # [0..1]
-let total: Int --> Text [1 ordered] =
+let names: Int -> String = 1 -> "one", 2 -> "two"  # two associations
+let noNames: Int -> String = empty                 # zero associations
+mut growing: Int -> String [*] = empty             # explicit variable capacity
+let partial: Int --> String [ordered] = > 0 --> "positive"  # [0..1]
+let total: Int --> String [1 ordered] =
     > 0 --> "positive",
     _ --> "other"
 ```
@@ -122,7 +123,7 @@ let total: Int --> Text [1 ordered] =
 Without [*], growing defaults to one association and cannot initialize from
 empty. Without the last branch, total is rejected for incomplete coverage;
 partial instead admits uncovered inputs and returns ordinary empty. In a
-signature, Int -> Text requires one association and Int --> Text requires one
+signature, Int -> String requires one association and Int --> String requires one
 result per application; use explicit bounds to accept other shapes.
 
 Inferred bounds describe every normal result admitted by the static contract,
@@ -296,7 +297,7 @@ memoization is selected. A wholly unused local stays undemanded, including when
 only the result would first read it. Scope disposal ends its binding/cache lifetime.
 
 Inside a functional branch, `.member` abbreviates `value.member`, including
-subsequent access/index/call suffixes and Text interpolations. It supplies no
+subsequent access/index/call suffixes and String interpolations. It supplies no
 receiver outside that branch and never picks a traversal binding implicitly.
 
 Interpret each selector operand with its established static category before

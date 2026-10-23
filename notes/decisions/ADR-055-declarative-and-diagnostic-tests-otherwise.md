@@ -21,7 +21,7 @@ A test has a nominal name, its own start with contribution, one then and an afte
 
 Every run builds a fresh isolated world from the union of the start with contributions of the static transitive closure of reachable tests, not ordinary part start with. It materializes and stabilizes that world before the test root. Called tests reuse this activation closure and never reapply initial activation. Cross-part test calls require uses authorization and a test context; executable call cycles are invalid.
 
-Then shares the ordinary ordered private-effect protocol, local calculation and stored-local rules. After may begin with shared pure preamble statements, followed by Boolean assertions. Old in test after retains the test entry view; reactive old retains its distinct wave-snapshot contract. Each assertion is an ExpressionBlock and may carry Error-only otherwise handlers. Its false result remains an assertion failure, not a captured Error. Otherwise on bindings and optional if select computing errors, then or raise exclusively, without Text-only false-condition diagnostics.
+Then shares the ordinary ordered private-effect protocol, local calculation and stored-local rules. After may begin with shared pure preamble statements, followed by Boolean assertions. Old in test after retains the test entry view; reactive old retains its distinct wave-snapshot contract. Each assertion is an ExpressionBlock and may carry Error-only otherwise handlers. Its false result remains an assertion failure, not a captured Error. Otherwise on bindings and optional if select computing errors, then or raise exclusively, without String-only false-condition diagnostics.
 
 ```mud
 test CounterIncreases {

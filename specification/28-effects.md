@@ -16,6 +16,7 @@ questions:
   - Q-069
   - Q-070
 decisions:
+  - D-181
   - D-167
   - D-168
   - D-166
@@ -133,7 +134,7 @@ Homogeneous concurrent collection updates retain their canonical algebra:
 | intersection | Pointwise minimum operand multiplicities |
 | difference | Sum removed multiplicities, then truncate remaining counts at zero |
 | symmetric difference | Parity by whole value; whole-value uniqueness is required |
-| Text concatenation | Requires the specified total semantic order of contributions |
+| String concatenation | Requires the specified total semantic order of contributions |
 
 Unlike concurrent operations with no specified compatible composition fault rather than inventing a universal priority. Different collection operations within one sequential branch still execute in textual order; this incompatibility concerns their composition across concurrent branches. Ordered values retain their logical sequence. Stable causal provenance resolves cases expressly requiring an order; hashes, source-file order and scheduler timing are not semantic priorities.
 

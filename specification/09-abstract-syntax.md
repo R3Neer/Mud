@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-181
   - D-180
   - D-179
   - D-178
@@ -461,7 +462,7 @@ A calculated field has no assignable storage; it may specify its shape and inter
 
 Structural literals remain contextual. `PositionalStructuralLiteralExpr` requires at least two values and `NamedStructuralLiteralExpr` retains one or more named components; neither names a specific alias. Alias members become available after contextual elaboration, explicit statically named structural construction or an admitted nominal conversion. Statically named construction retains ordinary CallExpr syntax under [[13-aliases]].
 
-The same rule applies to basic literals. If the context expects a nominal alias whose representation the literal supports, elaboration constructs that alias directly without introducing a general implicit conversion. For example, with `alias PlayerName := Text`, `let name: PlayerName = "Ada"` is valid. By contrast, an expression already typed as `Text`, such as `rawName`, does not silently become `PlayerName`; it requires `rawName to PlayerName`.
+The same rule applies to basic literals. If the context expects a nominal alias whose representation the literal supports, elaboration constructs that alias directly without introducing a general implicit conversion. For example, with `alias PlayerName := String`, `let name: PlayerName = "Ada"` is valid. By contrast, an expression already typed as `String`, such as `rawName`, does not silently become `PlayerName`; it requires `rawName to PlayerName`.
 
 Later elaboration must distinguish alias construction guided by an expected type from an explicit nominal `to` conversion. The Surface AST does not add a contextual-alias node because it still retains the literal and its expected context; the mechanical representation of the resolved distinction is fixed at that later stage.
 
@@ -759,7 +760,7 @@ The contextual literal `all` produces `AllLiteral`. Its domain and whether it is
 
 `--` produces `CollectionDifference`, distinct from `Subtract`. The updates `|=`, `&=`, `^=` and `--=` produce `UnionAssign`, `IntersectionAssign`, `SymmetricDifferenceAssign` and `DifferenceAssign`, respectively; they are not reduced to `Assign` because update class participates in concurrent consolidation.
 
-## Templates `Text`
+## Templates `String`
 
 A template is an ordered sequence of:
 

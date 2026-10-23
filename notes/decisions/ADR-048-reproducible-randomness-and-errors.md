@@ -55,7 +55,7 @@ Everything point random has identity semantics and derives its result of a seed 
 
 The non-finite results of `Rum`, division by zero, an unavailable required value reference outside established Boolean pruning, an operation outside domain and any effect which cannot produce a state well-formed are errors. Within a action actually produce `Errors` and rollback. Within `imagine` they spread like failure assessment purposes and do not amount to falsehood.
 
-Each Error occurrence has mandatory human-readable Text reason and diagnostic origin under D-118. At a real action boundary, unresolved occurrences form the nonempty Errors reply alternative; they are not flattened into one collection-wide reason. Established inactive Boolean-call pruning remains distinct from ordinary required-value faults.
+Each Error occurrence has mandatory human-readable String reason and diagnostic origin under D-118. At a real action boundary, unresolved occurrences form the nonempty Errors reply alternative; they are not flattened into one collection-wide reason. Established inactive Boolean-call pruning remains distinct from ordinary required-value faults.
 
 Resource constraints and internal flaws in an implementation should not be confused with a `Errors` semantic. Q-007 It must define their external representation and the exact boundary between the two categories.
 

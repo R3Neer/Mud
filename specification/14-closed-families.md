@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-181
   - D-169
   - D-038
   - D-064
@@ -148,7 +149,7 @@ Access `member.datum` produces a value, not a new descriptor per member.
 A member assignment has no public anchor or metadata body. A datum's immediate
 metadata-only body belongs to its schema descriptor. Execution cannot write
 postfix `~` properties. Configured `~name` is presentation and does not change
-member identity, equality or ordering; Text interpolation uses that presentation.
+member identity, equality or ordering; String interpolation uses that presentation.
 The projected type category is Family even for applied families and members.
 
 ## Examples and counterexamples

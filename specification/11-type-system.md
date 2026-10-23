@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-181
   - D-180
   - D-176
   - D-178
@@ -128,7 +129,7 @@ The following constructors are metalanguage, not new source syntax. $\mathsf{Man
 
 | Form | Information retained |
 | --- | --- |
-| $\mathsf{Basic}(b)$ | Text, Char, Bool, Nat, Int, Num, Rum, Money and Any. |
+| $\mathsf{Basic}(b)$ | String, Char, Bool, Nat, Int, Num, Rum, Money and Any. |
 | $\mathsf{App}(a,(\tau_i),k)$ | Static application of constructor declaration $a$ to type arguments, retaining category $k$. |
 | $\mathsf{Nom}(a,k)$ | Nominal declaration identity $a$ and category $k$: thing, alias or family. |
 | $\mathsf{Product}((n_i,\tau_i)_{i=1}^m)$ | Ordered named/positional structural components and their complete contracts. |
@@ -144,7 +145,7 @@ The following constructors are metalanguage, not new source syntax. $\mathsf{Man
 
 An ordinary omitted collection specification means $[1,1]$; the omission remains source provenance. In an immutable stored field with an initialiser, omitted outer cardinality instead inherits the exact external shape of that initial value. A dictionary remains one outer value independently of its association count. An outwardly mutable field keeps $[1,1]$ when omitted. A bare star is resolved against the applicable effective limits, not against a guessed finite runtime population. All actual collections are finite even when their static upper bound is unbounded. Nested collections occupy members without implicit flattening.
 
-For exact dictionaries the bracketed specification following the arrow constrains associations, not a collection of independent dictionaries. For functional dictionaries it constrains application results. Each arrow-owned omitted cardinality follows the owner matrix in [[17-dictionaries#Omitted cardinality and owner contracts]]: infer immutable initializers and derived bodies, retain [1] for mutable stored exact dictionaries and type-only contracts. Inference is static over admitted inputs/views, not the first invocation. Written bounds are checked before an inferred policy can satisfy a positive-minimum receiving contract. The value contract may itself contain a collection or another dictionary. Text is a positional sequence as one basic value, not Char with a collection-order modifier.
+For exact dictionaries the bracketed specification following the arrow constrains associations, not a collection of independent dictionaries. For functional dictionaries it constrains application results. Each arrow-owned omitted cardinality follows the owner matrix in [[17-dictionaries#Omitted cardinality and owner contracts]]: infer immutable initializers and derived bodies, retain [1] for mutable stored exact dictionaries and type-only contracts. Inference is static over admitted inputs/views, not the first invocation. Written bounds are checked before an inferred policy can satisfy a positive-minimum receiving contract. The value contract may itself contain a collection or another dictionary. String is a positional sequence as one basic value, not Char with a collection-order modifier.
 
 > [!rule] MUD-TYPE-002 — Well-formed type constructors
 > Every referenced declaration must be visible and have the required category. Cardinalities have nonnegative integral lower bounds and upper bounds no smaller than their lower bounds. Keyed paths and order paths must be statically meaningful and satisfy their stability contracts. Dictionary arrows must be the complete outer form, including after resolving representation aliases. A collection specification after a complete union qualifies that union; it does not qualify only its last alternative.
@@ -176,7 +177,7 @@ Specialisation views retain a value's exact effective nominal identity. Equality
 
 `with T, U as A, B with V as C with W` gives T and U both bounds A and B, V bound C, and W bound Any. Bounds are nominal types, possibly statically applied, with no direct domain, cardinality or collection modifiers. Header lists may be bracketed: `with [T, U] as [A, B]` and `as [ParentA, ParentB]`; brackets are sugar, not runtime collections. Ancestor `as` precedes parameter groups; `as` inside a `with` group supplies bounds. In the declaration's ancestor/parameter portion, before any for/given clauses, a new ungrouped `with` starts the next parameter group. An explicit application inside an unbracketed ancestor/bound list is parenthesised, as in `as (Base with T) with T`; a postfix ancestor `as T Base with T` is concise. An explicit application inside a bracketed ancestor/bound list is already delimited by that list.
 
-Arguments likewise have no direct outer domain, cardinality or modifiers. A named representation alias may wrap a complete shape: `alias CatQueue := Cat [* ordered]` admits `Box with CatQueue`; `Box with (Cat [*])` is invalid. A suffix after the complete application, as in `(Box with Cat) [*]`, shapes the outer Box collection, not its Cat argument. Grouped member unions such as `Box with (Nat | Text)` are also admitted without per-alternative collection/domain syntax. An ungrouped `|` combines the surrounding complete type, not generic arguments. Product arguments are admitted, with each component retaining its ordinary complete contract. Substitution replaces the member form at a parameter occurrence; the occurrence supplies its own outer domain/collection contract. It neither flattens a collection-valued argument nor fuses its inner shape with the occurrence's outer shape. Keyed order/uniqueness requires bounds proving the relevant paths and contracts.
+Arguments likewise have no direct outer domain, cardinality or modifiers. A named representation alias may wrap a complete shape: `alias CatQueue := Cat [* ordered]` admits `Box with CatQueue`; `Box with (Cat [*])` is invalid. A suffix after the complete application, as in `(Box with Cat) [*]`, shapes the outer Box collection, not its Cat argument. Grouped member unions such as `Box with (Nat | String)` are also admitted without per-alternative collection/domain syntax. An ungrouped `|` combines the surrounding complete type, not generic arguments. Product arguments are admitted, with each component retaining its ordinary complete contract. Substitution replaces the member form at a parameter occurrence; the occurrence supplies its own outer domain/collection contract. It neither flattens a collection-valued argument nor fuses its inner shape with the occurrence's outer shape. Keyed order/uniqueness requires bounds proving the relevant paths and contracts.
 
 `Constructor with A, B` is explicit application. `A Constructor` and `(A, B) Constructor` are postfix forms. After resolving constructor arity, a grouped postfix product supplies its components to an arity greater than one, or remains one product argument to an arity-one constructor. Thus `(Cat, Dog) Pair` supplies two arguments and `(Nat, Nat) Wrapper` supplies one product. Grouping does not bypass argument-shape restrictions, arity or bounds. There is no overloading one generic declaration by arity; an unapplied constructor does not denote a value type or implicit self-application. Its declared parameter type variables are available within its own parameterised scope.
 
@@ -370,10 +371,10 @@ Domain equality uses normalized symbolic contracts, including resolved provenanc
 For recursive admitted type graphs, compare a closed finite relation of node pairs: all local structural labels must match and every required child pair must belong to the relation. Alias identity is omitted from these labels; opaque thing/family labels retain constructor and exact argument identities. Greatest-fixed-point labelled bisimulation handles recursion without comparing sample values. Merely visiting a pair is not evidence. The relation is exact equality of this normalized contract representation, not the weaker conversion representation relation $\cong_R$.
 
 ```mud
-alias A { let x: Nat; let y: Text [0..1] }
-alias B { let x: Nat; let y: Text [0..1] }
+alias A { let x: Nat; let y: String [0..1] }
+alias B { let x: Nat; let y: String [0..1] }
 rule SameStructure { A === B }
-rule DifferentOrder { Text [*] !== Text [* ordered] }
+rule DifferentOrder { String [*] !== String [* ordered] }
 ```
 
 Both types may be exposed as Type descriptors without adding application anchors. Descriptors retain source constructor and argument information; member `~anchor` denotes the source declaration and `~type` the effective applied type. Their public categories follow the complete fixed TypeKind catalogue below; structural comparison introduces no additional intrinsic metadata spellings.
@@ -420,7 +421,7 @@ For a successful is test, $\Phi$ retains the compatible nominal alternatives; it
 
 Each written hole is an independent inference occurrence; two underscores do not implicitly equate their solutions. An already established Any source contract may itself be the uniquely synthesized type, but Any cannot be guessed to repair missing evidence. Propagate the written expected structure into components of the initialiser and synthesize missing component contracts where unique. Several source spellings for the same normalized exact type are one solution; structurally equal but nominally distinct aliases are different possible solutions. Do not enumerate nominal aliases to invent a contextual construction. Defined union synthesis retains its ordinary rule; a union of possible guesses is not a solution for an ambiguous hole. A generic application is checked only after its arguments are resolved, with ordinary bounds, variance and finite-closure obligations.
 
-`let pair: (_, Text) = source` succeeds when source and written constraints determine the first component uniquely and the second meets Text. `let pair: (_, Text) = (empty, "hello")` fails without additional evidence for the first member type. `let values: _ = empty` fails; `let values: _ in Cats [*] = empty` succeeds only if the domain contract supplies unique type evidence. Mutable stored annotations admit holes with the same rule; subsequent assignments obey the inferred fixed contract and ordinary writable invariance.
+`let pair: (_, String) = source` succeeds when source and written constraints determine the first component uniquely and the second meets String. `let pair: (_, String) = (empty, "hello")` fails without additional evidence for the first member type. `let values: _ = empty` fails; `let values: _ in Cats [*] = empty` succeeds only if the domain contract supplies unique type evidence. Mutable stored annotations admit holes with the same rule; subsequent assignments obey the inferred fixed contract and ordinary writable invariance.
 
 Written domains, cardinalities, uniqueness, order and authority remain stored admission constraints, never coercive derived transforms. Omitted shape retains the owner policy, including initializer-shape capture for immutable stored fields, body-result inference for functional definitions, and the singleton default for mutable fields and type-only contracts. Dictionary arrow-owned counts and exterior cardinality are resolved independently under [[17-dictionaries#Omitted cardinality and owner contracts]]. No hole infers missing bounds or creates authority. Schema/default/metadata initialisers retain their closed-static requirements. Hole syntax is unavailable in participant/given signatures, generic parameter bounds, alias representation definitions, derived annotations, ordinary casts or standalone Type expressions.
 
@@ -459,7 +460,7 @@ Complete signature encoding and operator reflection schema: [[names/operator-con
 
 | Public form | Category |
 | --- | --- |
-| Nat, Int, Num, Rum, Money, Text, Char, Bool | Basic |
+| Nat, Int, Num, Rum, Money, String, Char, Bool | Basic |
 | Any | Any |
 | Nominal thing, alias, family | Thing, Alias, Family respectively |
 | Anonymous tuple, collection, union, interval | Tuple, Collection, Union, Interval respectively |

@@ -26,7 +26,7 @@ The author accepts raise outside handlers and propagation through the existing b
 
 ## Decision
 
-Raise is admitted in evaluated expression/value/effect positions, including alias operator bodies. Its value body must yield one Error or a nonempty Errors-compatible collection. Text, Refusal and empty are invalid payloads. Evaluate the payload under the context's existing permissions; success introduces Fault with those distinct Error occurrences and no normal result. Payload computation faults follow ordinary recovery first; no arbitrary Error subtype is introduced. Existing admission rules govern uncertain payload cardinality; no successful empty raise is possible.
+Raise is admitted in evaluated expression/value/effect positions, including alias operator bodies. Its value body must yield one Error or a nonempty Errors-compatible collection. String, Refusal and empty are invalid payloads. Evaluate the payload under the context's existing permissions; success introduces Fault with those distinct Error occurrences and no normal result. Payload computation faults follow ordinary recovery first; no arbitrary Error subtype is introduced. Existing admission rules govern uncertain payload cardinality; no successful empty raise is possible.
 
 A raised expression can check against the enclosing expected normal-result contract because it produces no normal value. It does not synthesize a nominal result from nothing; result-only raise computations without a determining context need annotation. This metalanguage property introduces no storable bottom/never type.
 

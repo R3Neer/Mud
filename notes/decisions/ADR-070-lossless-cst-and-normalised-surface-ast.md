@@ -63,7 +63,7 @@ The CST:
 - Preserves every written token.
 - Preserves whitespace and comments as trivia.
 - Preserves the physical form of line breaks.
-- Preserves explicit and implicit closing of `Text`.
+- Preserves explicit and implicit closing of `String`.
 - Can represent invalid input through missing tokens and error regions.
 - Reconstructs the original bytes except for the BOM, which is retained as metadata.
 - Does not resolve names or types.

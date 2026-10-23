@@ -26,8 +26,8 @@ MUD needs to express that a value may belong to several alternatives without los
 `|` forms a type union in every type position:
 
 ```mud
-value: Nat | Text
-alias Result := Nat | Text
+value: Nat | String
+alias Result := Nat | String
 ```
 
 An alternative may declare its own domain. Collection specification may appear only once, at the end, and applies to the complete union:
@@ -58,7 +58,7 @@ This is especially important for distinct aliases with the same representation. 
 Without further information, only operations with a result compatible with every possible alternative are admitted. `is` is extended to test nominal membership of an alternative, and `is not` is added as a canonical compound operator with the same precedence:
 
 ```mud
-rule IsPositive given value: Nat | Text {
+rule IsPositive given value: Nat | String {
     value is Nat and value > 0
 }
 ```

@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-181
   - D-176
   - D-173
   - D-164
@@ -117,7 +118,7 @@ is iis in has
 not and or xor
 exists forall count min max
 true false empty all _
-Text Char Bool Thing Any Nat Int Num Rum Money
+String Char Bool Thing Any Nat Int Num Rum Money
 Name MudPath Anchor MudFile Prefix Rand
 ```
 
@@ -255,7 +256,7 @@ An implicitly closed `TEXT_END` is emitted as a synthetic token of zero width an
 
 ## `Char`
 
-`Char` shares the ordinary literals enclosed in double quotation marks with `Text`:
+`Char` shares the ordinary literals enclosed in double quotation marks with `String`:
 
 ```mud
 let letter: Char = "a"
@@ -265,13 +266,13 @@ let face: Char = "\u{1F642}"
 ```
 
 > [!rule] MUD-LEX-025 — A single scalar
-> An ordinary literal may be rendered as `Char` when the context requires it and, after interpreting escape sequences, contains exactly one Unicode scalar value. The explicit closing quote is mandatory and does not allow for interpolations. Without context `Char`, the same notation has type `Text`.
+> An ordinary literal may be rendered as `Char` when the context requires it and, after interpreting escape sequences, contains exactly one Unicode scalar value. The explicit closing quote is mandatory and does not allow for interpolations. Without context `Char`, the same notation has type `String`.
 
-The multi-line format is always `Text`. Single quotation marks do not delimit any MUD literal entries.
+The multi-line format is always `String`. Single quotation marks do not delimit any MUD literal entries.
 
 Its natural order is the ascending value sequence. It is neither a linguistic collation nor an order based on graphemes.
 
-## `Text`
+## `String`
 
 ### Ordinary form
 
@@ -287,7 +288,7 @@ or be implicitly closed before the jump:
 "Ada
 ```
 
-Both denote the same `Text`. If the content is followed by an operator, delimiter or comment, the closing quotation mark is mandatory:
+Both denote the same `String`. If the content is followed by an operator, delimiter or comment, the closing quotation mark is mandatory:
 
 ```mud
 let greeting = "Hello" | ", world"
@@ -320,11 +321,11 @@ let description = """
 > [!rule] MUD-LEX-034 — Contents
 > A single quotation mark does not close the multi-line format. Only `"""` on a valid closing line does so.
 
-`Text` retains the position of its characters. It is not the same as `Char [* ordered]`.
+`String` retains the position of its characters. It is not the same as `Char [* ordered]`.
 
 ### Templates and interpolation
 
-Everything in `Text` is a template. `{...}` contains an ordinary MUD expression, which can use postfix operators `~` such as `~anchor`. `anchor{...}` does not exist. Interpolated code braces are balanced and `\{`/`\}` writes literal braces. The scanner delivery `TEXT_START`, `TEXT_FRAGMENT`, `INTERPOLATION_START`, `INTERPOLATION_END` and `TEXT_END`.
+Everything in `String` is a template. `{...}` contains an ordinary MUD expression, which can use postfix operators `~` such as `~anchor`. `anchor{...}` does not exist. Interpolated code braces are balanced and `\{`/`\}` writes literal braces. The scanner delivery `TEXT_START`, `TEXT_FRAGMENT`, `INTERPOLATION_START`, `INTERPOLATION_END` and `TEXT_END`.
 
 ## Escapes
 
@@ -339,8 +340,8 @@ The minimum forms are:
 | `\r` | return `CR` |
 | `\t` | tab |
 | `\u{H...}` | a scalar written using one or more hexadecimal digits |
-| `\{` | opening key literal in `Text` |
-| `\}` | locking key literal in `Text` |
+| `\{` | opening key literal in `String` |
+| `\}` | locking key literal in `String` |
 
 > [!rule] MUD-LEX-035 — Unicode escape sequence
 > The value of `\u{...}` must lie between `U+0000` and `U+10FFFF` and cannot belong to the substitute interval.
@@ -425,7 +426,7 @@ This chapter only defines the lexical recognition of these forms; their interpre
 
 Every token and trivia contains `SourceSpan`. The text of a written token occupies exactly its byte range. A synthetic token has the same start and end. The `fullSpan` of an token begins at its first initial trivia.
 
-Escape decoding or the normalisation of the `Text` range does not alter the spans of its specific tokens; the decoded value belongs to the AST.
+Escape decoding or the normalisation of the `String` range does not alter the spans of its specific tokens; the decoded value belongs to the AST.
 
 ## Scanner priority
 

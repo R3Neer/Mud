@@ -44,7 +44,7 @@ The RHS admits the short expression or the `ValueBlock` already defined for comp
 family Tier {
     let score: Nat := baseScore
     let normalized in 0..100 := rawScore
-    let tags: Text [* unique ordered] := inheritedTags
+    let tags: String [* unique ordered] := inheritedTags
 
     Low,
     High

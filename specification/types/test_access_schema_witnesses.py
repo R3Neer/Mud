@@ -19,11 +19,11 @@ class AccessSchemaWitnesses(unittest.TestCase):
             emitted_values([('fault', None)])
 
     def test_static_tuple_position_determines_one_complete_type(self):
-        self.assertEqual(tuple_component(['Int', 'Text'], '*'), 'Text')
-        self.assertEqual(tuple_component(['Int', 'Text'], 1), 'Int')
+        self.assertEqual(tuple_component(['Int', 'String'], '*'), 'String')
+        self.assertEqual(tuple_component(['Int', 'String'], 1), 'Int')
         for bad in [0, 3, 'dynamic', True]:
             with self.assertRaises(ValueError):
-                tuple_component(['Int', 'Text'], bad)
+                tuple_component(['Int', 'String'], bad)
 
     def test_input_projection_relabels_without_casting_components(self):
         args = (['departure', 'arrival'], ['City', 'City'], ['origin', 'destination'], ['City', 'City'], [1, 2])

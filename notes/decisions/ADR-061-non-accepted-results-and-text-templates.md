@@ -1,6 +1,6 @@
 ---
 id: D-061
-title: "Non-accepted results and `Text` templates"
+title: "Non-accepted results and `String` templates"
 status: current
 date: 2026-07-29
 supersedes: []
@@ -10,9 +10,9 @@ questions:
   - "Q-055"
   - "Q-059"
 affects:
-  - "action results, `always` rules, lexicon, grammar, `Text` evaluation, diagnostics and the external boundary"
+  - "action results, `always` rules, lexicon, grammar, `String` evaluation, diagnostics and the external boundary"
 ---
-# ADR-061 — Non-accepted results and `Text` templates
+# ADR-061 — Non-accepted results and `String` templates
 
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
@@ -25,13 +25,13 @@ affects:
 - Further amended by: [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
 - Related questions: Q-007, [[notes/questions/Q-055-l-point-magnitude-literals|Q-055]], Q-059
-- Affected documents: action results, `always` rules, lexicon, grammar, `Text` evaluation, diagnostics and the external boundary
+- Affected documents: action results, `always` rules, lexicon, grammar, `String` evaluation, diagnostics and the external boundary
 
 ## Context
 
 An action's public result already distinguishes `Success`, `Refusal` and `Errors`, but non-accepted states did not yet carry a uniform explanation. `always` rules could cause a failure without declaring the invariant's own diagnostic.
 
-At the same time, `Text` literals need to incorporate values without resorting to manual concatenation or confusing a declaration with the value produced by an expression.
+At the same time, `String` literals need to incorporate values without resorting to manual concatenation or confusing a declaration with the value produced by an expression.
 
 ## Decision
 
@@ -39,13 +39,13 @@ At the same time, `Text` literals need to incorporate values without resorting t
 
 ActionReply is an ordinary immutable value with alternatives Success, Refusal and the nonempty nominal collection alias Errors. Refusal and Error require reason and Declaration origin; errors can wrap an optional cause. ConditionRefusal carries the actual final Boolean evaluation tree. No external state/reason envelope replaces that value contract.
 
-False if, after and always checks produce their respective refusal subtype. Computing a condition can instead yield Error values. Otherwise attaches to the protected block and handles only errors, with optional conjunctive on bindings and if, then or raise exclusively. Plain Text diagnostics for false checks are invalid and absence of such a diagnostic produces no warning. Test assertion falsity retains the separate test executor failure category, not a captured Error.
+False if, after and always checks produce their respective refusal subtype. Computing a condition can instead yield Error values. Otherwise attaches to the protected block and handles only errors, with optional conjunctive on bindings and if, then or raise exclusively. Plain String diagnostics for false checks are invalid and absence of such a diagnostic produces no warning. Test assertion falsity retains the separate test executor failure category, not a captured Error.
 
 Static diagnostics and executor defects retain their own categories. Q-007 delimits the exhaustive error catalogue and resource/defect boundary. Q-059 retains complete test observation/aggregation semantics.
 
-### `Text` templates
+### `String` templates
 
-Ordinary and multiline `Text` literals are templates. Within them:
+Ordinary and multiline `String` literals are templates. Within them:
 
 - `{e}` evaluates the MUD expression `e` and inserts the textual representation of its value;
 - `{e}` may also interpolate `e~anchor` when the static category of `e` exposes that property;
@@ -55,7 +55,7 @@ Ordinary and multiline `Text` literals are templates. Within them:
 
 `anchor` is contextual only within a template and does not become a generally reserved word. Outside a template it may remain an ordinary identifier.
 
-The scanner uses a mode stack: the contents of `{...}` return to ordinary expression lexing and their delimiters balance normally. A `Text` literal nested within that expression opens its own template mode. A line break or end of file can implicitly close ordinary text only when no hole remains open.
+The scanner uses a mode stack: the contents of `{...}` return to ordinary expression lexing and their delimiters balance normally. A `String` literal nested within that expression opens its own template mode. A line break or end of file can implicitly close ordinary text only when no hole remains open.
 
 ### Renderable values
 
@@ -63,7 +63,7 @@ The representation of a hole depends on the evaluated value, not the written nam
 
 | Value | Representation |
 | --- | --- |
-| `Text` | Its characters, without quotes |
+| `String` | Its characters, without quotes |
 | `Char` | Its contained scalar |
 | `Bool` | `true` or `false` |
 | Basic number | Its canonical numeric representation or the explicit format |
@@ -147,7 +147,7 @@ A numeric hole permits:
 - `right` sets exactly the digits to the right of the point, adding zeroes or rounding to nearest with ties to even in accordance with D-034;
 - when `right` is zero, no decimal point is written.
 
-Left precision is permitted for every basic numeric type. Right precision is permitted only for types that can show a fractional part: `Num`, `Rum` and `Money`. Formatting changes exclusively the produced `Text`, never the value or its type.
+Left precision is permitted for every basic numeric type. Right precision is permitted only for types that can show a fractional part: `Num`, `Rum` and `Money`. Formatting changes exclusively the produced `String`, never the value or its type.
 
 ```mud
 let count: Nat = 12
@@ -171,7 +171,7 @@ let speed := vehicle.speed in km/h
 let time := clock.time in second
 ```
 
-Omitting it is legal, but produces a warning where a unit can be selected because it makes a public boundary depend on its canonical projection. The suggested fix explicitly adds that unit. A magnitude without units publishes its number and produces no warning. For a point magnitude, a direct field without `in` publishes the numeric coordinate, not `~format`; to publish the formatted representation, declare a `Text` field, for example `let timeText := "{clock.time}"`.
+Omitting it is legal, but produces a warning where a unit can be selected because it makes a public boundary depend on its canonical projection. The suggested fix explicitly adds that unit. A magnitude without units publishes its number and produces no warning. For a point magnitude, a direct field without `in` publishes the numeric coordinate, not `~format`; to publish the formatted representation, declare a `String` field, for example `let timeText := "{clock.time}"`.
 
 The rule applies to public fields whose direct value is a magnitude. Recursive foreign serialization of magnitudes contained in aliases or collections belongs to Q-070 conversion/hosting protocols; closed Q-051 concerns basic look identity/selection.
 
@@ -193,7 +193,7 @@ The access is valid only when the receiver's static category exposes `~anchor`. 
 - The lexer requires nested modes for text and code.
 - `otherwise` is optional block error recovery; its absence propagates computing errors and produces no missing-false-diagnostic warning.
 - Each Refusal and each Error element has a human-readable reason; Errors is the nonempty collection alias.
-- Contextual rendering introduces no general implicit conversion to `Text`.
+- Contextual rendering introduces no general implicit conversion to `String`.
 - The `~name` display may differ from `~anchor`; they are separate reflective properties.
 - `in` serves both linear and point magnitudes and, for the latter, bypasses the format.
 - Component extraction is not limited by the visible format.
@@ -212,4 +212,4 @@ The access is valid only when the receiver's static category exposes `~anchor`. 
 10. Rejection of `~anchor` where the receiver's static category does not expose that property.
 11. Root, alternative and formatted rendering of linear and point magnitudes.
 12. Extraction `picosecond from second in time` independently of `format`.
-13. A warning for a public magnitude with a selectable unit but no explicit display, no warning where no units exist, and formatted publication through `Text`.
+13. A warning for a public magnitude with a selectable unit but no explicit display, no warning where no units exist, and formatted publication through `String`.

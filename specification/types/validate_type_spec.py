@@ -57,7 +57,7 @@ def check_witness(witness):
             raise ValueError("Invalid authority flag")
 
     parents = witness.get("parents", {})
-    builtins = {"Nat", "Int", "Num", "Rum", "Money", "Text", "Char", "Bool", "Any"}
+    builtins = {"Nat", "Int", "Num", "Rum", "Money", "String", "Char", "Bool", "Any"}
     if builtins & parents.keys():
         raise ValueError("A witness cannot redefine primitive ancestry")
     for name, entries in parents.items():

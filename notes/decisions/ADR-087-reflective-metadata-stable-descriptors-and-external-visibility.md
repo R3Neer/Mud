@@ -52,7 +52,7 @@ Configurable and user metadata is written at the start of the owner's body, befo
 thing Nora as Person {
     ~name = "Nora"
     ~summary = "Main person in the example"
-    ~author: Text = "Samuel"
+    ~author: String = "Samuel"
 
     mut health: Nat = 100
 }
@@ -278,13 +278,13 @@ Standard presentation and configuration metadata are retained with these princip
 
 ```text
 ~name         : Name
-~plural       : Text
-~abbreviation : Text
+~plural       : String
+~abbreviation : String
 ~prefixes     : Prefix [* unique] = empty
-~format       : Text
-~summary      : Text = ""
-~description  : Text = ""
-~deprecated   : Text [0..1] = empty
+~format       : String
+~summary      : String = ""
+~description  : String = ""
+~deprecated   : String [0..1] = empty
 ```
 
 `Prefix` is a built-in nominal type. The SI catalogue fixed by D-076 provides built-in `Prefix` values from `quecto` to `quetta`. Their names are ordinary identifiers resolved at the built-in level. Therefore `~prefixes = [kilo, milli]` is an ordinary MUD collection, `all` enumerates the built-in `Prefix` domain and `empty` represents the empty collection. Units retain neither `unit-property`, `prefix-selection` nor another parallel subgrammar: their body contains only general metadata declarations.
@@ -296,7 +296,7 @@ Standard presentation and configuration metadata are retained with these princip
 A non-reserved name may declare stored or calculated metadata:
 
 ```mud
-~author: Text = "Samuel"
+~author: String = "Samuel"
 ~important := Nora~path in world.main
 ```
 
@@ -323,9 +323,9 @@ explicit element value > file default > language default
 
 A file default does not admit `:=`, `ValueBlock`, runtime reads or intrinsic properties. Its form remains separate from ordinary metadata assignment on an owner. `~summary`, `~description` and `~deprecated` may be used as defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` and `~format` cannot be used as file defaults because they are inherently individual. User metadata is admitted as defaults unless its definition is explicitly restricted in future.
 
-### Text and tooling
+### String and tooling
 
-`Text` templates interpolate an ordinary expression and use the canonical textual conversion of its value. No special `anchor{...}` interpolation exists.
+`String` templates interpolate an ordinary expression and use the canonical textual conversion of its value. No special `anchor{...}` interpolation exists.
 
 The LSP and official tooling preferentially present, when available:
 

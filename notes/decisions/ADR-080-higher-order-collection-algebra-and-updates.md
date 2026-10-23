@@ -117,11 +117,11 @@ Mixing different update classes on the same target is a conflict unless another 
 
 When several compatible concurrent updates add new members to an `ordered` collection and the existing semantic criterion does not by itself determine a total order, provenance is completed reproducibly in accordance with D-100, while respecting all real causality. This situation no longer constitutes an open case of Q-006 on its own. Operations that only filter the target preserve its relative order.
 
-For `Text`, `|=` concatenates sequentially like `|`. Several concurrent concatenations are neither idempotent nor commutative: they are consolidated only when a semantically determined total order exists; otherwise they conflict.
+For `String`, `|=` concatenates sequentially like `|`. Several concurrent concatenations are neither idempotent nor commutative: they are consolidated only when a semantically determined total order exists; otherwise they conflict.
 
 ### Typed overloading
 
-`|=`, `&=` and `^=` follow the symbolic operation resolved by types, without themselves extending the domains of `|`, `&` or `^`. In particular, they do not replace word boolean operators. `|=` may denote `Text` concatenation or collection union; `&=` and `^=` denote collection operations wherever defined, and `^=` retains the whole-value uniqueness requirement, which may be supplied by ordinary or keyed uniqueness. `--=` denotes collection difference only.
+`|=`, `&=` and `^=` follow the symbolic operation resolved by types, without themselves extending the domains of `|`, `&` or `^`. In particular, they do not replace word boolean operators. `|=` may denote `String` concatenation or collection union; `&=` and `^=` denote collection operations wherever defined, and `^=` retains the whole-value uniqueness requirement, which may be supplied by ordinary or keyed uniqueness. `--=` denotes collection difference only.
 
 ## Consequences
 

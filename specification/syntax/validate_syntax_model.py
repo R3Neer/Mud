@@ -506,11 +506,11 @@ def validate(root: Path) -> list[Problem]:
             "after `anchor{` and `{`",
         ],
         root / "specification/04-mathematical-model.md": [
-            "intrinsic `name: Text`",
+            "intrinsic `name: String`",
             "A single global `start with` declaration determines a finite set",
         ],
         root / "specification/08-concrete-grammar.md": [
-            "intrinsic and immutable `name: Text` property",
+            "intrinsic and immutable `name: String` property",
             "`unique` is statically forbidden in dictionaries",
             "Parentheses are mandatory when nesting a dictionary as a value",
             "`anchor{d}` inserts the canonical anchor",

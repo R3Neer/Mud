@@ -79,7 +79,7 @@ class AliasConstructorWitnesses(unittest.TestCase):
         self.assertFalse(supplied_constructor(schema, [self.arg('derived')]))
 
     def test_component_types_and_known_default_domains_are_checked(self):
-        self.assertFalse(supplied_constructor(self.schema(), [self.arg(member='Text'), self.arg()]))
+        self.assertFalse(supplied_constructor(self.schema(), [self.arg(member='String'), self.arg()]))
         schema = self.schema()
         schema['fields'][1]['contract'] = {'name': 'Num', 'domain': [0, 1]}
         schema['fields'][1]['default'] = {'name': 'Num', 'domain': [2, 2]}

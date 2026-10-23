@@ -7,6 +7,7 @@ depends-on:
   - "[[../11-type-system]]"
 questions: []
 decisions:
+  - D-181
   - D-156
   - D-153
   - D-149
@@ -51,7 +52,7 @@ A normalized unrestricted nonnested singleton wrapper with no additional guarant
 
 JSON string quoting, array framing and explicit references make the form uniquely decodable. Rooted quotient graph isomorphism yields the same minimum serialization, and equal decoded graphs recover equal constructor/label/edge contracts. This establishes collision freedom within the specified normalized-contract model, not general semantic equivalence of programs.
 
-The bare builtin names Nat, Int, Num, Rum, Money, Text, Char, Bool and Any abbreviate exactly their unrestricted singleton contracts. A qualified alias identifier path abbreviates the corresponding unapplied unrestricted singleton nominal alias leaf. It is available only when distinct from reserved builtin spellings; all other contracts use graph form. Identifier path segments escape every UTF-8 byte except ASCII letters, digits and underscore as uppercase `%HH`, including separators occurring inside a segment. Dots separate segments. The original alias owner uses its existing canonical declaration anchor; ordinary anchor migrations remain explicit.
+The bare builtin names Nat, Int, Num, Rum, Money, String, Char, Bool and Any abbreviate exactly their unrestricted singleton contracts. A qualified alias identifier path abbreviates the corresponding unapplied unrestricted singleton nominal alias leaf. It is available only when distinct from reserved builtin spellings; all other contracts use graph form. Identifier path segments escape every UTF-8 byte except ASCII letters, digits and underscore as uppercase `%HH`, including separators occurring inside a segment. Dots separate segments. The original alias owner uses its existing canonical declaration anchor; ordinary anchor migrations remain explicit.
 
 The anchor is `owner-anchor::operator::symbol(C1, C2)` for a binary signature and `owner-anchor::operator::symbol(C1)` for unary. Between binary operands write exactly comma-space; inside graph encoding write no whitespace. The symbol is one admitted token. Signature parentheses and operand count distinguish unary/binary occurrences of + and -. Parse the outer signature and embedded JSON strings/arrays before recognizing separators; a colon, comma, parenthesis or tilde inside a quoted label is data. Metadata adds the ordinary `~identifier` suffix after the completed outer signature; no metadata identity is derived from an abbreviated display.
 
@@ -71,7 +72,7 @@ Operator descriptor admission is MUD-TYPE-036 in [[../11-type-system]].
 | `~owner` | Declaration descriptor of the original declaring alias. |
 | `~anchor` | Anchor, using the original signature, also for inherited/applied views. |
 | `~kind` | DeclarationKind, specifically Operator. |
-| `~symbol` | Text, one admitted operator token. |
+| `~symbol` | String, one admitted operator token. |
 | `~arity` | Nat, exactly 1 or 2. |
 | `~operands` | Immutable named `(name: Name, type: Type)` records, ordered, count equal to arity. |
 | `~result` | Type, the checked effective result contract, with generic substitution for applied views. |

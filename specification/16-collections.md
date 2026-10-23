@@ -11,6 +11,7 @@ depends-on:
 questions:
   - Q-032
 decisions:
+  - D-181
   - D-180
   - D-176
   - D-175
@@ -244,7 +245,7 @@ Positional indexing starts at one and requires observable order. A guaranteed
 existing position returns [1], otherwise [0..1]; out-of-range access yields
 ordinary absence. A range selects existing positions and preserves surviving
 occurrences' order, multiplicity, uniqueness and inner authority. Unordered
-positional access is invalid. Dictionary indexing uses keys; Text has its own
+positional access is invalid. Dictionary indexing uses keys; String has its own
 positional sequence contract and is not Char [* ordered].
 
 Pure deterministic selection binds a source item/pattern only in its predicate
@@ -287,7 +288,7 @@ update contracts. These witnesses are finite evidence, not an executor.
 T [?] is T [0..1]. C[*] selects the last observable collection position, with
 ordinary optional absence for an empty source. C[1] remains first position;
 [..*] and [*..] are not extreme-index abbreviations. Dictionary keys are not
-positional collection slots. Text retains its own positional sequence.
+positional collection slots. String retains its own positional sequence.
 
 C[?] requires a maximum of one, extracts its complete member when present and
 otherwise propagates omission under [[21-expressions#Optional extraction and omission]].

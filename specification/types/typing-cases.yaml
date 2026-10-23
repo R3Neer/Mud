@@ -135,7 +135,7 @@ cases:
   rules:
   - MUD-TYPE-002
   - MUD-TYPE-005
-  source: 'let raw: Text = playerName'
+  source: 'let raw: String = playerName'
   source_scope: read-only-inclusion-judgement-fragment
   expected: static-reject
   contract: Nominal representation equality is not implicit subtyping. The witness disposition concerns unconditional
@@ -145,7 +145,7 @@ cases:
     source:
       name: PlayerName
     target:
-      name: Text
+      name: String
     parents: {}
 - id: callable-input-contravariance
   rules:
@@ -262,7 +262,7 @@ cases:
 - id: abstract-concrete-witness
   rules:
   - MUD-TYPE-004
-  source: "abstract alias Problem { let reason: Text }; alias Missing as Problem"
+  source: "abstract alias Problem { let reason: String }; alias Missing as Problem"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
@@ -273,8 +273,8 @@ cases:
       Missing:
         kind: product
         children:
-        - Text
-      Text:
+        - String
+      String:
         kind: leaf
       Problem:
         kind: abstract
@@ -338,7 +338,7 @@ cases:
         - value
         - next
         children:
-        - Text
+        - String
         - A
       B:
         kind: product
@@ -346,11 +346,11 @@ cases:
         - value
         - next
         children:
-        - Text
+        - String
         - B
-      Text:
+      String:
         kind: leaf
-        label: Text
+        label: String
       Int:
         kind: leaf
         label: Int
@@ -375,7 +375,7 @@ cases:
         - value
         - next
         children:
-        - Text
+        - String
         - A
       B:
         kind: product
@@ -385,9 +385,9 @@ cases:
         children:
         - Int
         - B
-      Text:
+      String:
         kind: leaf
-        label: Text
+        label: String
       Int:
         kind: leaf
         label: Int
@@ -501,7 +501,7 @@ cases:
   source: 'let letter: Char = "a"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: One decoded scalar receives Char context; context-free "a" remains Text.
+  contract: One decoded scalar receives Char context; context-free "a" remains String.
 - id: exact-division
   rules:
   - MUD-TYPE-011
@@ -643,7 +643,7 @@ cases:
   source: '"{count}"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: count is Nat; its defined text rendering yields Text without a general implicit cast.
+  contract: count is Nat; its defined text rendering yields String without a general implicit cast.
 - id: expression-collection-literal-expr
   rules:
   - MUD-TYPE-009
@@ -673,7 +673,7 @@ cases:
   source: 1 -> "one"
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: The key/value owners check Nat and Text and construct one exact association.
+  contract: The key/value owners check Nat and String and construct one exact association.
 - id: expression-decision-branch-expr
   rules:
   - MUD-TYPE-002
@@ -1461,7 +1461,7 @@ cases:
 - id: structural-equality-collection-shape
   rules:
   - MUD-TYPE-020
-  source: Text [*] !== Text [* ordered]
+  source: String [*] !== String [* ordered]
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Both operands denote Type; order is observable and no collection lifting occurs.
@@ -1485,7 +1485,7 @@ cases:
   source: actor.Play(textValue)
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: The first nonempty lookup level has both supplied candidate signatures. Actor/textValue have Actor/Text
+  contract: The first nonempty lookup level has both supplied candidate signatures. Actor/textValue have Actor/String
     type; written argument contracts select b.Play.
   witness:
     kind: given-selection
@@ -1493,7 +1493,7 @@ cases:
     - name: Actor
     arguments:
     - types:
-      - name: Text
+      - name: String
     candidates:
     - identity: a.Play
       receivers:
@@ -1508,7 +1508,7 @@ cases:
       givens:
       - name: value
         type:
-          name: Text
+          name: String
 - id: given-static-name-disambiguation
   rules:
   - MUD-TYPE-001
@@ -1521,7 +1521,7 @@ cases:
     arguments:
     - name: text
       types:
-      - name: Text
+      - name: String
     candidates:
     - givens:
       - name: number
@@ -1533,7 +1533,7 @@ cases:
     - givens:
       - name: text
         type:
-          name: Text
+          name: String
       identity: b.Play
       receivers:
       - name: Actor
@@ -1593,7 +1593,7 @@ cases:
     - givens:
       - name: value
         type:
-          name: Text
+          name: String
         default: true
       identity: b.Play
       receivers:
@@ -1607,12 +1607,12 @@ cases:
   source: 'let reply: Expected = actor.Read(textValue)'
   source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: Both homonymous visible look signatures accept the same Actor/Text arguments; different result types
+  contract: Both homonymous visible look signatures accept the same Actor/String arguments; different result types
     cannot break the tie.
 - id: generic-grouped-union-argument
   rules:
   - MUD-TYPE-017
-  source: "alias Box with T { let value: T }\nlook Values { let item: Box with (Nat | Text) := (value = \"cat\") }"
+  source: "alias Box with T { let value: T }\nlook Values { let item: Box with (Nat | String) := (value = \"cat\") }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: A grouped union is one member-form argument; direct per-alternative domains/cardinalities and dictionary
@@ -1632,8 +1632,8 @@ cases:
   source: actor.Play(value)
   source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: value has static Nat | Text. The first lookup level has separate Actor operations accepting Nat and
-    Text. No one declaration admits every alternative; no runtime dispatch selects a declaration from value type.
+  contract: value has static Nat | String. The first lookup level has separate Actor operations accepting Nat and
+    String. No one declaration admits every alternative; no runtime dispatch selects a declaration from value type.
 - id: given-unknown-admission-keeps-candidates
   rules:
   - MUD-TYPE-001
@@ -1678,10 +1678,10 @@ cases:
   rules: &locals001
   - MUD-TYPE-008
   - MUD-TYPE-021
-  source: 'let pair: (_, Text) = source'
+  source: 'let pair: (_, String) = source'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: source synthesizes singleton (Int, Text); resolve the first hole to Int, preserving the second
+  contract: source synthesizes singleton (Int, String); resolve the first hole to Int, preserving the second
     written contract.
 - id: hole-mutable-fixed-type
   rules: *locals001
@@ -1699,10 +1699,10 @@ cases:
     Any.
 - id: hole-nested-empty-unresolved
   rules: *locals001
-  source: 'let pair: (_, Text) = (empty, "hello")'
+  source: 'let pair: (_, String) = (empty, "hello")'
   source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: The second component supplies Text only; the first component has no unique member type.
+  contract: The second component supplies String only; the first component has no unique member type.
 - id: hole-domain-unique
   rules: *locals001
   source: 'let values: _ in Cats [*] = empty'
@@ -1729,7 +1729,7 @@ cases:
   source: 'let values: _ [1..* unique] = repeated'
   source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: repeated has known Text members with a statically repeated value; a stored constraint does not
+  contract: repeated has known String members with a statically repeated value; a stored constraint does not
     deduplicate to repair it.
 - id: hole-nominal-alias-not-guessed
   rules: *locals001
@@ -1740,17 +1740,17 @@ cases:
     and no unique annotation.
 - id: hole-explicit-part-incompatible
   rules: *locals001
-  source: 'let pair: (_, Text) = boolPair'
+  source: 'let pair: (_, String) = boolPair'
   source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: boolPair has singleton (Int, Bool); solving the first hole cannot repair the written Text mismatch.
+  contract: boolPair has singleton (Int, Bool); solving the first hole cannot repair the written String mismatch.
 - id: pattern-nested-capture
   rules: &locals002
   - MUD-TYPE-022
   source: let (x, rest) = source
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: source is singleton (Num, (Text, Bool)); rest captures the whole second product with no flattening.
+  contract: source is singleton (Num, (String, Bool)); rest captures the whole second product with no flattening.
 - id: pattern-discard-no-symbol
   rules: *locals002
   source: '(_, value) in dictionary : value > zero'
@@ -1781,7 +1781,7 @@ cases:
   source: let (_, _) = pair
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: pair is singleton (Int, Text); evaluate stored RHS once and preserve its possible computing Error
+  contract: pair is singleton (Int, String); evaluate stored RHS once and preserve its possible computing Error
     despite no symbols.
 - id: local-live-sequential-read
   rules:
@@ -1876,18 +1876,18 @@ cases:
 - id: hole-partial-dictionary
   rules:
   - MUD-TYPE-021
-  source: 'let table: _ -> Text [*] = knownMap'
+  source: 'let table: _ -> String [*] = knownMap'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: knownMap has an exact Int->Text dictionary contract; solve key Int without changing association
+  contract: knownMap has an exact Int->String dictionary contract; solve key Int without changing association
     cardinality or constructing a collection of dictionaries.
 - id: hole-partial-named-product
   rules:
   - MUD-TYPE-021
-  source: 'let record: (count: _, label: Text) = knownRecord'
+  source: 'let record: (count: _, label: String) = knownRecord'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: 'knownRecord has named structural product (count: Int, label: Text); infer Int. Named products
+  contract: 'knownRecord has named structural product (count: Int, label: String); infer Int. Named products
     admit stored annotation holes even though named-product destructuring is forbidden.'
 - id: pattern-duplicate-name
   rules:
@@ -1969,8 +1969,8 @@ cases:
   source: 'let pair: (_, _) = typedPair'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: typedPair has singleton positional (Int, Text). Distinct hole occurrences independently resolve
-    to Int and Text, not one shared wildcard variable.
+  contract: typedPair has singleton positional (Int, String). Distinct hole occurrences independently resolve
+    to Int and String, not one shared wildcard variable.
 - id: pattern-context-free-numeric-ambiguity
   rules:
   - MUD-TYPE-008
@@ -2049,7 +2049,7 @@ cases:
   source: raise empty
   source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: Empty is not an admitted Error/nonempty Errors payload. Refusal and Text are also invalid payloads.
+  contract: Empty is not an admitted Error/nonempty Errors payload. Refusal and String are also invalid payloads.
 - id: raise-pure-context
   rules:
   - MUD-TYPE-030
@@ -2311,7 +2311,7 @@ cases:
   source: 'typeDescriptor~kind'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Supplied bare Int has Basic. Redundant unrestricted Int [1] is also Basic. Nondefault/nested collection shapes have Collection. Int | Int normalizes to Basic; Int | Text remains Union. Applied constructors retain category.
+  contract: Supplied bare Int has Basic. Redundant unrestricted Int [1] is also Basic. Nondefault/nested collection shapes have Collection. Int | Int normalizes to Basic; Int | String remains Union. Applied constructors retain category.
 
 - id: magnitude-normalization-compatible-units
   rules: [MUD-TYPE-037]
@@ -2778,29 +2778,29 @@ cases:
 - id: expression-implicit-member-expr
   rules:
   - MUD-TYPE-008
-  source: 'let naming: Person --> Text [ordered] = _ --> .name'
+  source: 'let naming: Person --> String [ordered] = _ --> .name'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Person has a visible singleton Text name; the omitted receiver resolves to the ordinary implicit
+  contract: Person has a visible singleton String name; the omitted receiver resolves to the ordinary implicit
     input.
 - id: expression-selector-expr
   rules:
   - MUD-TYPE-008
-  source: 'let describe: Int --> Text [ordered] = == 0 --> "zero", < 0 --> "negative", _ --> "positive"'
+  source: 'let describe: Int --> String [ordered] = == 0 --> "zero", < 0 --> "negative", _ --> "positive"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Abbreviated comparisons expand against the input; explicit residual supplies coverage.
 - id: policy-incomplete-family-coverage
   rules:
   - MUD-TYPE-008
-  source: 'let describe: Severity --> Text [1 ordered] = Severity.Low --> "low"'
+  source: 'let describe: Severity --> String [1 ordered] = Severity.Low --> "low"'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Severity has Low, Medium and High; the explicit positive minimum requires coverage, but no residual or proof covers the omitted members.
 - id: policy-bool-equality
   rules:
   - MUD-TYPE-008
-  source: 'let describe: Bool --> Text [ordered] = == false --> "false", _ --> "true"'
+  source: 'let describe: Bool --> String [ordered] = == false --> "false", _ --> "true"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Bare false would be a false condition; explicit equality covers only the false input.
@@ -2864,7 +2864,7 @@ cases:
   source: 'PlayerName(text)'
   source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: PlayerName represents Text rather than a structural component schema; explicit to retains its separate contract.
+  contract: PlayerName represents String rather than a structural component schema; explicit to retains its separate contract.
 
 - id: shared-selector-local-result-supported
   rules: [MUD-TYPE-005]
@@ -2938,7 +2938,7 @@ cases:
   source: pair[*]
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: pair is an anonymous (Int, Text) tuple. The last component is Text, not a union and not the whole
+  contract: pair is an anonymous (Int, String) tuple. The last component is String, not a union and not the whole
     pair.
 - id: tuple-dynamic-index-rejected
   rules:
@@ -2997,7 +2997,7 @@ cases:
 - id: dictionary-immutable-literal-count
   rules:
   - MUD-TYPE-008
-  source: 'let table: Int -> Text = 1 -> "one", 2 -> "two"'
+  source: 'let table: Int -> String = 1 -> "one", 2 -> "two"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The dictionary exterior is [1]; the omitted arrow count infers two associations.
@@ -3013,7 +3013,7 @@ cases:
 - id: dictionary-immutable-contextual-empty
   rules:
   - MUD-TYPE-008
-  source: 'let table: Int -> Text = empty'
+  source: 'let table: Int -> String = empty'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The explicit arrow supplies key/value types; omitted association count infers zero.
@@ -3029,7 +3029,7 @@ cases:
 - id: dictionary-mutable-omitted-empty-rejected
   rules:
   - MUD-TYPE-008
-  source: 'mut table: Int -> Text = empty'
+  source: 'mut table: Int -> String = empty'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: An omitted mutable association contract remains [1]; contextual empty cannot satisfy it.
@@ -3042,7 +3042,7 @@ cases:
 - id: dictionary-mutable-explicit-growing
   rules:
   - MUD-TYPE-008
-  source: 'mut table: Int -> Text [*] = empty'
+  source: 'mut table: Int -> String [*] = empty'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The written zero-admitting association capacity admits initialization and later insertions.
@@ -3058,7 +3058,7 @@ cases:
 - id: dictionary-type-only-singleton-contract
   rules:
   - MUD-TYPE-008
-  source: 'given table: Int -> Text'
+  source: 'given table: Int -> String'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The supplied map has two associations; a type-only omitted cardinality means one, not per-call
@@ -3072,7 +3072,7 @@ cases:
 - id: dictionary-schema-empty-inference-is-not-capacity
   rules:
   - MUD-TYPE-008
-  source: 'let table: Int -> Text = empty'
+  source: 'let table: Int -> String = empty'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: After inferring the default as zero associations, a two-association constructor argument does not
@@ -3089,7 +3089,7 @@ cases:
 - id: dictionary-schema-explicit-variable-capacity
   rules:
   - MUD-TYPE-008
-  source: 'let table: Int -> Text [*] = empty'
+  source: 'let table: Int -> String [*] = empty'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: A written component capacity permits constructor arguments with a different count from its empty
@@ -3109,7 +3109,7 @@ cases:
 - id: functional-inferred-partial-firstmatch
   rules:
   - MUD-TYPE-008
-  source: 'let positive: Int --> Text [ordered] = > 0 --> "positive"'
+  source: 'let positive: Int --> String [ordered] = > 0 --> "positive"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Uncovered inputs contribute zero; no implicit positive application minimum is introduced.
@@ -3125,7 +3125,7 @@ cases:
 - id: functional-written-positive-rejects-partial
   rules:
   - MUD-TYPE-008
-  source: 'let positive: Int --> Text [1 ordered] = > 0 --> "positive"'
+  source: 'let positive: Int --> String [1 ordered] = > 0 --> "positive"'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The explicit positive minimum cannot admit the supplied uncovered-input interval.
@@ -3144,7 +3144,7 @@ cases:
 - id: functional-inferred-allmatches-range
   rules:
   - MUD-TYPE-008
-  source: 'let labels: Int --> Text = > 0 --> "positive", >= 0 --> "nonnegative", _ --> "negative"'
+  source: 'let labels: Int --> String = > 0 --> "positive", >= 0 --> "nonnegative", _ --> "negative"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The supplied whole-input proof gives one or two scalar results with residual fallback; source order
@@ -3161,7 +3161,7 @@ cases:
 - id: functional-type-only-result-singleton
   rules:
   - MUD-TYPE-008
-  source: 'given policy: Int --> Text'
+  source: 'given policy: Int --> String'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: A potentially absent policy does not satisfy a type-only contract requiring exactly one result.
@@ -3174,7 +3174,7 @@ cases:
 - id: dictionary-derived-shape-not-first-read
   rules:
   - MUD-TYPE-008
-  source: 'let selected: Int -> Text := (key, entry) in table : key > 0'
+  source: 'let selected: Int -> String := (key, entry) in table : key > 0'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The source has at most ten associations; derived selection retains conservative bounds across reads.
@@ -3190,7 +3190,7 @@ cases:
 - id: functional-derived-views-include-absence
   rules:
   - MUD-TYPE-008
-  source: 'let positive: Int --> Text [ordered] := gate.enabled and value > 0 --> "positive"'
+  source: 'let positive: Int --> String [ordered] := gate.enabled and value > 0 --> "positive"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The supplied proof accounts for enabled and disabled views, not only the first invocation.

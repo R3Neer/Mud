@@ -34,8 +34,8 @@ Compatibility of normalized finite type graphs uses memoized pairs, nominal ance
 ## Examples
 
 ```mud
-abstract alias Problem { let reason: Text; let cause: Problem [0..1] = empty }
-alias Missing as Problem { let key: Text }
+abstract alias Problem { let reason: String; let cause: Problem [0..1] = empty }
+alias Missing as Problem { let key: String }
 alias Tree { let children: Tree [*] = empty }
 alias Impossible { let next: Impossible } # invalid: no finite value
 alias A := B

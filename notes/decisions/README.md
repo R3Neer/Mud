@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 175.
-- Current: 171.
+- Total: 176.
+- Current: 172.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -69,12 +69,12 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-053 | current | 2026-07-28 | [[notes/decisions/ADR-053-semantic-operator-and-authoring-flow|Semantic operator and authoring flow]] |
 | D-054 | current | 2026-07-28 | [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|Canonical definitions and initial activation]] |
 | D-055 | current | 2026-07-28 | [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|Declarative tests and block error handling]] |
-| D-056 | current | 2026-07-28 | [[notes/decisions/ADR-056-char-text-and-unicode-ordering|`Char`, `Text` and Unicode ordering]] |
+| D-056 | current | 2026-07-28 | [[notes/decisions/ADR-056-char-text-and-unicode-ordering|`Char`, `String` and Unicode ordering]] |
 | D-057 | current | 2026-07-28 | [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|Concrete grammar, precedence and continuation]] |
 | D-058 | current | 2026-07-29 | [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|Temporal triggers, `changes` and reactive `old`]] |
 | D-059 | current | 2026-07-29 | [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|Magnitude intervals and inverted endpoints]] |
 | D-060 | current | 2026-07-29 | [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|Additive deltas and `Nat` normalisation]] |
-| D-061 | current | 2026-07-29 | [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|Non-accepted results and `Text` templates]] |
+| D-061 | current | 2026-07-29 | [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|Non-accepted results and `String` templates]] |
 | D-062 | current | 2026-07-29 | [[notes/decisions/ADR-062-canonical-point-magnitude-literals|Canonical point-magnitude literals]] |
 | D-063 | current | 2026-07-30 | [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|Signatures, `given` and joint `on` bindings]] |
 | D-064 | current | 2026-07-30 | [[notes/decisions/ADR-064-ordering-by-stable-path|Ordering by stable path]] |
@@ -194,6 +194,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-178 | current | 2026-10-15 | [[notes/decisions/ADR-178-structural-tuple-inputs-and-postfix-generics|Structural tuple inputs and postfix generics]] |
 | D-179 | current | 2026-10-16 | [[notes/decisions/ADR-179-optional-empty-magnitude-bodies|Optional empty magnitude bodies]] |
 | D-180 | current | 2026-10-16 | [[notes/decisions/ADR-180-uniform-dictionary-cardinality-inference|Uniform dictionary cardinality inference]] |
+| D-181 | current | 2026-10-23 | [[notes/decisions/ADR-181-string-primitive-spelling|String primitive spelling]] |
 
 ## Reserved identifiers
 

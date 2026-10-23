@@ -41,7 +41,7 @@ affects:
 ### Types of field
 
 ```mud
-let title: Text = ""
+let title: String = ""
 mut treasury: Money = 0
 let age: Nat in 0..150 [1] = 18
 subjects: Person [* unique]

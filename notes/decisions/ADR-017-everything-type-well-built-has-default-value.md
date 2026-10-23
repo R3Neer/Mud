@@ -69,7 +69,7 @@ The basic cases, updated by D-028, are:
 | `Num` | `0` |
 | `Rum` | `r0` |
 | `Char` | `"\u{0}"` (`U+0000`) in context `Char` |
-| `Text` | `""` |
+| `String` | `""` |
 | `Money` | `0` in context `Money` |
 | Collections | `empty` |
 | Dictionaries | `empty` |

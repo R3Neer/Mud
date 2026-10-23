@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-181
   - D-178
   - D-171
   - D-170
@@ -55,7 +56,7 @@ An ordered structural body declares stored components and optional pure derived
 fields. Component defaults do not remove components from the representation.
 
 ```mud
-alias PlayerName := Text
+alias PlayerName := String
 alias Vector2 { let x: Num; let y: Num }
 look Example {
     let position: Vector2 := (1, 2)
@@ -306,16 +307,16 @@ write-back destinations belong to later phases.
 ```mud
 alias Pagination { let page: Nat = 1; let size: Nat = 20 }
 let p: Pagination = (size = 30)       # constructs page=1, size=30
-alias PlayerName := Text
+alias PlayerName := String
 let name: PlayerName = "Ada"         # contextual literal construction
-let raw: Text = "Ada"
+let raw: String = "Ada"
 let converted: PlayerName = raw to PlayerName
 alias Tree { let children: Tree [*] = empty }
 ```
 
 ```mud
 let bad: Pagination = (2)            # invalid: incomplete unnamed form
-let badName: PlayerName = raw        # invalid: typed Text does not become alias
+let badName: PlayerName = raw        # invalid: typed String does not become alias
 alias Impossible { let next: Impossible } # invalid: no finite value
 alias A := B
 alias B := A                     # invalid: transparent cycle
@@ -324,7 +325,7 @@ alias B := A                     # invalid: transparent cycle
 Inside an action with authority to update `Piece.square`, writing
 `Piece.square.file = C` reconstructs its stored Square value. Writing
 `square.file = C` after `let square := Piece.square` is invalid because the binding
-has no writable root. Two aliases both represented by Text do not compare as
+has no writable root. Two aliases both represented by String do not compare as
 the same nominal values.
 
 ## Conformance evidence

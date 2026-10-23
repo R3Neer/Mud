@@ -36,7 +36,7 @@ Destroying the declared type of a property preserves D-021's structural suspensi
 
 ### Transition error recovery
 
-The enclosing effect block may attach otherwise handlers for Error occurrences. A handler uses optional on bindings and if, then or raise exclusively. It cannot explain a false condition with plain Text, and it does not capture Refusal. Rollback precedes recovery; resource cleanup belongs to adapters rather than a finally clause.
+The enclosing effect block may attach otherwise handlers for Error occurrences. A handler uses optional on bindings and if, then or raise exclusively. It cannot explain a false condition with plain String, and it does not capture Refusal. Rollback precedes recovery; resource cleanup belongs to adapters rather than a finally clause.
 
 ## Consequences
 

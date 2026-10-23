@@ -34,5 +34,5 @@ Rejected results do not publish partial changes.
 ## Consequences
 
 D-042 defines the complete protocol for the actions. D-061 requires a reason
-`Text` for everything result Not accepted.
+`String` for everything result Not accepted.
 

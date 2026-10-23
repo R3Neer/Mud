@@ -271,7 +271,7 @@ cases:
   produces_ast: false
 - id: text-implicit-end
   category: text
-  source: "thing Person {\n    let label: Text = \"Ada\n}\n"
+  source: "thing Person {\n    let label: String = \"Ada\n}\n"
   cst_root: MudFileSyntax
   ast: TextTemplateExpr([TextFragment(Ada)])
   normalizations:
@@ -296,7 +296,7 @@ cases:
   - otherwise-requires-error-handler-branch
 - id: comments-lossless
   category: cst
-  source: "# before\nthing Person { # body #\n    let label: Text = \"person\"\n}\n"
+  source: "# before\nthing Person { # body #\n    let label: String = \"person\"\n}\n"
   cst_root: MudFileSyntax
   ast: ThingDecl(Person)
   normalizations:
@@ -307,7 +307,7 @@ cases:
   - comments-as-leading-trivia
 - id: missing-colon-recovery
   category: cst-error
-  source: "thing Person {\n    label Text\n}\n"
+  source: "thing Person {\n    label String\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - missing-colon
@@ -353,7 +353,7 @@ cases:
   produces_ast: true
 - id: union-alternative-cardinality-rejected
   category: validation-before-ast
-  source: "thing Sample {\n    values: Nat [2] | Text [1]\n}\n"
+  source: "thing Sample {\n    values: Nat [2] | String [1]\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - collection-specification-must-follow-whole-union
@@ -368,7 +368,7 @@ cases:
   produces_ast: true
 - id: is-not-comparison
   category: expression
-  source: "rule IsText given value: Nat | Text {\n    value is not Nat\n}\n"
+  source: "rule IsText given value: Nat | String {\n    value is not Nat\n}\n"
   cst_root: MudFileSyntax
   ast: ComparisonChainExpr(value, IsNotRelation, Nat)
   produces_ast: true
@@ -499,7 +499,7 @@ cases:
   produces_ast: true
 - id: nominal-alias-specialization
   category: alias
-  source: 'alias Identifier := Text
+  source: 'alias Identifier := String
 
     alias UserIdentifier as Identifier
 
@@ -509,7 +509,7 @@ cases:
   produces_ast: true
 - id: structural-alias-specialization-and-derived
   category: alias
-  source: "alias Person {\n    let first: Text\n    let last: Text\n    let full: Text := \"{first} {last}\"\n}\nalias Student as Person {\n    let id: Nat\n}\n"
+  source: "alias Person {\n    let first: String\n    let last: String\n    let full: String := \"{first} {last}\"\n}\nalias Student as Person {\n    let id: Nat\n}\n"
   cst_root: MudFileSyntax
   ast: AliasDecl(Student, ancestors=[Person], definition=StructuralAlias(...))
   produces_ast: true
@@ -536,13 +536,13 @@ cases:
   produces_ast: false
 - id: alias-representation-refinement-after-as
   category: alias
-  source: 'alias Identifier := Text
+  source: 'alias Identifier := String
 
-    alias UserIdentifier as Identifier := Text
+    alias UserIdentifier as Identifier := String
 
     '
   cst_root: MudFileSyntax
-  ast: AliasDecl(UserIdentifier, ancestors=[Identifier], definition=AliasRepresentation(Text, operators=[]))
+  ast: AliasDecl(UserIdentifier, ancestors=[Identifier], definition=AliasRepresentation(String, operators=[]))
   produces_ast: true
 - id: structural-member-requires-nominal-alias
   category: resolution
@@ -584,9 +584,9 @@ cases:
   produces_ast: true
 - id: anonymous-product-types
   category: type
-  source: "thing Pairs {\n    positional: (Nat, Text)\n    named: (count: Nat, label: Text)\n}\n"
+  source: "thing Pairs {\n    positional: (Nat, String)\n    named: (count: Nat, label: String)\n}\n"
   cst_root: MudFileSyntax
-  ast: 'PositionalProductType(Nat, Text) and NamedProductType(count: Nat, label: Text)'
+  ast: 'PositionalProductType(Nat, String) and NamedProductType(count: Nat, label: String)'
   produces_ast: true
 - id: not-in-comparison
   category: expression
@@ -603,7 +603,7 @@ cases:
   produces_ast: false
 - id: text-anchor-via-metadata
   category: text
-  source: "thing Reporter {\n    let label: Text = \"Rule: {CanRecruit~anchor}\"\n}\n"
+  source: "thing Reporter {\n    let label: String = \"Rule: {CanRecruit~anchor}\"\n}\n"
   cst_root: MudFileSyntax
   ast: TextTemplateExpr([TextFragment, ValueInterpolation(MetadataAccessExpr(CanRecruit, anchor))])
   produces_ast: true
@@ -615,21 +615,21 @@ cases:
   produces_ast: true
 - id: decision-fallback
   category: dictionary
-  source: "thing Policies {\n    let policy: Any --> Text [ordered] =\n        value is Nat --> \"number\"\
+  source: "thing Policies {\n    let policy: Any --> String [ordered] =\n        value is Nat --> \"number\"\
     ,\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Any, Text, FirstMatch) with DecisionBranchExpr and FallbackLiteral
+  ast: DecisionDictionaryType(Any, String, FirstMatch) with DecisionBranchExpr and FallbackLiteral
   produces_ast: true
 - id: decision-mut-rejected
   category: validation-before-ast
-  source: "thing Broken {\n    mut policy: Nat --> Text [mut]\n}\n"
+  source: "thing Broken {\n    mut policy: Nat --> String [mut]\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - decision-dictionary-forbids-mut
   produces_ast: false
 - id: legacy-anchor-interpolation-rejected
   category: lexical-error
-  source: "thing Reporter {\n    let label: Text = \"Rule: anchor{CanRecruit}\"\n}\n"
+  source: "thing Reporter {\n    let label: String = \"Rule: anchor{CanRecruit}\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - legacy-anchor-interpolation
@@ -644,7 +644,7 @@ cases:
   produces_ast: true
 - id: thing-name-field-initializer
   category: thing
-  source: "thing Named {\n    let name: Text = \"unknown\"\n}\nthing Ada as Named {\n    name = \"Ada\"\n\
+  source: "thing Named {\n    let name: String = \"unknown\"\n}\nthing Ada as Named {\n    name = \"Ada\"\n\
     }\n"
   cst_root: MudFileSyntax
   ast: ThingDecl(Ada, initializers=[ThingInitializer(name, TextTemplateExpr(Ada))])
@@ -704,7 +704,7 @@ cases:
   produces_ast: true
 - id: exact-type-test-structural-rejected
   category: validation-after-resolution
-  source: "rule Broken for value: Any {\n    value iis (Nat, Text)\n}\n"
+  source: "rule Broken for value: Any {\n    value iis (Nat, String)\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - iis-requires-nominal-type
@@ -777,11 +777,11 @@ cases:
   produces_ast: true
 - id: iis-functional-narrowing
   category: dictionary
-  source: "thing Descriptions {\n    let describe: Identifier --> Text [ordered] =\n        value iis EmployeeId\
+  source: "thing Descriptions {\n    let describe: Identifier --> String [ordered] =\n        value iis EmployeeId\
     \ --> \"Employee {value}\",\n        value iis PersonId --> \"Person {value}\",\n        value is Identifier\
     \ --> \"Identifier {value}\"\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Identifier, Text, FirstMatch) with ExactTypeTestExpr
+  ast: DecisionDictionaryType(Identifier, String, FirstMatch) with ExactTypeTestExpr
   produces_ast: true
 - id: mud-path-membership
   category: expression
@@ -941,21 +941,21 @@ cases:
   produces_ast: true
 - id: functional-explicit-value-selector
   category: dictionary
-  source: "thing Seasons {\n    let season: Month --> Text [ordered] =\n        value == January --> \"\
+  source: "thing Seasons {\n    let season: Month --> String [ordered] =\n        value == January --> \"\
     winter\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=ComparisonChainExpr(value, Equal, January))
   produces_ast: true
 - id: functional-explicit-interval-selector
   category: dictionary
-  source: "thing Seasons {\n    let season: Month --> Text [ordered] =\n        [March..May] has value -->\
+  source: "thing Seasons {\n    let season: Month --> String [ordered] =\n        [March..May] has value -->\
     \ \"spring\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=ComparisonChainExpr(Interval, HasMember, value))
   produces_ast: true
 - id: functional-implicit-selector-rejected
   category: typing-after-ast
-  source: "thing Seasons {\n    let season: Month --> Text [ordered] =\n        January --> \"winter\",\n\
+  source: "thing Seasons {\n    let season: Month --> String [ordered] =\n        January --> \"winter\",\n\
     \        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
@@ -963,17 +963,17 @@ cases:
   produces_ast: true
 - id: functional-boolean-selector
   category: dictionary
-  source: "thing Seasons {\n    let season: Month --> Text [ordered] =\n        value == June or value ==\
+  source: "thing Seasons {\n    let season: Month --> String [ordered] =\n        value == June or value ==\
     \ July --> \"summer\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=BooleanExpr)
   produces_ast: true
 - id: functional-applicable-empty-fallback
   category: execution-contract
-  source: "thing Labels {\n    let label: Person --> Text [ordered] =\n        value is Person --> value.nickname,\n\
+  source: "thing Labels {\n    let label: Person --> String [ordered] =\n        value is Person --> value.nickname,\n\
     \        _ --> value~name\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Person, Text, FirstMatch)
+  ast: DecisionDictionaryType(Person, String, FirstMatch)
   normalizations:
   - distinguish-applicable-branch-from-produced-result
   - fallback-only-when-no-ordinary-result
@@ -1191,11 +1191,11 @@ cases:
   produces_ast: true
 - id: any-functional-narrowing
   category: dictionary
-  source: "thing Descriptions {\n    let describe: Any --> Text [ordered] =\n        value iis PersonId\
+  source: "thing Descriptions {\n    let describe: Any --> String [ordered] =\n        value iis PersonId\
     \ --> \"Person {value}\",\n        value is Nat --> \"Natural {value}\",\n        _ --> \"Other\"\n\
     }\n"
   cst_root: MudFileSyntax
-  ast: DecisionDictionaryType(Any, Text, FirstMatch)
+  ast: DecisionDictionaryType(Any, String, FirstMatch)
   normalizations:
   - preserve-narrowing-in-branch-result
   produces_ast: true
@@ -1230,9 +1230,9 @@ cases:
   produces_ast: true
 - id: metadata-explicit-text-conversion
   category: expression
-  source: "look Identity for place: Place {\n    let pathText: Text := place~path to Text\n}\n"
+  source: "look Identity for place: Place {\n    let pathText: String := place~path to String\n}\n"
   cst_root: MudFileSyntax
-  ast: ConversionExpr(MetadataAccessExpr(path), Text)
+  ast: ConversionExpr(MetadataAccessExpr(path), String)
   produces_ast: true
 - id: cardinality-inferred-zero
   category: field
@@ -1886,7 +1886,7 @@ cases:
   produces_ast: true
 - id: duplicate-decision-branch-canonical-selector
   category: resolution-after-ast
-  source: "thing PolicyHolder {\n    let policy: Nat --> Text = value < 10 --> \"low\", value < 10 --> \"\
+  source: "thing PolicyHolder {\n    let policy: Nat --> String = value < 10 --> \"low\", value < 10 --> \"\
     alsoLow\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
@@ -2007,7 +2007,7 @@ cases:
 
 - id: contextual-basic-alias-literal
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    let name: PlayerName = \"Ada\"\n}\n"
+  source: "alias PlayerName := String\nthing Person {\n    let name: PlayerName = \"Ada\"\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - elaborate-basic-literal-as-expected-nominal-alias
@@ -2015,16 +2015,16 @@ cases:
   produces_ast: true
 - id: typed-representation-does-not-implicitly-become-alias
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    mut name: PlayerName = \"Ada\"\n}\naction Rename for mut person: Person given rawName: Text {\n    then person.name = rawName\n}\n"
+  source: "alias PlayerName := String\nthing Person {\n    mut name: PlayerName = \"Ada\"\n}\naction Rename for mut person: Person given rawName: String {\n    then person.name = rawName\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - explicit-nominal-conversion-required
   semantic_expectations:
-  - typed-Text-expression-is-not-a-contextual-literal
+  - typed-String-expression-is-not-a-contextual-literal
   produces_ast: true
 - id: explicit-representation-to-alias
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    mut name: PlayerName = \"Ada\"\n}\naction Rename for mut person: Person given rawName: Text {\n    then person.name = rawName to PlayerName\n}\n"
+  source: "alias PlayerName := String\nthing Person {\n    mut name: PlayerName = \"Ada\"\n}\naction Rename for mut person: Person given rawName: String {\n    then person.name = rawName to PlayerName\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - semantic-ir-uses-explicit-conversion
@@ -2032,7 +2032,7 @@ cases:
 
 - id: contextual-alias-comparison-literal
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    let name: PlayerName = \"Ada\"\n}\nrule IsAda for\
+  source: "alias PlayerName := String\nthing Person {\n    let name: PlayerName = \"Ada\"\n}\nrule IsAda for\
     \ person: Person {\n    person.name == \"Ada\"\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
@@ -2968,9 +2968,9 @@ cases:
   produces_ast: true
 - id: structural-type-comparison
   category: generic-types
-  source: rule Different { Text [*] !== Text [* ordered] }
+  source: rule Different { String [*] !== String [* ordered] }
   cst_root: MudFileSyntax
-  ast: StructuralTypeEqualityExpr(Text[*], Text[* ordered], Enabled)
+  ast: StructuralTypeEqualityExpr(String[*], String[* ordered], Enabled)
   normalizations:
   - retain-complete-type-operands
   produces_ast: true
@@ -2984,9 +2984,9 @@ cases:
   produces_ast: true
 - id: generic-grouped-union-preserved
   category: generic-types
-  source: "alias Box with T { let value: T }\nlook Values { let item: Box with (Nat | Text) := (value = \"cat\") }"
+  source: "alias Box with T { let value: T }\nlook Values { let item: Box with (Nat | String) := (value = \"cat\") }"
   cst_root: MudFileSyntax
-  ast: GenericTypeApplication(Box,[TypeExpr(Nat | Text)],ExplicitGenericWith)
+  ast: GenericTypeApplication(Box,[TypeExpr(Nat | String)],ExplicitGenericWith)
   normalizations:
   - preserve-grouped-member-union
   produces_ast: true
@@ -3002,9 +3002,9 @@ cases:
   produces_ast: true
 - id: stored-partial-type-hole
   category: locals
-  source: 'thing Example { let pair: (_, Text) = (knownInt, "hello") }'
+  source: 'thing Example { let pair: (_, String) = (knownInt, "hello") }'
   cst_root: MudFileSyntax
-  ast: StoredFieldDecl(TypeInferenceHole, Text)
+  ast: StoredFieldDecl(TypeInferenceHole, String)
   normalizations: []
   produces_ast: true
 - id: shared-preamble-stored-value-block
@@ -3196,7 +3196,7 @@ cases:
   produces_ast: true
 - id: functional-selector-sugar
   category: expression
-  source: 'let describe: Int --> Text [ordered] = == 0 --> "zero", _ --> "other"'
+  source: 'let describe: Int --> String [ordered] = == 0 --> "zero", _ --> "other"'
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=SelectorComparison)
   normalizations:
@@ -3204,7 +3204,7 @@ cases:
   produces_ast: true
 - id: implicit-input-member
   category: expression
-  source: 'let naming: Person --> Text [ordered] = _ --> .name'
+  source: 'let naming: Person --> String [ordered] = _ --> .name'
   cst_root: MudFileSyntax
   ast: ImplicitMemberExpr(name)
   normalizations:
@@ -3234,7 +3234,7 @@ cases:
   produces_ast: true
 - id: dictionary-cardinality-omission-independent-layers
   category: typing-after-ast
-  source: 'thing Sample { let table: Int -> Text = 1 -> "one", 2 -> "two" }'
+  source: 'thing Sample { let table: Int -> String = 1 -> "one", 2 -> "two" }'
   cst_root: MudFileSyntax
   ast: StoredFieldDecl(ExactDictionaryType(entries=OmittedCardinality), exterior=OmittedCardinality)
   normalizations:
@@ -3243,7 +3243,7 @@ cases:
   produces_ast: true
 - id: functional-omission-mode-only-infers-partial
   category: typing-after-ast
-  source: 'thing Sample { let positive: Int --> Text [ordered] = > 0 --> "positive" }'
+  source: 'thing Sample { let positive: Int --> String [ordered] = > 0 --> "positive" }'
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(mode=FirstMatch, branches=OmittedCardinality)
   normalizations:
@@ -3251,7 +3251,7 @@ cases:
   produces_ast: true
 - id: dictionary-mutable-empty-requires-capacity
   category: validation-after-resolution
-  source: 'thing Sample { mut table: Int -> Text = empty }'
+  source: 'thing Sample { mut table: Int -> String = empty }'
   cst_root: MudFileSyntax
   ast: StoredFieldDecl(ExactDictionaryType(entries=OmittedCardinality), collection_mutable=Enabled)
   produces_ast: true

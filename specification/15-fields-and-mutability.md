@@ -10,6 +10,7 @@ depends-on:
   - "[[11-type-system]]"
 questions: []
 decisions:
+  - D-181
   - D-180
   - D-177
   - D-175
@@ -76,7 +77,7 @@ otherwise. Derived dictionary definitions retain their inferred bounds. Schema i
 
 `let initial: _ = source` is valid. Tooling suggests `let initial = source`
 only when removing that complete hole preserves the contract and meaning.
-Partial holes such as `let pair: (_, Text) = source` and
+Partial holes such as `let pair: (_, String) = source` and
 `let policy: Person --> _ [ordered] = _ --> .name` retain their information.
 Omission and holes fail when evidence is insufficient; context-free empty or
 an input using only `.name` does not choose an arbitrary member/input type.

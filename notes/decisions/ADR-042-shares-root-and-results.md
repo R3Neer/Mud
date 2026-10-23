@@ -85,7 +85,7 @@ Each invocation checks after against its own stabilized causal completion projec
 
 Every invocation yields ActionReply = Success | Refusal | Errors. A false if is IfRefusal, a false after is AfterRefusal and a false always is AlwaysRefusal. Computing failures produce Error occurrences; stored-domain violations and effect conflicts are errors. Each refusal/error carries reason and mandatory Declaration origin; ConditionRefusal retains only the actually evaluated final Boolean expression tree. No false condition is captured by otherwise.
 
-Otherwise handlers belong to expression/value/effect blocks and handle Error values. They use optional on and if, then or raise exclusively. A plain Text diagnostic is invalid. A Refusal never enters an Error handler.
+Otherwise handlers belong to expression/value/effect blocks and handle Error values. They use optional on and if, then or raise exclusively. A plain String diagnostic is invalid. A Refusal never enters an Error handler.
 
 A successful outer request commits atomically. A refused or unhandled erroneous request discards its complete tentative world, suppresses unpublished occurrences and marks published pending tickets Dropped. Nested invocation and speculative execution return the same ordinary reply type. Child Success confirms relative to its level and incorporates automatically into its containing level without an independent stable-root commit. Imagine discards its alternative branch; Q-072 retains the complete operational algorithm. Actions and subactions return only ActionReply; no additional domain return value is admitted.
 

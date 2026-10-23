@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-181
   - D-180
   - D-179
   - D-178
@@ -299,7 +300,7 @@ let fieldName [derived-value-shape] := value-body
 
 `derived-value-shape` may be `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Therefore, both `let area: Num in 0..* := width * height` and `let area in 0..* := width * height` are valid. If the type is omitted, it must be inferred unambiguously from the expression, without a predetermined preference between compatible representations or contextual forms. If more than one solution exists, the type must be written. A calculated field does not support outer `mut`; its shape may specify a domain, a collection specification and internal `[mut]` capability. Its domain and interval endpoints may depend on mutable state, subject to pure, deterministic, acyclic evaluation in the read's view. Interval endpoints in stored field/local restrictions must instead be transitively stable for the binding lifetime; their syntax does not implicitly capture mutable endpoints.
 
-Outer `mut` is written before the name because it describes the storage location, not the type of its members. `fieldName: mut Type` is not part of the syntax. Field names and metadata names occupy different syntactic positions: `let name: Text = expression` declares a field, whereas `~name = expression` declares or amends presentation metadata.
+Outer `mut` is written before the name because it describes the storage location, not the type of its members. `fieldName: mut Type` is not part of the syntax. Field names and metadata names occupy different syntactic positions: `let name: String = expression` declares a field, whereas `~name = expression` declares or amends presentation metadata.
 
 The value after `=` may be a short expression or a `ValueBlock`. In a stored field, the complete body must remain static: it is fully evaluated at compile time and cannot read world state, participants, `given` values, external locations or activities. Temporary mutable structures created within the `ValueBlock` are valid when the complete structure can be constructed statically. For example:
 
@@ -572,7 +573,7 @@ do not inject value: their values are computed at association construction,
 not recomputed for each lookup.
 
 Inside a functional branch, `.member` abbreviates `value.member`, including
-subsequent access/index/call suffixes and Text interpolations. It supplies no
+subsequent access/index/call suffixes and String interpolations. It supplies no
 receiver outside that branch and never picks a traversal binding implicitly.
 
 Interpret each selector operand with its established static category before
@@ -699,7 +700,7 @@ let weather := weatherOf[capitalOf[country]]
 
 ```mud
 distance: (City, City) -> Length
-label: (name: Text, count: Nat)
+label: (name: String, count: Nat)
 routePolicy: (origin: City, destination: City) --> Route
 ```
 
@@ -730,12 +731,12 @@ If a member is a union, the path must exist across all feasible alternatives. Ev
 
 `ordered by` does not permit arbitrary expressions. If the criterion requires a formula, it is declared as a field or calculated value and referenced by name. Keys with the same value retain their relative order under stable provenance; in a purely sequential source, this is their order of appearance. Ties are not resolved by anchor, identity or `family` declaration order.
 
-`ordered by` is prohibited for `Char`; its encoding is Unicode. `Text` does not accept collection specifications.
+`ordered by` is prohibited for `Char`; its encoding is Unicode. `String` does not accept collection specifications.
 
 ## Aliases
 
 ```mud
-alias PlayerName := Text
+alias PlayerName := String
 alias UserName as PlayerName
 
 alias Board := Square -> Piece [0..32 ordered]
@@ -743,7 +744,7 @@ alias Board := Square -> Piece [0..32 ordered]
 alias Square {
     let file: File
     let rank: Rank
-    let label: Text := "{file}{rank}"
+    let label: String := "{file}{rank}"
 }
 
 alias Coordinate {
@@ -765,7 +766,7 @@ alias LargePagination as Pagination {
 
 An alias declaration may write an unordered list of ancestors using `as`. The local definition is optional when the ancestors determine a complete effective form. Therefore, both `alias UserName as PlayerName` and `alias PositionedCoordinate as Coordinate` are valid. `alias A` without ancestors or a definition is a static error.
 
-`:= type` introduces the representation of a root nominal alias. Nominal aliases with ancestors inherit the effective representation and cannot redeclare it. In particular, `alias UserName as PlayerName := Text` is invalid.
+`:= type` introduces the representation of a root nominal alias. Nominal aliases with ancestors inherit the effective representation and cannot redeclare it. In particular, `alias UserName as PlayerName := String` is invalid.
 
 A `:= type` representation may be followed by an immediate body containing alias metadata and owned operator declarations. A representational alias can therefore be documented, configured or given operators without acquiring structural components.
 
@@ -916,7 +917,7 @@ A unit body contains only ordinary `~...` statements; there is no `unit-property
 
 A number may omit the space before its unit, but the formatter inserts it: `3m` and `3 m` have the same AST, and the latter is canonical.
 
-`~format` is optional and uses the general `Text` template syntax: spaces are literal, and `:2` sets two places to the left of the point here. Without it, a point has no special representation: it uses the ordinary textual representation of a magnitude, with the coordinate in the root unit and that unit's abbreviation or name when units exist; a unitless point displays only its numeric coordinate. In this case, the first component is the coordinate in that unit—reduced by the cycle, if one exists—and each subsequent component is extracted within the preceding one. A non-obvious container is made explicit, for example `~format = "{week from year:2}"`.
+`~format` is optional and uses the general `String` template syntax: spaces are literal, and `:2` sets two places to the left of the point here. Without it, a point has no special representation: it uses the ordinary textual representation of a magnitude, with the coordinate in the root unit and that unit's abbreviation or name when units exist; a unitless point displays only its numeric coordinate. In this case, the first component is the coordinate in that unit—reduced by the cycle, if one exists—and each subsequent component is extracted within the preceding one. A non-obvious container is made explicit, for example `~format = "{week from year:2}"`.
 
 Outside `~format`, extraction requires the point:
 
@@ -1134,7 +1135,7 @@ The body directly contains its final Boolean condition. A false invariant yields
 
 ## Block error handlers
 
-Expression, value and effect blocks may carry an ordered list of `otherwise` handlers outside the protected body. Normalized short blocks have the same facility. Each handler has optional `on` bindings to aliases specialized from Error, optional `if`, and exactly one `then` or `raise`. Multiple on roles match jointly; no on is catch-all. Then recovery must preserve the protected block's result and effect contract. Raise evaluates a value body producing one Error or a nonempty Errors value, then enters the error channel without a normal result. `otherwise raise errorValue` is short catch-all sugar. Raise also occurs in executable expression/value/effect bodies and follows the same fault/recovery channel. Text-only diagnostics, Refusal bindings and a handler with both then and raise are invalid. No finally clause exists.
+Expression, value and effect blocks may carry an ordered list of `otherwise` handlers outside the protected body. Normalized short blocks have the same facility. Each handler has optional `on` bindings to aliases specialized from Error, optional `if`, and exactly one `then` or `raise`. Multiple on roles match jointly; no on is catch-all. Then recovery must preserve the protected block's result and effect contract. Raise evaluates a value body producing one Error or a nonempty Errors value, then enters the error channel without a normal result. `otherwise raise errorValue` is short catch-all sugar. Raise also occurs in executable expression/value/effect bodies and follows the same fault/recovery channel. String-only diagnostics, Refusal bindings and a handler with both then and raise are invalid. No finally clause exists.
 
 ```mud
 then { counter.value += amount }
@@ -1206,7 +1207,7 @@ message KingChanged on kingdom: Kingdom {
     if kingdom.visible
 
     let kingdomName := kingdom~name
-    let kingName: Text := kingdom.king~name
+    let kingName: String := kingdom.king~name
     let time := kingdom.clock in second
     let timeText := "{kingdom.clock}"
 }
@@ -1235,7 +1236,7 @@ Publication preserves causal order across wave barriers. A reproducible technica
 
 The outer envelope keeps the `on` bindings that identify participants separate from the public payload; it does not merge the two namespaces. Provisionally delivered occurrences retain causal order between waves and, within one wave, a stable reproducible technical order that introduces no priority semantics among them.
 
-A public field whose direct value is a magnitude supporting units should preferably select its representation with `in`. Omitting it is legal and uses the canonical unit projection, but triggers a warning because it implies an API decision. A unitless magnitude displays its numeric value directly without that warning. A direct point magnitude publishes its coordinate in the chosen unit, not its `~format`; publishing the format requires a `Text` field.
+A public field whose direct value is a magnitude supporting units should preferably select its representation with `in`. Omitting it is legal and uses the canonical unit projection, but triggers a warning because it implies an API decision. A unitless magnitude displays its numeric value directly without that warning. A direct point magnitude publishes its coordinate in the chosen unit, not its `~format`; publishing the format requires a `String` field.
 
 ## Clauses and keys
 
@@ -1300,7 +1301,7 @@ The name is available only from its declaration to the end of the block. It may 
 
 ### Stored annotations and binding patterns
 
-`let name: _ = value-body` declares an immutable stored local; `mut name: _ = value-body` is admitted wherever mutable stored locals are admitted. `_` is a type-inference hole, including nested positions such as `let pair: (_, Text) = value-body` or `let items: Box with _ = value-body`. Stored annotations preserve written type structure, domains, collection cardinalities, uniqueness, order and inner authority. Holes are not admitted in signatures, derived annotations, alias representation declarations or general Type expressions. Every hole must have a unique static solution; missing or ambiguous evidence is a compile-time error reported at that hole.
+`let name: _ = value-body` declares an immutable stored local; `mut name: _ = value-body` is admitted wherever mutable stored locals are admitted. `_` is a type-inference hole, including nested positions such as `let pair: (_, String) = value-body` or `let items: Box with _ = value-body`. Stored annotations preserve written type structure, domains, collection cardinalities, uniqueness, order and inner authority. Holes are not admitted in signatures, derived annotations, alias representation declarations or general Type expressions. Every hole must have a unique static solution; missing or ambiguous evidence is a compile-time error reported at that hole.
 
 Stored fields, alias components with defaults, family data with defaults and stored metadata with explicit initial values admit the same annotation syntax under their owners' ordinary static requirements. A hole-bearing annotation without its own initial value is invalid; member population, runtime values or later assignment cannot supply its type. `_` does not omit a cardinality or modifier and does not grant derived coercion.
 
@@ -1394,7 +1395,7 @@ If an exact dictionary lookup used as an intermediate step does not find its key
 
 RemoveEffect always removes a value from a collection-compatible assignable target. It never deletes a field declaration; non-collection targets are rejected during typing.
 
-`|=`, `&=`, `^=` and `--=` retain their update class in the AST. They require an externally mutable location or a reconstructible assignable path whose write-back ends in one, and a result assignable to the location. `^=` accepts only collections that guarantee whole-value uniqueness; ordinary `unique` and `unique by path` both satisfy that precondition. For collections, homogeneous updates consolidate by union, intersection, parity or summed removed multiplicities; mixing different classes is a conflict unless explicitly specified otherwise. For `Text`, `|=` is concatenation and multiple concurrent updates require a defined global order.
+`|=`, `&=`, `^=` and `--=` retain their update class in the AST. They require an externally mutable location or a reconstructible assignable path whose write-back ends in one, and a result assignable to the location. `^=` accepts only collections that guarantee whole-value uniqueness; ordinary `unique` and `unique by path` both satisfy that precondition. For collections, homogeneous updates consolidate by union, intersection, parity or summed removed multiplicities; mixing different classes is a conflict unless explicitly specified otherwise. For `String`, `|=` is concatenation and multiple concurrent updates require a defined global order.
 
 ## `foreach`, progressions, selection and quantifiers
 
@@ -1482,7 +1483,7 @@ rule Positive given value: Any {
 Inside a functional branch, `is` and `iis` retain their narrowing in the result:
 
 ```mud
-let describeAny: Any --> Text [ordered] =
+let describeAny: Any --> String [ordered] =
     value iis PersonId --> "Person id {value}",
     value is Nat --> "Natural {value}",
     _ --> "Other"
@@ -1686,13 +1687,13 @@ The access is written `owner~metadata`, never `owner.~metadata`. All access `~` 
 | `~on` | `Participant [* unique ordered]` | reactive rule, rule `always`, `message`, `submessage` | no, intrinsic |
 | `~given` | `Participant [* unique ordered]` | Boolean rule, `action`, `subaction`, `look`, `sublook` | no, intrinsic |
 | `~clauses` | `ClauseKind [* unique]` | statements containing clauses | no, intrinsic |
-| `~plural` | `Text` | units | yes |
-| `~abbreviation` | `Text` | units | yes |
+| `~plural` | `String` | units | yes |
+| `~abbreviation` | `String` | units | yes |
 | `~prefixes` | `Prefix [* unique]` | units | yes; default `empty` |
-| `~format` | `Text` | point magnitudes | yes |
-| `~summary` | `Text` | compatible metadata-bearing elements | yes; default `""` |
-| `~description` | `Text` | compatible metadata-bearing elements | yes; default `""` |
-| `~deprecated` | `Text [0..1]` | compatible metadata-bearing elements | yes; default `empty` |
+| `~format` | `String` | point magnitudes | yes |
+| `~summary` | `String` | compatible metadata-bearing elements | yes; default `""` |
+| `~description` | `String` | compatible metadata-bearing elements | yes; default `""` |
+| `~deprecated` | `String [0..1]` | compatible metadata-bearing elements | yes; default `empty` |
 
 The “Owners” column is a semantic availability restriction, not a description of when the result is non-empty. After resolving and classifying the receiver, accessing a property unsupported by its static category is an error. In particular, `thing A` makes `A~for` invalid; an `action` supports `~for` even when it omits the clause, in which case the result is `empty`. The same distinction between an unavailable property and an `empty` value applies to `~on` and `~given`.
 
@@ -1705,10 +1706,10 @@ The table summarises the common and configurable properties that affect the synt
 General conversions are explicit when the following apply:
 
 ```mud
-let pathText: Text = Alexandria~path to Text
+let pathText: String = Alexandria~path to String
 ```
 
-Templates can render metadata types directly without establishing general nominal compatibility with `Text`. `~file` is valid in any expression, but triggers a warning when it appears outside text or purely informative public output and its value may affect behaviour:
+Templates can render metadata types directly without establishing general nominal compatibility with `String`. `~file` is valid in any expression, but triggers a warning when it appears outside text or purely informative public output and its value may affect behaviour:
 
 ```mud
 look SourceInfo {
@@ -1722,17 +1723,17 @@ rule Fragile given expected: MudFile {
 
 `~name` and any other configurable metadata may be changed by editing and re-elaborating the model, never by a runtime effect. Such an edit changes neither payload, equality, path nor anchor unless the source identifier is changed separately.
 
-## `Text` and operators
+## `String` and operators
 
-`|` concatenates `Text`:
+`|` concatenates `String`:
 
 ```mud
 "Hello, " | name
 ```
 
-The operators `&`, `^` and `-` are not permitted on `Text`. `xor` is exclusively logical and `^` exclusively set-like. Nominal aliases of `Text` do not undergo implicit concatenation.
+The operators `&`, `^` and `-` are not permitted on `String`. `xor` is exclusively logical and `^` exclusively set-like. Nominal aliases of `String` do not undergo implicit concatenation.
 
-Every `Text` literal, whether ordinary or multiline, is a template. `{e}` evaluates `e` and inserts the value's canonical textual representation. Metadata are ordinary expressions:
+Every `String` literal, whether ordinary or multiline, is a template. `{e}` evaluates `e` and inserts the value's canonical textual representation. Metadata are ordinary expressions:
 
 ```mud
 "Kingdom: {kingdom}"
@@ -1742,9 +1743,9 @@ Every `Text` literal, whether ordinary or multiline, is a template. `{e}` evalua
 "Literal braces: \{example\}"
 ```
 
-`anchor{...}` is not part of the language. Rendering `Name`, `MudPath`, `Anchor` or `MudFile` in a template does not implicitly convert it to `Text` outside that context.
+`anchor{...}` is not part of the language. Rendering `Name`, `MudPath`, `Anchor` or `MudFile` in a template does not implicitly convert it to `String` outside that context.
 
-`Text`, `Char`, `Bool`, basic numbers, `thing` values, `family` members, intervals, collections and magnitudes can be rendered directly. A call to a Boolean rule can also be rendered because it produces `Bool`. Statement and type descriptors are first-class MUD values, but that does not give them an implicit textual representation. Actions, reactive rules, `always` rules, `look`, `message`, tests, types and `family` declarations produce a static error inside `{...}` unless an applicable explicit textual conversion or projection exists.
+`String`, `Char`, `Bool`, basic numbers, `thing` values, `family` members, intervals, collections and magnitudes can be rendered directly. A call to a Boolean rule can also be rendered because it produces `Bool`. Statement and type descriptors are first-class MUD values, but that does not give them an implicit textual representation. Actions, reactive rules, `always` rules, `look`, `message`, tests, types and `family` declarations produce a static error inside `{...}` unless an applicable explicit textual conversion or projection exists.
 
 A `thing`, a nominal alias and a `family` member are represented by their effective `~name`. Their canonical anchor is obtained through `~anchor`; editing `~name` changes neither equality, path nor anchor. A `family` member without an override initially uses its nominal name. An interval uses its normalised canonical form. A collection omits only its outer square brackets and separates elements with `, `; any collection that appears as an element retains its own square brackets:
 

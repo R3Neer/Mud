@@ -14,6 +14,7 @@ depends-on:
 questions:
   - Q-007
 decisions:
+  - D-181
   - D-172
   - D-169
   - D-167
@@ -148,7 +149,7 @@ in C and retain its effect summary/obligations. No inhabitant of tau is created.
 
 > [!rule] MUD-BLOCK-003 — Raise without a normal value
 > A successful raise payload supplies Fault with its distinct Error occurrences.
-> Text, Refusal and empty cannot be successful payloads. Without a determining
+> String, Refusal and empty cannot be successful payloads. Without a determining
 > normal-result context, raise alone cannot infer a nominal result type. There
 > is no storable bottom/never value or implicit return, break, continue or finally.
 
@@ -179,7 +180,7 @@ exports are unavailable after rollback.
 > [!rule] MUD-BLOCK-004 — Category-preserving recovery
 > A `then` recovery checks against the protected normal-result contract and
 > owner mode. A `raise` recovery checks ErrorPayload under that mode. Both
-> branches in one clause, Text-only diagnostics and Refusal `on` bindings are
+> branches in one clause, String-only diagnostics and Refusal `on` bindings are
 > static errors. Handler locals create no public declaration anchors.
 
 Expression recovery remains pure and supplies the expected result. Value
@@ -237,7 +238,7 @@ in its inherited optional cause component and be raised. Cause storage does not
 automatically reproduce the original occurrence in the pending set.
 
 ```mud
-let result: Num = { raise "explanation" } # invalid: Text is not ErrorPayload
+let result: Num = { raise "explanation" } # invalid: String is not ErrorPayload
 let result: Num = { raise empty }         # invalid: payload cannot be empty
 let result: Num = { raise refusal }       # invalid: Refusal is not Error
 ```

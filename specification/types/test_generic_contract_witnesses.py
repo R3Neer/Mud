@@ -38,7 +38,7 @@ class GenericContractWitnessTests(unittest.TestCase):
         graph = {"A": {"kind": "record", "children": ["A", "X"]},
                  "B": {"kind": "record", "children": ["B", "Y"]},
                  "X": {"kind": "primitive", "identity": "Nat"},
-                 "Y": {"kind": "primitive", "identity": "Text"}}
+                 "Y": {"kind": "primitive", "identity": "String"}}
         self.assertFalse(structural_equal(graph, "A", "B"))
         graph["Y"]["identity"] = "Nat"
         self.assertTrue(structural_equal(graph, "A", "B"))
@@ -51,7 +51,7 @@ class GenericContractWitnessTests(unittest.TestCase):
         graph = {"A": {"kind": "union", "children": ["X", "Y"]},
                  "B": {"kind": "union", "children": ["Y", "X"]},
                  "X": {"kind": "primitive", "identity": "Nat"},
-                 "Y": {"kind": "primitive", "identity": "Text"}}
+                 "Y": {"kind": "primitive", "identity": "String"}}
         self.assertTrue(structural_equal(graph, "A", "B"))
         graph["B"]["children"] = ["X", "X"]
         self.assertFalse(structural_equal(graph, "A", "B"))
@@ -60,14 +60,14 @@ class GenericContractWitnessTests(unittest.TestCase):
         graph = {"A": {"kind": "product", "children": ["X", "Y"]},
                  "B": {"kind": "product", "children": ["Y", "X"]},
                  "X": {"kind": "primitive", "identity": "Nat"},
-                 "Y": {"kind": "primitive", "identity": "Text"}}
+                 "Y": {"kind": "primitive", "identity": "String"}}
         self.assertFalse(structural_equal(graph, "A", "B"))
 
     def fixture(self):
-        return {"receivers": [{"name": "Actor"}], "arguments": [{"types": [{"name": "Text"}]}],
+        return {"receivers": [{"name": "Actor"}], "arguments": [{"types": [{"name": "String"}]}],
                 "candidates": [
                     {"identity": "a.Play", "receivers": [{"name": "Actor"}], "givens": [{"name": "value", "type": {"name": "Nat"}}]},
-                    {"identity": "b.Play", "receivers": [{"name": "Actor"}], "givens": [{"name": "value", "type": {"name": "Text"}}]},
+                    {"identity": "b.Play", "receivers": [{"name": "Actor"}], "givens": [{"name": "value", "type": {"name": "String"}}]},
                 ]}
 
     def test_written_type_selects_and_import_order_does_not(self):
@@ -78,7 +78,7 @@ class GenericContractWitnessTests(unittest.TestCase):
 
     def test_named_given_selects_without_return_context(self):
         fixture = self.fixture()
-        fixture["arguments"] = [{"name": "text", "types": [{"name": "Text"}]}]
+        fixture["arguments"] = [{"name": "text", "types": [{"name": "String"}]}]
         fixture["candidates"][0]["givens"][0] = {"name": "number", "type": {"name": "Any"}}
         fixture["candidates"][1]["givens"][0]["name"] = "text"
         self.assertEqual(selected_candidates(fixture, includes, {}), ["b.Play"])
@@ -119,7 +119,7 @@ class GenericContractWitnessTests(unittest.TestCase):
     def test_given_witness_cannot_override_primitive_ancestry(self):
         from validate_type_spec import check_witness
         fixture = self.fixture()
-        fixture.update(kind="given-selection", parents={"Nat": ["Text"]})
+        fixture.update(kind="given-selection", parents={"Nat": ["String"]})
         with self.assertRaises(ValueError):
             check_witness(fixture)
 

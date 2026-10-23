@@ -49,7 +49,7 @@ The scanner retains physical newlines. Before the concrete productions consume `
 
 ## Modal scanner
 
-`Text` templates require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../07-lexicon]] defines the algorithm; `mud.ebnf` analyses tokens emitted within interpolations.
+`String` templates require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../07-lexicon]] defines the algorithm; `mud.ebnf` analyses tokens emitted within interpolations.
 
 The ways of unit and from magnitude from point are also context-dependent. The fact that there is a token contextual does not anticipate its resolution semantics.
 

@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-181
   - D-180
   - D-178
   - D-176
@@ -143,7 +144,7 @@ Block evaluation has the disjoint outcomes $\mathsf{Normal}(v)$ and $\mathsf{Fau
 > [!rule] MUD-TYPE-009 — Literal synthesis and checking
 > A name obtains the contract of its resolved visible binding. An exact numeric literal remains contextual until its compatible representation is uniquely established. No Nat/Int/Num/Money priority is applied to an ambiguous literal; an insufficiently constrained calculated binding requires an annotation. Signs are operators. A basic/alias/magnitude expected context may contextualise a compatible untyped literal. A Rum literal requires its lexical r prefix even in a Rum context.
 
-Text literals synthesise Text, including one-scalar text. A Char context admits one decoded Unicode scalar, with no interpolation. Text is not implicitly a Char collection; its specified textual-list construction in a Char-collection context must satisfy that collection's order/shape. Bool literals have singleton Bool.
+String literals synthesise String, including one-scalar text. A Char context admits one decoded Unicode scalar, with no interpolation. String is not implicitly a Char collection; its specified textual-list construction in a Char-collection context must satisfy that collection's order/shape. Bool literals have singleton Bool.
 
 Empty has cardinality zero and no chosen nominal member type. An expected zero-admitting collection can check it; a positive-minimum context fails the ordinary admission/contract check. All and fallback are contextual forms: all requires a finite enumerable expected domain, and fallback exists only in a functional branch position.
 
@@ -159,7 +160,7 @@ For field access, every possible static receiver alternative must expose one com
 
 Metadata access applies the static owner-category matrix. Type reflection returns Type for the statically known contract at that programme point, including valid narrowing. Unsupported metadata is rejected; supported absent optional metadata returns its declared optional result. No runtime lookup repairs invalid reflection.
 
-Positional indexing requires observable order, uses one-based indices and returns the optional member form when absence is permitted. Slices preserve the source members' contracts and retained guarantees with conservative cardinality. Text indexing produces Char and text slicing produces Text; Text retains its own positional sequence without acquiring collection modifiers.
+Positional indexing requires observable order, uses one-based indices and returns the optional member form when absence is permitted. Slices preserve the source members' contracts and retained guarantees with conservative cardinality. String indexing produces Char and text slicing produces String; String retains its own positional sequence without acquiring collection modifiers.
 
 An exact dictionary query checks the key contract and yields its value contract with possible absence; composite keys contextualise one product key. A functional query applies all relevant branch-selector/result contracts and the dictionary's selection mode. The static result preserves the documented FirstMatch or AllMatches collection shape. Missing exact keys yield empty; exhaustive functional policies obtain absence only from admitted selected results, not an invented type default or a special aggregation error.
 
@@ -362,7 +363,7 @@ Value equality, whole-value membership/algebra and equality-dependent keys or un
 
 ## 6. Collection and dictionary algebra
 
-Collection |, &, -- and ^ combine compatible member contracts and preserve whole-value multiplicities according to their specified algebra. ^ requires whole-value uniqueness from both operands. Text | is concatenation and does not provide Text overloads for &, -- or ^.
+Collection |, &, -- and ^ combine compatible member contracts and preserve whole-value multiplicities according to their specified algebra. ^ requires whole-value uniqueness from both operands. String | is concatenation and does not provide String overloads for &, -- or ^.
 
 For finite upper bounds $u_A,u_B$, conservative size bounds are:
 
@@ -394,7 +395,7 @@ All D materialises a proved finite canonically enumerable domain into a finite c
 
 Selection binds source members only inside its predicate. It requires a captured finite enumerable source and a pure deterministic singleton-Bool predicate. It preserves surviving member identity, multiplicity, uniqueness, order and supplied inner authority; its conservative cardinality is $[0,u]$. An is predicate may narrow surviving alternatives. A bare domain is explicitly materialised when selection must return a collection. Dictionary pair selection retains complete associations.
 
-Take checks a singleton Nat amount and a finite enumerable source. With constant amount $n$ its bounds are $[\min(\ell,n),\min(u,n)]$. It preserves the documented prefix/sample behaviour and retained members' guarantees; an unordered proper sample is a random point, not a proof of deterministic purity. Taking an entire provably small source or zero members need not consume randomness. Text take yields Text; container alias nominality is not reconstructed automatically.
+Take checks a singleton Nat amount and a finite enumerable source. With constant amount $n$ its bounds are $[\min(\ell,n),\min(u,n)]$. It preserves the documented prefix/sample behaviour and retained members' guarantees; an unordered proper sample is a random point, not a proof of deterministic purity. Taking an entire provably small source or zero members need not consume randomness. String take yields String; container alias nominality is not reconstructed automatically.
 
 | Quantifier | Source/body requirements | Result |
 | --- | --- | --- |
@@ -446,12 +447,12 @@ $$
 {\mathcal C\vdash\mathsf{raise}\ b\Leftarrow\tau\triangleright(\epsilon,O)}\;\mathsf{E\text{-}Raise}.
 $$
 
-Payload faults use ordinary computation recovery. A successful payload v supplies Fault(occurrences(v)); there is no Normal result. Text, Refusal and empty cannot be successful payloads. Uncertain domain/cardinality admission uses only the existing authorised checking rules; a failed check follows the ordinary error channel. Producing or returning Error values without raise remains Normal.
+Payload faults use ordinary computation recovery. A successful payload v supplies Fault(occurrences(v)); there is no Normal result. String, Refusal and empty cannot be successful payloads. Uncertain domain/cardinality admission uses only the existing authorised checking rules; a failed check follows the ordinary error channel. Producing or returning Error values without raise remains Normal.
 
 Expression/value/effect bodies, including operator implementations, can explicitly fault. The producing block handles the fault first; unhandled errors propagate through existing nested-block/call/invocation contracts. Explicit ActionReply capture retains its existing observation boundary. Raised handler errors leave that chain; nested payload blocks retain their own handlers. The failed scope rolls back before recovery and dependent continuation is skipped. All source remains statically resolved/typed. Raise adds no world authority in pure contexts, no return/break/continue and no finally. An unhandled fault in a required static initializer makes the declaration inadmissible.
 
 > [!rule] MUD-TYPE-013 — Recovery alternatives
-> Then recovery checks against the protected normal result and mode. Raise checks an Error or nonempty Errors-compatible collection and is also admitted in executable bodies. Then and raise cannot coexist in one handler. Text-only diagnostics and Refusal bindings are static errors.
+> Then recovery checks against the protected normal result and mode. Raise checks an Error or nonempty Errors-compatible collection and is also admitted in executable bodies. Then and raise cannot coexist in one handler. String-only diagnostics and Refusal bindings are static errors.
 
 Distinct equal-valued error occurrences are not deduplicated. Clauses handle remaining occurrences in textual/stable causal order; ordinary role binding does not introduce implicit inequality. Protected-body locals and partial exports are unavailable after rollback. Valid enclosing locals and handler bindings remain available.
 

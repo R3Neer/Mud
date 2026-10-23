@@ -19,6 +19,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-181
   - D-180
   - D-172
   - D-171
@@ -226,7 +227,7 @@ Defines:
 - Identifiers and case sensitivity.
 - Reserved words.
 - Numeric, monetary and percentage literals.
-- Ordinary and multiline `Text` templates, ordinary interpolations, escapes and typed `~anchor` access.
+- Ordinary and multiline `String` templates, ordinary interpolations, escapes and typed `~anchor` access.
 - `#`, `#...#` and `###...###` comments.
 - Whitespace.
 - Tokens, trivia, spans and lexical errors.
@@ -253,7 +254,7 @@ Defines the complete syntax of:
 - Canonical definitions of `thing` and rules, part-unified `start with` and activation through `create Name`.
 - Isolated tests with local `start with`, `then`, `after` and `otherwise`.
 - Error-only otherwise handlers on expression, value and effect blocks, with joint on bindings and then/raise branches.
-- Numeric formats within `Text` interpolations.
+- Numeric formats within `String` interpolations.
 - Quantifiers and iterations.
 
 Foreign `from Language` bodies delegate native parsing and preserve `mud name [: Type] <- nativeExpression` bridges, with braces determined by instruction count. All existing block capabilities remain in force; pure preambles and value/effect statement slots admit compatible foreign blocks.

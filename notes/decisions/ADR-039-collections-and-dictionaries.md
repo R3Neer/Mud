@@ -171,7 +171,7 @@ let combinedChars := leftChars | rightChars
 
 The type static of `combinedChars` is `Char [1..7]`: it isn't `unique`, `ordered` nor `mut`, and its domain from member is the domain full list of `Char`.
 
-`Text` is not the same as `Char [* ordered]`: retains the positional order of its characters and does not support modifiers for collection. D-056 establishes this distinction.
+`String` is not the same as `Char [* ordered]`: retains the positional order of its characters and does not support modifiers for collection. D-056 establishes this distinction.
 
 Compatible concurrent insertions that need to complete an order of provenance They respect causality and resolve ties only between concurrent events by means of a reproducible pseudo-random selection using identity semantics stable. In a collection `unique`, equivalent insertions are merged before that order is completed.
 

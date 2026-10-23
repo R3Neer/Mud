@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-071
 decisions:
+  - D-181
   - D-169
   - D-138
   - D-132
@@ -89,11 +90,11 @@ using world.people
 using physics.*
 
 thing Kingdom {
-    mut title: Text = ""
+    mut title: String = ""
 }
 
 action Retitle for kingdom: Kingdom [mut]
-given newTitle: Text {
+given newTitle: String {
     then kingdom.title = newTitle
 }
 ```
@@ -141,13 +142,13 @@ The Surface AST retains only the metadata required for provenance and tooling; i
 
 ## End of file
 
-The end-of-file character can act as a terminator for a line-ending comment or an ordinary literal `Text` without a closing quotation mark. It cannot implicitly terminate:
+The end-of-file character can act as a terminator for a line-ending comment or an ordinary literal `String` without a closing quotation mark. It cannot implicitly terminate:
 
 - Round brackets or square brackets.
 - Blocks in curly brackets.
-- Interpolations of a template `Text`.
+- Interpolations of a template `String`.
 - Multi-line literals or comments.
-- Contextual literals `Char` using the same double quotation marks as `Text`.
+- Contextual literals `Char` using the same double quotation marks as `String`.
 
 
 ## Recommended editorial structure

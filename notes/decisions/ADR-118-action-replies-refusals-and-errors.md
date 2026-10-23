@@ -37,19 +37,19 @@ The following reply catalogue specifies no patch component; Q-073 retains that a
 
 ```mud
 alias Success {}
-abstract alias Refusal { let reason: Text; let origin: Declaration }
+abstract alias Refusal { let reason: String; let origin: Declaration }
 abstract alias ConditionRefusal as Refusal { let condition: BoolCheck }
 alias IfRefusal as ConditionRefusal
 alias AfterRefusal as ConditionRefusal
 alias AlwaysRefusal as ConditionRefusal
 alias ArgumentRefusal as Refusal { let argument: Participant }
 alias BoolCheck {
-    let expression: Text
+    let expression: String
     let value: Bool [0..1]
     let parts: BoolCheck [* ordered] = empty
 }
 abstract alias Error {
-    let reason: Text
+    let reason: String
     let origin: Declaration
     let cause: Error [0..1] = empty
 }
@@ -73,7 +73,7 @@ Built-in Error specializations classify arithmetic evaluation, domain/cardinalit
 
 Every expression, value and effect block evaluates with a normal result and an Error [*] error channel. Empty means no error; nonempty means the normal result is unavailable. Sequential dependent evaluation stops at its first failed dependency; independent concurrent evaluations can contribute several occurrences. Action completion embeds a nonempty channel as Errors in ActionReply. Refusal is never an Error and is not selected by otherwise.
 
-Otherwise clauses attach to blocks, including normalized short forms, not to declaration categories. They occur outside the protected body and use optional on bindings to Error-specialized aliases, an optional if filter, and exactly one then or raise branch. Multiple on roles are conjunctive; no on means catch any error. Then provides recovery subject to the protected block's normal-result/effect contract. Raise constructs a nonempty error value/collection and propagates it outward; executable-body raise is also admitted under D-147 and uses the same fault/recovery channel. Otherwise raise errorValue is catch-all short sugar. A clause with both then and raise, a Text-only diagnostic, or a Refusal binding is invalid. There is no finally. Detailed occurrence selection, rollback and propagation obligations belong to the block-recovery contract.
+Otherwise clauses attach to blocks, including normalized short forms, not to declaration categories. They occur outside the protected body and use optional on bindings to Error-specialized aliases, an optional if filter, and exactly one then or raise branch. Multiple on roles are conjunctive; no on means catch any error. Then provides recovery subject to the protected block's normal-result/effect contract. Raise constructs a nonempty error value/collection and propagates it outward; executable-body raise is also admitted under D-147 and uses the same fault/recovery channel. Otherwise raise errorValue is catch-all short sugar. A clause with both then and raise, a String-only diagnostic, or a Refusal binding is invalid. There is no finally. Detailed occurrence selection, rollback and propagation obligations belong to the block-recovery contract.
 
 ```mud
 always rule Positive on counter: Counter { counter.value >= 0 }

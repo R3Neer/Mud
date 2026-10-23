@@ -14,6 +14,7 @@ questions:
   - Q-033
   - Q-070
 decisions:
+  - D-181
   - D-179
   - D-169
   - D-028
@@ -223,17 +224,17 @@ of units displayed by ~format. The short `smallUnit from containingUnit` exists
 only inside a point-format hole. Successive `{hour:2}:{minute:2}:{second:2}`
 holes use the complete initial coordinate then components within preceding units.
 
-Numeric Text holes `{e:left}`, `{e::right}`, `{e:left:right}` use natural decimal
+Numeric String holes `{e:left}`, `{e::right}`, `{e:left:right}` use natural decimal
 widths. Left pads to a minimum without removing digits or counting the sign;
 right fixes fractional digits with ties-to-even text rounding, available for
-Num/Rum/Money. Zero right precision removes the point. Formatting changes Text,
+Num/Rum/Money. Zero right precision removes the point. Formatting changes String,
 never the numeric value. Point formats reuse this syntax with the additional
 invertibility requirement.
 
 A direct public magnitude field can explicitly select units with in. Omitting
 it is legal but warns when units are selectable; no warning is needed for a
 unitless magnitude. A direct point field publishes its numeric coordinate;
-publishing ~format requires a Text field such as `let timeText := "{clock.time}"`.
+publishing ~format requires a String field such as `let timeText := "{clock.time}"`.
 Recursive foreign serialization of contained magnitudes remains
 [[../notes/questions/Q-070-foreign-value-conversion-lifetime-and-errors|Q-070]] and is
 not an implied host protocol here.

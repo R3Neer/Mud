@@ -111,7 +111,7 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
 It represents positions on a magnitude linear and uses its units. You cannot declare units or `root unit`.
 Without `in`, admits the domain the full range of the underlying coordinate. With a linear interval, it is bounded without wrapping. With `[a..b) cycle`, it is limited and cyclically normalised.
 
-The point may optionally define a `~format` metadata template: a special textual representation. If omitted, it is rendered by the ordinary coordinate presentation: a compatible unit where one exists, otherwise only the number under D-163. In accordance with D-061, `~format` uses a `Text` template: `hour`, `minute` and `second` are contextual expressions of the point, and `:2` shifts two positions to the left. D-061 also specifies the explicit extraction `minute from hour in time`; D-062 requires an invertible `~format` to serve as the canonical literal form and to reject literals outside the domain before normalisation.
+The point may optionally define a `~format` metadata template: a special textual representation. If omitted, it is rendered by the ordinary coordinate presentation: a compatible unit where one exists, otherwise only the number under D-163. In accordance with D-061, `~format` uses a `String` template: `hour`, `minute` and `second` are contextual expressions of the point, and `:2` shifts two positions to the left. D-061 also specifies the explicit extraction `minute from hour in time`; D-062 requires an invertible `~format` to serve as the canonical literal form and to reject literals outside the domain before normalisation.
 
 His maths is as follows:
 
