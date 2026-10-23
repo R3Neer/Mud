@@ -82,13 +82,14 @@ TypeKind distinguishes Dictionary and FunctionalDictionary for raw constructors.
 ## Omitted cardinality and owner contracts
 
 > [!rule] MUD-DICT-006 — Uniform owner-directed cardinality
-> A written arrow cardinality is an association/application contract. If it is
+> An exact-arrow cardinality or functional output-type cardinality is an
+> association/application-result contract. If it is
 > omitted, immutable stored definitions infer it from their initializer/body,
 > derived definitions preserve expression-inferred bounds, and mutable stored
 > exact dictionaries and type-only positions use [1]. A dictionary's exterior
 > remains one value independently of these internal bounds.
 
-| Owner with omitted arrow cardinality | Effective internal cardinality |
+| Owner with omitted association/output cardinality | Effective counted cardinality |
 | --- | --- |
 | Immutable stored exact definition with initializer | Inferred association bounds; proved literal counts are exact. |
 | Immutable stored functional definition with body | Inferred application-result bounds over admitted inputs and views. |

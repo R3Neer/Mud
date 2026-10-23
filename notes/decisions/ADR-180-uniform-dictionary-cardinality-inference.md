@@ -31,8 +31,9 @@ affects:
 ## Context
 
 The author accepts reuse of ordinary omitted-cardinality rules for exact and
-functional dictionaries. A dictionary is one exterior value; its arrow-owned
-specification counts associations or application results instead. Those counts
+functional dictionaries. A dictionary is one exterior value; an exact intrinsic
+arrow specification counts associations and a functional output-type
+specification counts application results. Those counts
 must not be confused. Omission must not silently demand one association or a
 total policy when an immutable definition supplies inference evidence.
 
