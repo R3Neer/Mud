@@ -19,6 +19,7 @@ affects:
 - Modified by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 - Extended by: [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Modified by: [[ADR-187-order-sensitive-collection-arithmetic-and-read-only-views|D-187]].
 
 - Modifies: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]] and [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]].
 - Related questions: [[notes/questions/Q-006-c-conflicts|Q-006]] and [[notes/questions/Q-019-n-numbers|Q-019]].
@@ -33,11 +34,11 @@ The symmetric difference of multisets defined by absolute multiplicity differenc
 
 ## Decision
 
-### Restricted arithmetic lifting
+### Order-sensitive arithmetic lifting
 
-The binary arithmetic operators `+`, `-`, `*`, `/` and `%` are lifted over collections when at least one operand has a static upper cardinality bound less than or equal to one.
+The binary arithmetic operators `+`, `-`, `*`, `/` and `%` lift over admitted member operations. At each explicit collection layer, two semantically ordered values pair positions up to the shorter length and discard tails; otherwise every occurrence pair contributes. General read-only contracts do not erase actual order. Explicit nested layers recurse without flattening; direct member computation is the base case.
 
-For a member operator `\odot`:
+For a member operator `\odot`, the unordered case is:
 
 $$
 A\mathbin{\odot}B
@@ -45,7 +46,7 @@ A\mathbin{\odot}B
 [\,a\mathbin{\odot}b\mid a\in A,\ b\in B\,].
 $$
 
-The collection retains one occurrence foreach pair of occurrences. If the cardinalities are $[\ell_A..u_A]$ and $[\ell_B..u_B]$, the cardinality before any uniqueness normalisation is:
+The collection retains one occurrence per selected pair. If the cardinalities are $[\ell_A..u_A]$ and $[\ell_B..u_B]$, Cartesian bounds are:
 
 $$
 [\ell_A\ell_B..u_Au_B].
@@ -53,11 +54,11 @@ $$
 
 Therefore, `empty` is absorbing: if either operand is empty, no pair exists and no member operation is evaluated. In particular, `empty / [0]` produces `empty` without performing a division by zero.
 
-Two operands whose upper bounds may exceed one do not permit implicit arithmetic lifting. MUD does not silently choose between positional pairing, a full Cartesian product, reduction or mutual broadcasting.
+Positional bounds are $[\min(\ell_A,\ell_B)..\min(u_A,u_B)]$. When order is unknown, the static result covers every possible pairing mode. No reduction or matrix multiplication is inferred. Operand production and validation retain their errors; discarded tails execute no member operation.
 
 When unions are involved, every possible pair of alternatives must support the member operator and their results must form a well-formed union type. Prior narrowing may remove impossible pairs.
 
-If only one operand can be multiple, the result preserves its order whenever that order was observable. Whole-value uniqueness is retained only when analysis demonstrates that the operation cannot collapse distinct members; otherwise the result retains ordinary multiplicity. A keyed criterion `unique by path` is preserved only when the result still consists of members for which the same path is meaningful and analysis proves that no new projected-key collision can be introduced; otherwise any safe guarantee is degraded to ordinary whole-value uniqueness.
+Positional results retain pair sequence; Cartesian results have no observable order. Equality-eligible whole-value uniqueness requires no collisions among selected-pair results, with upper cardinality at most one as a sufficient case. A keyed criterion additionally requires a valid stable result key and no key collisions. Otherwise retain only independently proved guarantees, without implicit deduplication. Operand uniqueness alone is insufficient. Explicit [unique] normalization remains available.
 
 ### Collection difference
 
@@ -136,7 +137,7 @@ For `String`, `|=` concatenates sequentially like `|`. Several concurrent concat
 
 1. Lifting `[1]` with `[n..m]` in both orders.
 2. Lifting `[0..1]` and absorption by `empty`.
-3. Rejection when both upper bounds may exceed one.
+3. Positional versus Cartesian traversal for multiple operands and ordered singletons.
 4. Matrix of nominal alternatives and prior narrowing.
 5. Distinction between `-`, `--`, `-=` and `--=`.
 6. Rejection of `^` and `^=` over non-`unique` collections.

@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-187
   - D-186
   - D-183
   - D-184
@@ -301,7 +302,7 @@ Unit construction consumes its checked numeric value, converts its coordinate us
 > [!rule] MUD-TYPE-039 — Exact truncating remainder
 > Nat%Nat yields Nat, Int%Int yields Int and Num%Num yields Num. Mixed operands use the exact Nat-to-Int-to-Num widening chain. With nonzero divisor b, let q=trunc(a/b), where trunc is mathematical integer truncation toward zero; the exact result is a-q*b. A zero divisor supplies Fault under ordinary demand and recovery rules. Money has no remainder signature and %= is not introduced.
 
-For a nonzero remainder its sign is the dividend's sign and its absolute value is below abs(b). Thus (-5)%3=-2, 5%(-3)=2 and (5/2)%1=1/2. This internal quotient is not a source integer conversion and does not use its ties-to-even rule. Existing arithmetic member lifting retains its static cardinality/signature premises; no member computation occurs for empty inputs.
+For a nonzero remainder its sign is the dividend's sign and its absolute value is below abs(b). Thus (-5)%3=-2, 5%(-3)=2 and (5/2)%1=1/2. This internal quotient is not a source integer conversion and does not use its ties-to-even rule. Arithmetic member lifting follows MUD-TYPE-011, retaining static signature checks and executing no member computation for empty inputs.
 
 ### Unitless point coordinates
 
@@ -334,6 +335,17 @@ f_A\preceq f_B\quad D_A\subseteq D_B\quad
 $$
 
 All premises are proved under $\Sigma;\Phi$. Guarantee strength $\succeq$ means the source supplies every target guarantee: keyed uniqueness implies whole-value uniqueness, which implies none; equal keyed criteria are compatible; order preserves the required criterion; authority may be forgotten but not created. No deep mutability is inferred. Outer writable-place invariance is defined in [[15-fields-and-mutability]].
+
+Forgetting ordered/unique requirements changes the visible guarantees, not the
+supplied value's sequence or multiplicity properties. Such a target admits values
+with or without the omitted guarantee; omission is not a negative constraint.
+Order-sensitive arithmetic follows the retained semantic order under
+MUD-TYPE-011, with conservative result contracts when that order is not statically
+guaranteed. Positional access still requires proof. Inner mut is permission:
+omitting it forbids writes through that view, including forwarding hidden authority
+to a writable parameter, while retaining the caller's independent authority.
+Value properties cannot manufacture an authority proof. An inferred stored
+binding preserves the initializer's known order rather than desorting its value.
 
 A source union is usable as $\sigma$ only when every alternative satisfies $\sigma$. A source fits a target union if it satisfies a target alternative; composite derivations may prove coverage without arbitrarily selecting a target for an ambiguous literal. Read-only products require matching component names/order and componentwise inclusion. Nominal membership still needs ancestry or contextual construction.
 

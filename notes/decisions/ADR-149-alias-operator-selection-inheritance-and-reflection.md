@@ -18,6 +18,7 @@ affects:
 # ADR-149 — Alias operator selection, inheritance and reflection
 
 - Amended by: [[ADR-185-functional-operator-fields-and-global-signature-coherence|D-185]].
+- Amended by: [[ADR-187-order-sensitive-collection-arithmetic-and-read-only-views|D-187]].
 
 ## Decision
 
@@ -29,7 +30,7 @@ Select the unique signature whose operand contracts are included in every other 
 
 Check every pair of remaining static union alternatives after flow narrowing. Each pair must select uniquely; result contracts join normally. Runtime identification of an already checked union alternative is not new runtime overload discovery.
 
-Resolve explicit signatures on complete operands first, then an applicable builtin contract, then permitted arithmetic lifting. An ambiguous explicit match is an error, not a reason to fall back. Execution failure or destination/result failure does not retry a different operation. Custom +, -, *, / and % lift under existing collection limits: at least one static upper cardinality is at most one; every possible member pair is admitted. No implicit zip, reduction or unrestricted Cartesian product is introduced. A direct collection-argument overload takes priority over member lifting. Set-algebra symbols retain their outer collection contracts without new automatic member lifting.
+Resolve explicit signatures on complete operands first, then an applicable builtin contract, then permitted arithmetic lifting. An ambiguous explicit match is an error, not a reason to fall back. Execution failure or destination/result failure does not retry a different operation. Custom +, -, *, / and % lift with complete static member-pair coverage: two semantically ordered values pair positions, otherwise use every occurrence pair, recursively at explicit nested layers. No reduction or matrix multiplication is inferred. The retained actual order selects traversal, not a new overload. A direct collection-argument overload takes priority over member lifting. Set-algebra symbols retain their outer collection contracts without new automatic member lifting.
 
 ## Public identity and reflection
 

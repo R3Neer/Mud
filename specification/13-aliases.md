@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-187
   - D-183
   - D-184
   - D-185
@@ -292,7 +293,7 @@ compiler-proved commutativity is introduced. Selection uses complete static
 operand contracts and unique strict specificity; equal/incomparable declarations
 are ambiguous. Inheritance retains original owner, body and result. Every remaining
 union alternative pair must select; expected results and runtime subtypes do not
-repair ambiguity. Direct signatures precede builtins and restricted arithmetic
+repair ambiguity. Direct signatures precede builtins and order-sensitive arithmetic
 lifting; errors never trigger signature fallback. Derived compound updates require
 an assignable destination and storable result and produce absolute replacements
 for user operators. `%=` is unavailable.

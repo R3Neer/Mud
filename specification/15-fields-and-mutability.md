@@ -10,6 +10,7 @@ depends-on:
   - "[[11-type-system]]"
 questions: []
 decisions:
+  - D-187
   - D-186
   - D-183
   - D-184
@@ -137,6 +138,14 @@ Alias-overloaded compound updates use an admitted binary signature with the dest
 A supplied place of contract $\tau_s$ satisfies a requested read/write place of contract $\tau_t$ only if both $\tau_s\preceq\tau_t$ and $\tau_t\preceq\tau_s$ are proved. Domains, cardinality and collection guarantees participate, not just nominal names. This prevents a callee from writing a value valid for its parameter but invalid for the caller's storage.
 
 Read-only use may forget stronger guarantees, including authority. Identity-preserving selection, filtering, indexing, slicing, deduplication, reordering and nominal views may retain inner authority already supplied. Creating a different value does not retain the source thing's authority by resemblance.
+
+A parameter without inner mut receives no permission to edit immediately
+contained things, even when its actual argument carries that permission in the
+caller. It cannot forward hidden authority to a parameter requiring it. The
+caller's authority remains intact after the call. Omitted ordered/unique
+requirements similarly hide guarantees, but do not transform the value; unlike
+write permission, retained semantic order can choose an arithmetic traversal
+whose contract explicitly supports both ordered and unordered inputs.
 
 > [!rule] MUD-EFFECT-002 — No authority amplification
 > A derived annotation, conversion, static narrowing, Error handler or foreign wrapper cannot grant authority absent from its inputs. Inner authority reaches immediate thing members only. Pure blocks cannot spend authority to change outside state even when a captured value carries that authority.

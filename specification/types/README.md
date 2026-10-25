@@ -4,6 +4,7 @@ status: current
 normative: true
 questions: []
 decisions:
+  - D-187
   - D-183
   - D-184
   - D-185
@@ -76,6 +77,12 @@ A witness is a finite certificate in the validator's restricted language. Nat in
 - test_interval_witnesses.py checks supplied finite integral segment normal forms and descending step restart. It also contrasts a supplied exact rational grid with a rational inside the bounds but outside the grid. Continuous and domain-dependent interval normalization remain semantic review obligations.
 
 - operator_contract_witnesses.py and test_operator_contract_witnesses.py check supplied finite operand-admission sets: strict specificity, crossed ambiguity, source-origin deduplication, duplicate local declarations, narrowed union coverage and direct/builtin/lifting priority. They do not discover Mud candidates, infer source types, encode arbitrary anchors or execute operator bodies.
+
+- collection_arithmetic_witnesses.py and test_collection_arithmetic_witnesses.py
+  check supplied finite occurrence-pair and result certificates, interval bounds,
+  nested pair shapes, demand labels, collisions and read-only view authority.
+  Operators and result labels are supplied, not evaluated from Mud source. No
+  compiler, source type inference, general injectivity prover or runtime is implemented.
 
 - test_operator_identity_witnesses.py certifies canonical numbering of supplied small quotient graphs, nominal/domain/binder distinctions, ordered versus set edges and escaped scalar labels. Quotient construction and source normalization are supplied premises; it is not a complete operator identity encoder.
 

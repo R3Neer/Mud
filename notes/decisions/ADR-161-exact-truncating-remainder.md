@@ -32,7 +32,8 @@ produces Error occurrences under the ordinary demand/recovery contract.
 Thus (-5)%3=-2, 5%(-3)=2 and (5/2)%1=1/2. Nonzero remainder has the dividend's
 sign and magnitude strictly below abs(b). Money has no remainder signature;
 Rum remains governed by D-160. No %= or implicit exact/Rum mixing is introduced.
-Existing restricted arithmetic collection lifting applies.
+Order-sensitive arithmetic collection lifting applies under
+[[ADR-187-order-sensitive-collection-arithmetic-and-read-only-views|D-187]].
 
 ## Verification
 

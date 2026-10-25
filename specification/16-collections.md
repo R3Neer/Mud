@@ -11,6 +11,7 @@ depends-on:
 questions:
   - Q-032
 decisions:
+  - D-187
   - D-183
   - D-184
   - D-185
@@ -234,14 +235,29 @@ equal observable sequences when operands are exchanged.
 
 ## Arithmetic lifting and access
 
-Numeric and alias arithmetic lifts only when at least one static upper bound
-is at most one and every possible member pair has an admitted operation.
-Result cardinality before normalization is [l_A*l_B,u_A*u_B]. Each occurrence
-pair contributes once. Empty absorbs without executing a nonexistent pair;
-static signature checks remain mandatory. Both possibly-multiple operands do
-not acquire implicit zip, reduction or Cartesian arithmetic. Collision-freedom
-is required to preserve uniqueness. Complete-operand alias overloads precede
-member lifting under [[21-expressions]].
+Numeric and alias +, -, *, / and % lift over admitted member operations.
+Two semantically ordered values pair positions up to the shorter length;
+otherwise every occurrence pair contributes. The same rule applies independently
+at each explicit nested layer, without flattening or matrix multiplication.
+Positional results retain pair order; Cartesian results have no observable order.
+Empty absorbs. Static alternative coverage and complete-operand overload priority
+remain mandatory. Bounds, base cases and demand follow MUD-TYPE-011 in
+[[21-expressions]].
+
+Read-only omission of ordered/unique hides a guarantee rather than changing the
+value. General functional parameters preserve actual semantic order for arithmetic
+pairing; they cannot assume positional access without a static guarantee. Copying
+an ordered collection retains its sequence, and an inferred binding retains its
+known order. Omitted inner mut hides write permission inside the callee without
+revoking the caller's authority; it cannot be recovered from the actual argument.
+
+Arithmetic preserves repetitions. Preserve whole-value uniqueness only with
+equality eligibility and evidence of no equal results from distinct selected
+pairs; an upper count of one suffices. A keyed guarantee additionally needs a
+valid stable result key with no collisions. Unique inputs alone do not suffice:
+ordered [1,2] plus ordered [2,1] produces [3,3]. Missing evidence weakens the
+guarantee rather than normalizing or rejecting valid arithmetic. Explicit
+`(a + b)[unique]` applies ordinary normalization and its cardinality checks.
 
 Positional indexing starts at one and requires observable order. A guaranteed
 existing position returns [1], otherwise [0..1]; out-of-range access yields

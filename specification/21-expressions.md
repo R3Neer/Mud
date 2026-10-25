@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-187
   - D-186
   - D-183
   - D-184
@@ -282,10 +283,75 @@ Pure Nat subtraction saturates before a declared domain check; signed additive e
 
 Magnitude arithmetic composes nominal dimensional factors and selects the representation allowed by the operation. Addition/subtraction require the specified dimension and linear/point compatibility. Different unitless nominal magnitudes retain different factors. Unit presentation in changes presentation, not dimension or nominal magnitude. Point extraction requires compatible ordered units and produces Nat. The deterministic factor/scale procedure is MUD-TYPE-037 in [[11-type-system#Dimensional normalization]]; its equality never bypasses the original representation signatures or source rounding sites.
 
-> [!rule] MUD-TYPE-011 — Restricted arithmetic lifting
-> Binary numeric +, -, *, / and % admit collection lifting only when at least one static upper cardinality is at most one. Every pair of possible member alternatives must support the operator. The result preserves one occurrence per evaluated pair and has conservative bounds $[\ell_A\ell_B,u_Au_B]$ before explicit normalisation.
+> [!rule] MUD-TYPE-011 — Order-sensitive arithmetic lifting
+> Binary numeric +, -, *, / and % and their admitted alias member signatures lift over finite collections. Every pair of possible static member alternatives must admit the operation. At each collection layer, two values with semantic order pair corresponding positions and discard unmatched tails; otherwise form all occurrence pairs. Each selected pair contributes one complete result. Explicit nested layers recurse under the same rule without flattening. Complete-operand resolution precedes member lifting.
 
-If an operand is empty, no member operation is evaluated. Order is preserved from the sole potentially multiple operand where observable. Uniqueness is retained only with non-collision evidence; key uniqueness additionally requires a meaningful stable key path. No implicit zip, reduction or unrestricted Cartesian product is selected.
+Let $A=(a_1,\ldots,a_n)$ and $B=(b_1,\ldots,b_m)$ denote occurrence inventories;
+their written indices specify semantic positions only when that value is ordered.
+For two ordered values the selected pairs are $(a_i,b_i)$ for
+$1\leq i\leq\min(n,m)$, in that sequence. Otherwise select every
+$(a_i,b_j)$; the resulting collection has no observable order. Stable technical
+enumeration or retained insertion provenance alone does not make an unordered
+value ordered. An ordinary singleton constructed without an order modifier is
+not thereby ordered; an explicitly ordered singleton participates in positional
+pairing. A plain singleton parameter contract can still receive and retain an
+ordered singleton: its annotation does not reset the value's pairing mode.
+
+Direct numeric/member computation is the recursion base. Recurse only through
+explicit nested collection layers: the ordinary singleton wrapper does not
+create another recursion step. A member result that is itself a collection
+occupies one member, without implicit flattening. No matrix multiplication,
+reduction or rectangularity obligation is inferred.
+
+For static input bounds $[\ell_A,u_A]$ and $[\ell_B,u_B]$, positional bounds are
+$[\min(\ell_A,\ell_B),\min(u_A,u_B)]$ and Cartesian bounds are
+$[\ell_A\ell_B,u_Au_B]$. When both input contracts guarantee order, use the
+positional bounds; otherwise take the interval hull of all modes not excluded
+by established facts. Use extended nonnegative arithmetic with $0\cdot\infty=0$.
+Nested bounds are checked separately at every layer. Output member/domain
+contracts join the statically admitted member results, not only current samples.
+
+Omitting ordered in a parameter or read-only view does not remove the argument's
+semantic order. Pairing uses that retained property, while positional access
+still requires a static order guarantee. Such a view cannot regain hidden inner
+write authority. Copying an ordered value retains its sequence; an unannotated
+binding retains the initializer's known contract. An unknown-order input cannot
+justify an ordered output annotation without additional evidence. Positional
+results retain pair sequence, not an ordered-by criterion unless proved.
+
+Preserve repetitions. Whole-value uniqueness requires equality eligibility and
+proof that distinct selected pairs cannot yield equal results; no global
+injectivity proof outside the admitted pairs is required. Upper cardinality at
+most one suffices when equality is available. Keyed uniqueness additionally
+requires an accessible stable result key and proof of no selected-pair key
+collisions. Operand uniqueness alone proves neither guarantee. Without proof,
+weaken the guarantee without deduplication or rejection of otherwise valid
+arithmetic; a destination's own guarantees still require admission. Explicit
+collection normalization uses [[16-collections]].
+
+Produce and validate the complete operands under their ordinary demand/error
+contracts. Empty absorbs without executing a member operation. Execute only
+selected member operations, so unmatched tails cause no arithmetic faults;
+operand-production faults remain observable. Empty and discarded tails do not
+waive static member-signature checks. Preserve ordinary representation rounding,
+Error propagation and actual dependencies; an unordered Cartesian result does
+not acquire an observable implementation traversal order. Explicit foreach
+comprehensions express a different pairing. No negative collection modifier or
+new compound-update consolidation law is introduced.
+
+```mud
+# Fragments inside an admitted owner:
+let a = [1, 2, 3][ordered]
+let b = [10, 20][ordered]
+let paired = a + b                 # [11, 22], ordered
+let copied = a                    # preserves [1, 2, 3] and its order
+let combinations = [1, 2] + [10, 20]  # four occurrences, no order
+let broadcast = 2 * b             # two occurrences, no order
+let singlePair = 2[ordered] * b   # [20], ordered
+let safeTail = [10][ordered] / [2, 0][ordered]  # [5]
+let repeated = [1, 2][ordered unique] + [2, 1][ordered unique]
+# repeated is [3, 3]; explicit (a + b)[unique] normalizes instead.
+```
 
 Logical not, and, or, xor, implication and equivalence require singleton Bool results, with their specified short-circuit/desugaring contract. Temporal is a metalanguage qualification of triggers, not a newly introduced first-class MUD type. A temporal trigger expression is not a Bool that may participate in arbitrary operators: only its defined trigger-combination forms are admitted.
 
@@ -348,7 +414,7 @@ For union operands use the alternatives remaining after flow narrowing. Every po
 
 For each checked alternative pair, resolve direct explicit signatures on the complete operands before considering builtin operation contracts. If none is applicable, use an admitted builtin operation, otherwise try permitted arithmetic lifting. An ambiguous direct candidate set stops with an error. Execution errors, result-domain errors and unstorable destination results never trigger fallback. A Vector2 * Num [2] declaration therefore takes priority over lifting Vector2 * Num across a two-member collection.
 
-Binary overloads of +, -, *, / and % admit the same restricted member lifting as numeric arithmetic: at least one static operand upper cardinality is at most one and every possible member pair admits the operation. Preserve occurrence/cardinality and observable order contracts; preserve uniqueness only with non-collision evidence. Empty inputs execute no member bodies but do not waive static signature checks. No member lifting is introduced for |, &, ^ or --; their existing outer collection algebra is available when no direct overload applies.
+Binary overloads of +, -, *, / and % admit the same order-sensitive recursive member lifting as numeric arithmetic under MUD-TYPE-011. Every possible static member pair must admit its operation. Complete-operand overloads retain priority; the values' semantic order selects only the lifting traversal, never a different overload. No member lifting is introduced for |, &, ^ or --; their existing outer collection algebra is available when no direct overload applies. Comparisons retain their own contracts.
 
 Representation aliases are not implicitly unwrapped for matching. A Scale alias represented by Num does not satisfy a Num operand merely by representation. Magnitudes retain dimensions: builtins reuse their admitted numeric representation signatures without requiring redeclarations, but a Length represented by Num is not a Num scalar argument. Magnitudes have only numeric representations Nat, Int, Num, Rum and Money; arbitrary-representation magnitudes and generalized dimensional vector operations are not part of this contract.
 

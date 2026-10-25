@@ -509,14 +509,55 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Exact division produces Num without integer truncation.
-- id: unrestricted-lifting
+- id: multiple-collection-lifting
   rules:
   - MUD-TYPE-011
   source: left + right
   source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Both operands are finite Int collections with upper cardinality greater than one. Two semantically ordered values pair positions and discard tails; otherwise every occurrence pair contributes. Unknown order in the general input contracts requires bounds covering both modes.
+- id: collection-arithmetic-ordered-tail
+  rules: [MUD-TYPE-011]
+  source: '[10][ordered] / [2, 0][ordered]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Ordered inputs select only the first pair, producing ordered [5]. The discarded zero divisor executes no division. A fault producing either complete operand would remain observable.
+- id: collection-arithmetic-ordered-singleton
+  rules: [MUD-TYPE-011]
+  source: '2[ordered] * [10, 20][ordered]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The explicitly ordered singleton pairs only the first position, producing ordered [20]. Bare 2 instead combines with both occurrences and does not establish output order.
+- id: collection-arithmetic-nested-independent-order
+  rules: [MUD-TYPE-011, MUD-TYPE-027]
+  source: '[[1, 2], [3]][ordered] + [[10, 20], [30]][ordered]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Outer rows pair positionally. Each row pair is unordered and uses every occurrence pair. The ordered exterior has two complete collection members, of counts four and one respectively. No flattening or matrix contraction occurs.
+- id: collection-arithmetic-unique-collision
+  rules: [MUD-TYPE-011]
+  source: '[1, 2][ordered unique] + [2, 1][ordered unique]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The ordered result is [3,3], retaining two occurrences. Unique operand guarantees do not imply noncolliding results; no implicit normalization or rejection occurs.
+- id: collection-arithmetic-general-function-order
+  rules: [MUD-TYPE-011, MUD-TYPE-005]
+  source: 'let combine: (a: Int [*]) --> (b: Int [*]) --> Int [*] = a + b'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Inside an admitted owner, the general function preserves actual argument order. Ordered [1,2] and [10,20] produce ordered [11,22]; actually unordered operands produce four occurrences. The static output admits both modes and does not guarantee order or allow positional input access.
+- id: collection-arithmetic-hidden-authority
+  rules: [MUD-TYPE-005, MUD-EFFECT-002]
+  source: 'participant.memberField = replacement'
+  source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: Both operand contracts have upper cardinality greater than one; no implicit zip/Cartesian product
-    is selected.
+  contract: The fixture is an effect body with participant typed Thing [*] without inner mut and a singleton narrowing for memberField. Actual caller authority cannot justify writing through the read-only parameter; caller authority outside this view is retained.
+- id: collection-arithmetic-empty-signature-check
+  rules: [MUD-TYPE-011]
+  source: 'emptyNumbers + emptyStrings'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Both statically typed operands have count zero, with Int and String members respectively. No Int + String signature exists. Empty runtime demand does not waive static member admission.
 - id: optional-index-and-extrema
   rules:
   - MUD-TYPE-009
@@ -2118,7 +2159,7 @@ cases:
   source: 'v * factors'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Supplied direct Vector2 * Num [2] wins over member lifting of Vector2 * Num. With no direct or builtin contract, restricted lifting is allowed only when at least one upper cardinality is at most one.
+  contract: Supplied direct Vector2 * Num [2] wins over member lifting of Vector2 * Num. Without a direct or builtin contract, admitted member signatures lift using retained semantic order independently at each explicit nested layer.
 - id: operator-no-alias-or-dimension-erasure
   rules: [MUD-TYPE-031]
   source: 'v * length'

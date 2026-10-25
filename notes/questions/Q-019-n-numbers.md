@@ -22,7 +22,7 @@ superseded-by: []
 
 ## Resolution
 
-Nat/Int/Money have arbitrary precision. Money's scaling, ratio and unsupported-operation matrix is fixed, combined with existing nominal dimensional admission. Impossible supported arithmetic uses the Error channel. Num exactness, finite Rum, rounding/conversion, Nat saturation and restricted collection lifting retain their existing contracts. Error subtype taxonomy and binary64 portability remain separately scoped, not missing numerical limit/signature choices.
+Nat/Int/Money have arbitrary precision. Money's scaling, ratio and unsupported-operation matrix is fixed, combined with existing nominal dimensional admission. Impossible supported arithmetic uses the Error channel. Num exactness, finite Rum, rounding/conversion and Nat saturation retain their contracts; collection lifting follows the order-sensitive rule in chapter 21. Error subtype taxonomy and binary64 portability remain separately scoped, not missing numerical limit/signature choices.
 
 ## Closure criterion
 
