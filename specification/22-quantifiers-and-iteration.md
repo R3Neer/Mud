@@ -15,6 +15,7 @@ depends-on:
 questions:
   - Q-032
 decisions:
+  - D-188
   - D-175
   - D-176
   - D-174
@@ -125,6 +126,11 @@ go inside the first position. Selection retains full associations and extrema
 retain original key witnesses. Pattern mismatch is a static error, not a
 mechanism to discard source items. Filter locals disappear before an executable
 iteration body and bindings do not escape the construct.
+
+Refutable functional-branch patterns, including cons, collection-length tests,
+field tests and repeated-name equality, do not extend iteration-binding.
+Use the ordinary predicate to filter a traversal; its Boolean literals remain
+predicates, independently of functional selector literal matching.
 
 Quantifiers and for each can consume an admitted finite domain directly.
 Collection-producing selection/take instead require `all D`. Functional

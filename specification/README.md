@@ -19,6 +19,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-188
   - D-187
   - D-186
   - D-183
@@ -298,7 +299,7 @@ Defines:
 - Mandatory placement of all `using` declarations in the file header.
 - Ambiguity and candidate-local static selection of homonymous imported callables by supplied `for` participants and written `given` arguments, without expected-result tie-breaking or changes to anchors and lookup priorities.
 - Foreign exports as ordinary local symbols and native captures as source-mapped nominal references; adapter labels/private native locals receive no MUD declaration identity.
-- One ordinary LocalSymbol per named pattern leaf; discards and type holes introduce no symbol or anchor.
+- Exact binding patterns create one ordinary LocalSymbol per named leaf. Refutable selector patterns create one branch-local selector-capture per first name occurrence; repetitions refer to that binding for equality. Discards and type holes introduce no symbol or anchor.
 - Formation and uniqueness of public anchors; functional-dictionary branches use local keys and receive no public anchor.
 - Categories `thing::*`, `alias::*`, `family::*`, `magnitude::*`, `unit::*`, `rule::*`, `action::*`, `look::*`, `message::*`, `test::*` and `type::*`.
 - Identity under file moves.
@@ -321,6 +322,7 @@ Defines:
 - Static generic parameters/applications, nominal bounds, conservative inferred variance and proven finite application closure.
 - Subtyping, compatibility, narrowing, exact normalized structural type equality, ordering, conversions and unambiguous inference, including owner-directed dictionary association/application cardinality.
 - Whole and partial stored type holes requiring a unique compile-time solution, and exact positional pattern typing.
+- Refutable functional-selector tuple, field and exact/cons collection patterns, with repeated-capture equality, definite result scope and static positional-order requirements.
 - Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
 - Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.
 

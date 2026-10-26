@@ -3230,3 +3230,38 @@ cases:
   produces_ast: true
   required_contract: Mutable association count defaults to [1]; the empty initializer fails static cardinality
     admission.
+- id: selector-repeated-positional-capture
+  category: typing-after-ast
+  source: 'thing Sample { let same: (Int, Int) --> Bool = (x,x) --> true, _ --> false }'
+  cst_root: MudFileSyntax
+  ast: 'SelectorPattern(TupleMatch(CaptureMatch(x), CaptureMatch(x)))'
+  normalizations: [first-capture-local-later-equality-reference]
+  produces_ast: true
+- id: selector-typed-field-pattern
+  category: typing-after-ast
+  source: 'Impact { damage: > 0, target: victim } --> victim'
+  cst_root: MappingExpressionSyntax
+  ast: 'SelectorPattern(PropertyMatch(Impact, MatchField(damage, ComparisonMatch), MatchField(target, CaptureMatch)))'
+  normalizations: [retain-field-labels-and-nominal-type-without-construction]
+  produces_ast: true
+- id: selector-right-associated-cons
+  category: typing-after-ast
+  source: 'x:y:resto --> x'
+  cst_root: MappingExpressionSyntax
+  ast: 'SelectorPattern(ConsMatch(CaptureMatch(x), ConsMatch(CaptureMatch(y), CaptureMatch(resto))))'
+  normalizations: [cons-right-associative-no-flattening]
+  produces_ast: true
+- id: selector-boolean-literal-value
+  category: typing-after-ast
+  source: '(false) --> result'
+  cst_root: MappingExpressionSyntax
+  ast: 'SelectorPattern(ValueMatch(BoolLiteral))'
+  normalizations: [strip-grouping-without-folding-computed-predicates]
+  produces_ast: true
+- id: selector-nested-empty-collection
+  category: typing-after-ast
+  source: '[[]] --> result'
+  cst_root: MappingExpressionSyntax
+  ast: 'SelectorPattern(CollectionMatch(CollectionMatch()))'
+  normalizations: [retain-one-empty-member-distinct-from-empty-source]
+  produces_ast: true

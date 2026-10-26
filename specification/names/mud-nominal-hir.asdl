@@ -18,7 +18,7 @@
 -- Operator selection and signature-dependent public anchors belong to typing.
 -- Preserve original alias ownership and separate declaration-local operand scopes;
 -- no selected target, inferred type or type-dependent anchor is manufactured here.
--- Named pattern leaves use ordinary computed/stored/iterator LocalSymbol kinds.
+-- Exact binding-pattern leaves use computed/stored/iterator LocalSymbol kinds.
 -- Ordinals follow textual depth-first leaf order; discards create no symbol or edge.
 -- Type holes have SurfaceRef provenance only, no symbol, inferred type or HIR payload.
 -- File/part catalogues enforce part-only and direct uses before lookup.
@@ -42,6 +42,11 @@
 -- PendingReceiverCall with role operator-family; typing resolves correlated
 -- signatures, global collisions and instantiations outside this HIR.
 -- No quantified scheme, runtime dispatch or selected type is stored here.
+-- Refutable branch patterns use LocalSymbol kind selector-capture for first
+-- textual depth-first captures. Repeated occurrences are ResolvedReference
+-- role pattern-equality to that local, not fresh bindings or implicit parameters.
+-- Type/field occurrences retain SurfaceRef provenance; match success, equality,
+-- order proofs and capture contract joins remain outside nominal HIR.
 
 module MUDNominalHIR {
     -- Arrow-owned specifications retain SurfaceRef provenance only. Their

@@ -20,6 +20,8 @@ affects:
 
 # ADR-172 — Shared functional selector locals and demand-preserving reuse
 
+- Extended by: [[ADR-188-structural-selector-patterns-and-boolean-literals|D-188]].
+
 - Amended by: [[ADR-186-arrow-owned-dictionary-specifications|D-186]].
 
 - Amended by: [[ADR-183-functional-families-currification-and-input-syntax|D-183]].
@@ -32,6 +34,10 @@ stored capture. Nested/other-branch/fallback locals remain unavailable; each
 application/branch has independent instances and no shadowing. Direct pure pattern
 leaves and completed immutable foreign exports retain their ordinary local scope
 meaning. Exact key/value and comprehension filter/result scopes remain separate.
+
+Successful refutable branch-pattern captures follow D-188 and join the same
+definitely established branch-result environment. Repeated capture names test
+equality against their first binding, without shadowing or extra symbols.
 
 A first demanded successful computation must be reused while its inputs and
 transitive dependencies are unchanged. No eager computation is introduced.

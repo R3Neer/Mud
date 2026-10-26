@@ -2845,7 +2845,73 @@ cases:
   source: "let describe: Bool -->[ordered] String [ordered] =\n    == false --> \"false\", _ --> \"true\""
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Bare false would be a false condition; explicit equality covers only the false input.
+  contract: Bare false and explicit == false both match the false input; other Boolean expressions retain predicate meaning.
+- id: selector-pattern-repeated-capture
+  rules: [MUD-TYPE-054]
+  source: 'let same: (Int, Int) --> Bool = (x,x) --> true, _ --> false'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Inside an admitted owner, the first capture binds x and the second tests ordinary Int equality. The result binds x once; fallback covers unequal pairs without acquiring x.
+- id: selector-pattern-functional-equality-rejected
+  rules: [MUD-TYPE-054, MUD-TYPE-040]
+  source: '(f,f) --> f'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The supplied input is a product of two functional dictionaries. Repeated capture requires unavailable value equality even when one current sample might contain the same policy twice.
+- id: selector-pattern-boolean-literals
+  rules: [MUD-TYPE-054]
+  source: 'let describe: Bool --> String = true --> "yes", false --> "no"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Both literals compare with the input and cover Bool. Parenthesized literals have identical classification. A captured Bool name or computed Boolean expression instead remains a predicate; constant folding does not reclassify it.
+- id: selector-pattern-field-capture
+  rules: [MUD-TYPE-054]
+  source: 'Impact { damage: > 0, target: victim } --> victim'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied visible nominal Impact has damage Int and target Entity. The nominal test narrows viable alternatives, damage filters them, and victim captures the accessible target for this result. Other fields and original nominal identities are retained.
+- id: selector-pattern-private-field-rejected
+  rules: [MUD-TYPE-054]
+  source: 'Impact { privateTarget: victim } --> victim'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: privateTarget is inaccessible from this part; a pattern cannot reflect or expose it merely because Impact is visible.
+- id: selector-pattern-exact-collection
+  rules: [MUD-TYPE-054]
+  source: '[] --> 0, [x] --> x'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied Int [0..1] input requires no order. Empty and exact singleton branches cover it; empty and [] have the same empty-pattern normalization without requiring member equality. A collection containing empty is one member rather than empty; nested patterns retain that distinction.
+- id: selector-pattern-ordered-cons
+  rules: [MUD-TYPE-054]
+  source: 'x:y:resto --> x + y'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied Int [* ordered] input admits right-nested cons, matching only counts at least two. resto retains the suffix sequence and member contract. This partial policy has an inferred zero-admitting result; a required positive minimum needs additional coverage.
+- id: selector-pattern-cons-hidden-order-rejected
+  rules: [MUD-TYPE-054]
+  source: 'x:resto --> x'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Supplied input Int [*] does not prove order, even if a current argument retains actual order for arithmetic. Cons pattern admission cannot recover a hidden positional guarantee.
+- id: selector-pattern-refutable-local-rejected
+  rules: [MUD-TYPE-022, MUD-TYPE-054]
+  source: 'let (x,x) = pair'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Local exact binding patterns retain unique names and mandatory initialization. Repeated equality capture belongs to refutable branch selectors, not local declarations or iteration bindings.
+- id: selector-pattern-fault-not-fallback
+  rules: [MUD-TYPE-054]
+  source: 'Impact { computed: x } --> x, _ --> 0'
+  source_scope: fragment-with-stated-contract
+  expected: runtime-check
+  contract: Supplied visible computed Int field may raise an Error when demanded. The fault propagates through ordinary recovery rather than becoming a pattern mismatch or choosing fallback.
+- id: selector-pattern-definite-scope
+  rules: [MUD-TYPE-054]
+  source: '((x,0) or (0,y)) --> x'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The result cannot use x because a successful right alternative need not establish it. Matching branches and selector recovery do not fabricate missing locals.
 - id: comprehension-boolean-results
   rules:
   - MUD-TYPE-008

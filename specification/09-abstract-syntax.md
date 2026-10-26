@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-188
   - D-186
   - D-183
   - D-184
@@ -1069,3 +1070,18 @@ metadata. Operand-header forms normalize to the same functional semantics.
 Input/output collection layers and explicit product/grouping boundaries survive
 projection. Full rules are in [[types/functional-families]] and
 [[types/structural-traits]] relative to specification/.
+
+## Refutable selector patterns
+
+SelectorPattern retains a separate match_pattern tree: CaptureMatch, DiscardMatch,
+ValueMatch, ComparisonMatch, NominalMatch, TupleMatch, CollectionMatch, ConsMatch
+and PropertyMatch/MatchField. Literal true/false selector operands normalize to
+SelectorPattern(ValueMatch(BoolLiteral)); grouping preserves that classification.
+Other Boolean expressions remain SelectorOperand. ConsMatch nests rightward;
+CollectionMatch retains exact member count and empty/nested shape. Repeated
+CaptureMatch occurrences retain source names for first-binding/later-equality
+resolution, without injecting a new binding_pattern or function parameter.
+No AST node stores inferred types, successful-match environments or a runtime
+slice DSL. Local/traversal binding_pattern remains the distinct exact binding tree.
+Selector-pattern empty and [] share CollectionMatch with no members; [empty]
+retains one nested CollectionMatch rather than flattening it.

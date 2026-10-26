@@ -40,7 +40,8 @@ class CollectionPolicyWitnesses(unittest.TestCase):
     def test_allmatches_fallback_contributes_without_a_wrapper(self):
         self.assertEqual(apply_all(0, [], lambda _: [1, 2]), [1, 2])
 
-    def test_bool_predicate_and_explicit_equality_differ(self):
+    def test_computed_bool_predicate_and_explicit_equality_differ(self):
+        # A supplied computed false condition, not a false literal selector.
         condition = lambda _: False
         equal_false = lambda x: x is False
         self.assertFalse(covers([False, True], [condition]))

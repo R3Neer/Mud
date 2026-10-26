@@ -1124,6 +1124,7 @@ selector-and
 
 selector-term
     ::= "not" , selector-term
+      | structural-selector-pattern
       | selector-comparison , comparison-expression
       | "is" , [ "not" ] , declared-type
       | "iis" , [ "not" ] , declared-type
@@ -1132,6 +1133,43 @@ selector-term
 
 selector-comparison
     ::= "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+
+structural-selector-pattern
+    ::= positional-match-pattern
+      | collection-match-pattern
+      | property-match-pattern
+      | match-atom , ":" , match-pattern ;
+
+match-pattern
+    ::= match-atom , [ ":" , match-pattern ] ;
+
+match-atom
+    ::= variable-name
+      | "_"
+      | literal
+      | "-" , ( exact-number | rumber-number )
+      | qualified-name
+      | selector-comparison , comparison-expression
+      | "is" , [ "not" ] , declared-type
+      | "iis" , [ "not" ] , declared-type
+      | positional-match-pattern
+      | collection-match-pattern
+      | property-match-pattern
+      | "(" , match-pattern , ")" ;
+
+positional-match-pattern
+    ::= "(" , match-pattern , "," , match-pattern
+        , { "," , match-pattern } , ")" ;
+
+collection-match-pattern
+    ::= "[" , [ match-pattern , { "," , match-pattern } ] , "]" ;
+
+property-match-pattern
+    ::= declared-type , "{" , declaration-layout
+        , [ match-field , { "," , match-field } ] , "}" ;
+
+match-field
+    ::= field-name , ":" , match-pattern ;
 
 mapping-left
     ::= eventually-expression

@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-188
   - D-187
   - D-186
   - D-183
@@ -453,6 +454,28 @@ Nested products may remain whole under a name or be opened recursively. An alrea
 Exact dictionaries retain key traversal for a single name or discard. A positional root of exactly two positions selects association projection, even when the key itself has a positional representation; open that key within the first position if needed. The pattern only changes available predicate/body bindings. Selection retains accepted associations, and dictionary min/max retain their original accepted key witness rather than constructing an ordinary product from key/value bindings. Step, finiteness and usable-order requirements remain those of the original traversal.
 
 Stored local patterns evaluate the RHS once, validate the complete pattern and establish all immutable captures atomically; a failed RHS exposes no partial bindings. Derived patterns register live component projections of their common RHS. They have no writable root, and pure expression positions retain their ExpressionBlock restrictions. A completely discarded stored pattern still evaluates its RHS and enforces admission/error obligations; tooling may suggest removal only when no observable obligation is lost. Derived patterns retain derivation checks even when every component is discarded, but do not introduce eager reads or new effects solely to discard them.
+
+> [!rule] MUD-TYPE-054 — Refutable selector pattern
+> Functional branch patterns test positional products, type-selected visible
+> fields and finite collection shapes under [[17-dictionaries#Structural selector patterns]].
+> Infer capture contracts from statically viable matching alternatives, checking
+> field visibility, required order, purity and supported equality. Repeated names
+> compare complete values against their first capture, without new nominal
+> conversion or authority. Only definitely established captures reach that branch's
+> result. A failed match contributes no result; a computing fault remains Error.
+
+Let $\Gamma;\Phi\vdash p:\tau\Rightarrow\Delta$ mean that selector pattern p
+is admitted on input contract tau and establishes capture environment Delta
+on success. A first capture adds the projected complete contract to Delta;
+a repeated capture requires the ordinary equality judgement with its existing
+contract and adds no symbol. Product components use declared positional forms;
+field components use statically accessible contracts after nominal narrowing.
+Empty/singleton collection patterns require no order, while patterns distinguishing
+multiple positions and cons require an order proof. Success refines length and
+selected nominal alternatives before result checking. Ambiguous capture contracts
+are not repaired by Any or a runtime schema guess. This refutable judgement is
+distinct from MUD-TYPE-022; local/traversal bindings do not silently acquire
+failed-match filtering, repeated equality constraints or missing initializers.
 
 ## Structural views and functional schemes
 

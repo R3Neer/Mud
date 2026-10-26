@@ -2569,15 +2569,17 @@ syntax_nodes:
     - selector-term
   selector-term:
     kind: SelectorTermSyntax
-    rhs: "\"not\" , selector-term\n      | selector-comparison , comparison-expression\n      | \"is\" ,\
-      \ [ \"not\" ] , declared-type\n      | \"iis\" , [ \"not\" ] , declared-type\n      | comparison-expression\n\
-      \      | \"(\" , selector-expression , \")\""
+    rhs: "\"not\" , selector-term\n      | structural-selector-pattern\n      | selector-comparison\
+      \ , comparison-expression\n      | \"is\" , [ \"not\" ] , declared-type\n    \
+      \  | \"iis\" , [ \"not\" ] , declared-type\n      | comparison-expression\n  \
+      \    | \"(\" , selector-expression , \")\""
     references:
     - comparison-expression
     - declared-type
     - selector-comparison
     - selector-expression
     - selector-term
+    - structural-selector-pattern
   selector-comparison:
     kind: SelectorComparisonSyntax
     rhs: '"==" | "!=" | "<" | "<=" | ">" | ">="'
@@ -2660,3 +2662,64 @@ syntax_nodes:
     rhs: '"ordered" | "unique" , [ "by" , collection-key-path ]'
     references:
     - collection-key-path
+  structural-selector-pattern:
+    kind: StructuralSelectorPatternSyntax
+    rhs: "positional-match-pattern\n      | collection-match-pattern\n      | property-match-pattern\n\
+      \      | match-atom , \":\" , match-pattern"
+    references:
+    - collection-match-pattern
+    - match-atom
+    - match-pattern
+    - positional-match-pattern
+    - property-match-pattern
+  match-pattern:
+    kind: MatchPatternSyntax
+    rhs: match-atom , [ ":" , match-pattern ]
+    references:
+    - match-atom
+    - match-pattern
+  match-atom:
+    kind: MatchAtomSyntax
+    rhs: "variable-name\n      | \"_\"\n      | literal\n      | \"-\" , ( exact-number\
+      \ | rumber-number )\n      | qualified-name\n      | selector-comparison , comparison-expression\n\
+      \      | \"is\" , [ \"not\" ] , declared-type\n      | \"iis\" , [ \"not\" ] ,\
+      \ declared-type\n      | positional-match-pattern\n      | collection-match-pattern\n\
+      \      | property-match-pattern\n      | \"(\" , match-pattern , \")\""
+    references:
+    - collection-match-pattern
+    - comparison-expression
+    - declared-type
+    - exact-number
+    - literal
+    - match-pattern
+    - positional-match-pattern
+    - property-match-pattern
+    - qualified-name
+    - rumber-number
+    - selector-comparison
+    - variable-name
+  positional-match-pattern:
+    kind: PositionalMatchPatternSyntax
+    rhs: "\"(\" , match-pattern , \",\" , match-pattern\n        , { \",\" , match-pattern\
+      \ } , \")\""
+    references:
+    - match-pattern
+  collection-match-pattern:
+    kind: CollectionMatchPatternSyntax
+    rhs: '"[" , [ match-pattern , { "," , match-pattern } ] , "]"'
+    references:
+    - match-pattern
+  property-match-pattern:
+    kind: PropertyMatchPatternSyntax
+    rhs: "declared-type , \"{\" , declaration-layout\n        , [ match-field , { \"\
+      ,\" , match-field } ] , \"}\""
+    references:
+    - declaration-layout
+    - declared-type
+    - match-field
+  match-field:
+    kind: MatchFieldSyntax
+    rhs: field-name , ":" , match-pattern
+    references:
+    - field-name
+    - match-pattern

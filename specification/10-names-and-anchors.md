@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-188
   - D-186
   - D-183
   - D-184
@@ -511,3 +512,16 @@ stores scopes/candidates/references, never effective types or selected overloads
 Intrinsic arrow specifications create no symbol, scope or anchor. Their key
 paths retain source references for later typed validation. first is an ordinary
 identifier; removing a body constructor does not remove lexical user bindings.
+
+Structural functional selector patterns use branch-local LocalSymbol kind
+selector-capture. The first textual depth-first capture occurrence creates that
+symbol and an Owns relation to the branch scope; repeated occurrences retain
+ResolvedReference role pattern-equality to it, not additional symbols. Discards
+create no symbols. Captures obey no-shadowing, remain local without public anchors
+and are visible in the branch result only under the definite-availability check.
+Other branches, fallback and nested-block locals do not acquire these bindings.
+Pattern leaves are not unresolved free parameters. Explicit expected expressions
+resolve ordinary outer names. Property pattern type references and field labels
+retain source references for ordinary visible typed resolution; a match does not
+create alias members, nominal specializations or constructors. Equality, order,
+shape tests and successful match environments belong to elaboration, not HIR.

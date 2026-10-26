@@ -4,6 +4,7 @@ status: current
 normative: true
 questions: []
 decisions:
+  - D-188
   - D-187
   - D-183
   - D-184
@@ -104,6 +105,11 @@ The declaration certificates also check supplied comparison edges for the transi
 
 [[finite-static-certification]] and [[termination-certification]] define the completed scoped normative procedures. test_static_certification_witnesses.py checks supplied exact elimination, integral-period, lexicographic/phase, affine and represented-Rum certificates. It is not a source analyzer or compiler/runtime implementation.
 ## Policy and comprehension finite witnesses
+
+selector_pattern_witnesses.py and test_selector_pattern_witnesses.py check finite
+supplied shape, nominal/field visibility, equality, order, demand and branch-scope
+certificates. Capture contracts and comparison eligibility are supplied premises;
+the checker neither infers Mud types nor executes field bodies or Mud source.
 
 collection_policy_witnesses.py and test_collection_policy_witnesses.py check supplied finite input coverage, empty selected results, Bool predicate/equality distinction, interval boundaries, source capture, multiplicity/order, nested empty members and fault propagation. Predicates/results are supplied Python certificate functions; these tests are not a MUD interpreter or general coverage solver.
 

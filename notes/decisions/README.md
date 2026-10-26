@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 182.
-- Current: 178.
+- Total: 183.
+- Current: 179.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -201,6 +201,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-185 | current | 2026-10-23 | [[notes/decisions/ADR-185-functional-operator-fields-and-global-signature-coherence|Functional operator fields and global signature coherence]] |
 | D-186 | current | 2026-10-23 | [[notes/decisions/ADR-186-arrow-owned-dictionary-specifications|Arrow-owned dictionary specifications]] |
 | D-187 | current | 2026-10-25 | [[notes/decisions/ADR-187-order-sensitive-collection-arithmetic-and-read-only-views|Order-sensitive collection arithmetic and read-only views]] |
+| D-188 | current | 2026-10-26 | [[notes/decisions/ADR-188-structural-selector-patterns-and-boolean-literals|Structural selector patterns and Boolean literals]] |
 
 ## Reserved identifiers
 

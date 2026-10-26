@@ -1618,3 +1618,38 @@ productions:
     ast:
       disposition: normalized
       target: collection_uniqueness
+  structural-selector-pattern:
+    cst: StructuralSelectorPatternSyntax
+    ast:
+      disposition: normalized
+      target: match_pattern
+  match-pattern:
+    cst: MatchPatternSyntax
+    ast:
+      disposition: normalized
+      target: match_pattern
+  match-atom:
+    cst: MatchAtomSyntax
+    ast:
+      disposition: normalized
+      target: match_pattern
+  positional-match-pattern:
+    cst: PositionalMatchPatternSyntax
+    ast:
+      disposition: normalized
+      target: match_pattern
+  collection-match-pattern:
+    cst: CollectionMatchPatternSyntax
+    ast:
+      disposition: normalized
+      target: match_pattern
+  property-match-pattern:
+    cst: PropertyMatchPatternSyntax
+    ast:
+      disposition: normalized
+      target: match_pattern
+  match-field:
+    cst: MatchFieldSyntax
+    ast:
+      disposition: normalized
+      target: MatchField

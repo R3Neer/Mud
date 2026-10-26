@@ -868,3 +868,31 @@ metadata. Operand-header forms normalize to the same functional semantics.
 Input/output collection layers and explicit product/grouping boundaries survive
 projection. Full rules are in [[../types/functional-families]] and
 [[../types/structural-traits]] relative to specification/.
+
+## Refutable selector pattern conversion
+
+StructuralSelectorPatternSyntax projects to SelectorPattern(match_pattern).
+PositionalMatchPatternSyntax projects to TupleMatch; CollectionMatchPatternSyntax
+to CollectionMatch, including an empty member list; PropertyMatchPatternSyntax
+to PropertyMatch with source-ordered MatchField records. MatchPatternSyntax
+folds colon rightward to ConsMatch. MatchAtomSyntax retains CaptureMatch for
+an unqualified lowerCamel capture, DiscardMatch for _, ValueMatch for literals
+or expected values, and explicit ComparisonMatch/NominalMatch for tests. Grouped
+patterns preserve the contained tree. A named type/value reference is resolved
+under its ordinary category; an explicit == expression never becomes a capture.
+
+In complete selector position, a true/false literal after removing grouping
+normalizes to SelectorPattern(ValueMatch(BoolLiteral)). Do not constant-fold
+another Boolean expression into that form. Structural tuple/collection/field/cons
+patterns take precedence over value-expression interpretation only in selector
+position. Explicit == preserves whole-value comparison. _ alone remains fallback;
+inside a pattern it is DiscardMatch. Keep source origins for every repeated
+capture occurrence; nominal resolution creates the first local and resolves the
+later reference, while typing checks equality. No binder is an implicit parameter.
+Syntax projection does not perform matching, type-directed field lookup, coverage
+or order checking, and does not extend local/traversal binding patterns.
+
+In selector or nested match-pattern position, empty normalizes to the same
+CollectionMatch with no members as []. [empty] therefore retains one nested
+empty match and is equivalent to [[]], not to []. Value/result construction
+outside a selector retains its ordinary empty expression.

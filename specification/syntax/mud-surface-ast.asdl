@@ -742,11 +742,27 @@ module MUDSurface {
     index_access_kind = LastPosition | OptionalMember
 
     selector_syntax = SelectorOperand(expr value)
+                    | SelectorPattern(match_pattern value)
                     | SelectorComparison(comparison_operator operator, expr expected)
                     | SelectorNominal(declared_type type, flag exact, flag negated)
                     | SelectorNot(selector_syntax operand)
                     | SelectorAnd(selector_syntax left, selector_syntax right)
                     | SelectorOr(selector_syntax left, selector_syntax right)
+        attributes (source_origin origin)
+
+    match_pattern = CaptureMatch(variable_name name)
+                  | DiscardMatch
+                  | ValueMatch(expr expected)
+                  | ComparisonMatch(comparison_operator operator, expr expected)
+                  | NominalMatch(declared_type type, flag exact, flag negated)
+                  | TupleMatch(match_pattern first, match_pattern second,
+                               match_pattern* remaining)
+                  | CollectionMatch(match_pattern* members)
+                  | ConsMatch(match_pattern head, match_pattern tail)
+                  | PropertyMatch(declared_type type, match_field* fields)
+        attributes (source_origin origin)
+
+    match_field = MatchField(field_name name, match_pattern pattern)
         attributes (source_origin origin)
 
     named_structural_element = NamedStructuralElement(component_name name,

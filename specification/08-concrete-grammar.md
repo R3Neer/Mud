@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-188
   - D-186
   - D-183
   - D-184
@@ -1239,7 +1240,20 @@ Stored fields, alias components with defaults, family data with defaults and sto
 
 In a local declaration position, let followed by a complete positional binding-pattern and then `=` or `:=` is classified as a pattern declaration before considering an assignment expression. This classification depends only on written syntax, not whether leaf names already resolve. A following access such as `(x, y).field = value` does not match that form and gains no multi-target assignment meaning. Existing visible capture names still produce redeclaration/shadowing errors.
 
-Only positional products can be opened; named products cannot. A name may capture an entire nested component without opening it. Iteration, selection and all five quantifiers accept the same patterns, including a sole `_`. Exact-dictionary iteration retains association semantics: a two-position pattern projects key and value without turning the association into an ordinary product. Functional dictionaries retain their traversal restrictions. Pattern/source compatibility is checked statically; there is no implicit collection flattening or runtime filtering by pattern shape. Min/max return the original accepted source witness, not an arbitrarily selected captured component.
+Only positional products can be opened; named products cannot. A name may capture an entire nested component without opening it. Iteration, selection and all five quantifiers accept the same binding patterns, including a sole `_`. Exact-dictionary iteration retains association semantics: a two-position pattern projects key and value without turning the association into an ordinary product. Functional dictionaries retain their traversal restrictions. Binding-pattern/source compatibility is checked statically; there is no implicit collection flattening or runtime filtering by a traversal binding's shape. Min/max return the original accepted source witness, not an arbitrarily selected captured component.
+
+### Functional selector patterns
+
+Functional branch selectors admit `(0,y)`, `(x,x)`, `Impact { damage: > 0,
+target: victim }`, `[]`, `[x]`, `[x,y]` and `x:resto`. Colon is right-associative:
+`x:y:resto` groups as `x:(y:resto)`. These are refutable selector patterns, not
+extensions to local or traversal binding-pattern. []/[x] need no order; patterns
+distinguishing multiple positions and cons require static order. Pattern capture
+and explicit expected-value comparison are distinguished in
+[[17-dictionaries#Structural selector patterns]]. In selector position literal
+true/false (including grouping) compare with the input; other Bool expressions
+remain predicates. SelectorNot negates the interpreted selector, not a folded
+literal expression. Explicit == retains whole-value comparison.
 
 ExpressionBlock and TestAfterBlock preambles retain pure derived locals and pure derived positional patterns with expression RHSs; they admit neither stored locals nor ValueBlock RHSs. Shared preambles of action/subaction, reactive rule and message/submessage instead admit immutable stored locals, live derived locals and immutable stored/derived positional patterns, all with value-body RHSs. No shared preamble admits outer mut. A nested ValueBlock may mutate only its private storage, never the surrounding world. Stored preamble slots belong to that concrete declaration instance and do not persist between instances, executions or observation episodes.
 

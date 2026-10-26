@@ -40,6 +40,8 @@ transformations should not require a hand-written private accumulator.
 
 - Amended by: [[ADR-176-optional-extraction-and-positional-access|D-176]] and [[ADR-178-structural-tuple-inputs-and-postfix-generics|D-178]].
 
+- Amended by: [[ADR-188-structural-selector-patterns-and-boolean-literals|D-188]].
+
 ## Decision
 
 Ordinary immutable stored/derived value declarations require let. Mutable stored
@@ -52,11 +54,12 @@ Stored domain-only annotations constrain admission and never filter their values
 
 Functional selectors retain complete Bool predicates and add ordinary-value
 equality, abbreviated comparisons, nominal type tests, interval/domain membership,
-selector negation and logical combinations. Bool operands remain predicates;
-explicit == compares Bool/interval values. value is reserved for the cumulative functional input. Explicit member-name exceptions permit qualified .value without permitting ordinary local/argument shadowing.
+selector negation and logical combinations. Literal true/false compare input
+values; other Bool expressions remain predicates. Explicit == compares complete
+Bool/interval values. value is reserved for the cumulative functional input. Explicit member-name exceptions permit qualified .value without permitting ordinary local/argument shadowing.
 .member abbreviates its member access. Exact dictionaries
-do not inject it. No as input binding, structural patterns or additional guard
-syntax is accepted. D-172 extends each result scope with its own direct selector-preamble bindings
+do not inject it. Refutable structural selector patterns follow D-188; no as
+input binding or additional guard keyword is introduced. D-172 extends each result scope with its own direct selector-preamble bindings
 and requires demand-preserving per-application reuse of unchanged derivations.
 Policies with positive application-result minimum require proven coverage or a fallback; zero-admitting applications may be uncovered;
 explicit empty output handles a case and does not invoke fallback.

@@ -13,6 +13,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-188
   - D-186
   - D-183
   - D-184
@@ -304,16 +305,19 @@ outcome among its named projections; discarded leaves add no demand. No physical
 memoization is selected. A wholly unused local stays undemanded, including when
 only the result would first read it. Scope disposal ends its binding/cache lifetime.
 
-Inside a functional branch, `.member` abbreviates `value.member`, including
-subsequent access/index/call suffixes and String interpolations. It supplies no
-receiver outside that branch and never picks a traversal binding implicitly.
+Inside a functional branch, `.member` selects the unique statically accessible
+receiver among the available complete arguments under [[types/functional-families]],
+including subsequent access/index/call suffixes and String interpolations. For
+one complete input it abbreviates `value.member`. It supplies no receiver outside
+that branch and never picks a traversal or pattern capture implicitly.
 
 Interpret each selector operand with its established static category before
 combining selector `not`, `and` and `or`:
 
 | Written selector | Predicate |
 | --- | --- |
-| Ordinary singleton Bool expression | The expression itself. |
+| Literal `true` or `false`, including grouping | Equality with that Boolean value. |
+| Other singleton Bool expression | The expression itself. |
 | Ordinary non-Bool singleton value expression | `value == expression`. |
 | Interval/domain expression | `expression has value`, preserving all boundaries. |
 | Nominal type reference | `value is Type`. |
@@ -322,8 +326,13 @@ combining selector `not`, `and` and `or`:
 | `not selector` | Negation of the interpreted predicate. |
 | `_` | Residual fallback. |
 
-Bool operands keep their ordinary predicate meaning: `false` never applies;
-`== false` compares the input with false. For a non-Bool expected value,
+Boolean literals compare the input, so `false --> result` handles a false
+input and `true --> result` handles a true input; explicit == remains valid.
+Other Boolean selector operands remain predicates, including a bound Bool name,
+a comparison or a Boolean-rule call. Selector `not false` instead negates the
+interpreted literal test, hence means `!= false`. This distinction follows
+written syntax, not constant folding. Grouping does not change it.
+For a non-Bool expected value,
 `not expected` means inequality. For an interval it means exclusion and for a
 type it means failed membership. Arbitrary collection expressions acquire no
 implicit membership. Explicit equality forces value comparison when supported;
@@ -335,8 +344,94 @@ Logical operators combine the expanded predicates with their ordinary demand,
 pruning and narrowing rules. `Low or Medium` and `== Low or == Medium` compare
 family members, rather than applying Boolean or to member values. A complete
 condition such as `value.age >= 18 and value.hasPermit` needs no additional if.
-No as input binding, structural selector patterns or new guard form exists.
+Structural selector patterns additionally test and bind components as specified
+below. No as input binding or separate branch-guard keyword is introduced.
 Supported equality, singleton-Bool admission and purity remain mandatory.
+
+### Structural selector patterns
+
+```mud
+# Fragments in an admitted owner; signatures supply the input contracts:
+let same: (Int, Int) --> Bool = (x, x) --> true, _ --> false
+let pick: (Int, Int) -->[ordered] Int =
+    (0, y) --> y,
+    (x, 0) --> x,
+    _ --> 0
+let enabled: Bool --> String = true --> "enabled", false --> "disabled"
+# With visible alias Impact and its fields:
+# Impact { damage: > 0, target: victim } --> victim
+# For an ordered Int input collection: [] --> 0, x:resto --> x
+```
+
+A structural selector pattern checks the complete input at that stage.
+Parentheses with at least two positions match an admitted positional product;
+named products are not silently opened as positional products. A nominal alias
+retains identity and may expose its admitted positional representation under
+[[11-type-system]]. `Type { field: pattern, ... }` first applies the ordinary
+is Type test, then matches the named accessible fields. Existing trait
+satisfaction retains its own is contract where admitted. Omitted
+fields impose no condition. Fields may be stored, calculated or inherited;
+they must be statically visible, and matching does not construct defaults,
+invoke a constructor, change nominal identity or grant authority. Duplicate
+field labels are invalid. A qualified expected family/value name compares
+normally; an explicit == expression forces comparison rather than capture.
+
+Inside patterns, an unqualified lowerCamel name is a capture; `_` is a discard;
+literals compare complete expected values, including true/false. Comparisons
+such as `> 0` test the selected component. Nominal names and is/iis tests retain
+their ordinary meaning. Bare identifiers outside a structural pattern keep
+ordinary selector interpretation; a root identifier alone is not a new capture.
+Use `== (a,b)` or `== [a,b]` to compare existing complete values. Pattern
+classification takes precedence over tuple/collection value interpretation
+only in structural selector positions, not exact association keys or results.
+Reserved value and implicit .member keep their functional-input meaning;
+descending into a subpattern does not rebind them to the selected component.
+
+The first textual occurrence of each capture creates one immutable branch-local
+binding; later occurrences test == against that complete value. `(x,x)` accepts
+equal components and binds x once. This is not unification, nominal conversion,
+an implicit parameter or a comparison with an outer variable of the same name.
+Captures obey no-shadowing; name an outer expected value through explicit ==.
+Equality must be supported for every compared viable alternative, including
+collection equality and its order/multiplicity contracts. Functional values
+cannot be compared through repeated captures. Repeated `_` creates no equality.
+
+`[]` and `empty` match zero outer members; `[x]` matches exactly one, without
+requiring order. Empty matching needs no member equality operation.
+`[x,y]` and longer exact collection patterns require observable static order and
+exactly that many members. `head : tail` requires static order and at least one
+member; head matches the first complete member, tail the remaining collection.
+Colon associates to the right, so `x:y:resto` is `x:(y:resto)` and requires at
+least two members. A tail may be empty. A scalar singleton is eligible for [x],
+but lacks positional head/tail admission without an order guarantee. Head/tail
+does not invent order from provenance or hidden actual order.
+
+Nested collection members remain complete: in [[1,2],[3]], head captures [1,2]
+and tail contains the single collection member [3]. [] and [empty] differ;
+`[[]]` tests exactly one empty collection member. Fixed-length patterns test
+cardinality; they do not truncate. Tails preserve surviving member types,
+sequence, valid uniqueness and supplied inner authority, never a writable root
+or hidden authority. A k-member prefix refines the admitted count to n>=k and
+the tail count to n-k. No physical copying or view representation is mandated.
+
+Match subpatterns in written depth-first order, stopping a conjunctive match
+at its first failure. Literal/repeated comparisons use ordinary equality and
+component predicates use ordinary demand/recovery. Computing a field, expected
+value or comparison may fault; a fault is not a failed match and does not select
+fallback. Failed matches expose no captures to a result or another branch.
+The result can use captures and direct preamble locals only when every admitted
+successful path establishes them. Existing shared-scope reuse applies. For
+selector and, left captures are available on successful continuation; selector
+or/not do not export a capture lacking one unambiguous definite binding on every
+successful path. No new truth-table rule bypasses ordinary pruning or purity.
+
+Pattern success does not change FirstMatch/AllMatches or fallback. An equality
+pattern alone does not cover unequal inputs. A zero-admitting output may leave
+inputs uncovered; a positive minimum requires the usual coverage/result proof.
+`_ --> result` is residual fallback, whereas `_` inside a pattern is a wildcard.
+Local declarations, traversal bindings and exact dictionaries retain their own
+non-filtering destructuring/query contracts. Collection indexing and slices are
+unchanged; no Python-style colon slicing or lazy sequence is introduced.
 
 Composite application policy[a,b] retains its written arguments and explicit
 product grouping. It can supply one product input or two curried stages when
@@ -449,7 +544,7 @@ With L=(1->"one",2->"two") and R=(2->"other",3->"three"), L|R retains
 keys 1 and 3. Exchanging L and R changes the shared-key value. A partial write
 through an absent key creates nothing; a valid whole association write can insert.
 
-A selector `1 --> "one"` compares value with 1. A Bool selector false is a condition; write `== false` for equality. A policy with unproved coverage and no fallback is invalid.
+A selector `1 --> "one"` compares value with 1. Literal `false --> result` and `== false --> result` both compare the input with false; other Bool operands remain predicates. A policy whose required positive application minimum lacks coverage is invalid.
 Assigning policy branches at runtime, using F in `foreach`, comparing F==G,
 or using a functional value as an exact key is invalid. Combining -> and -->
 operands or putting an effective arrow alias inside a union is invalid.

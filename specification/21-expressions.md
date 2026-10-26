@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-188
   - D-187
   - D-186
   - D-183
@@ -469,6 +470,14 @@ under MUD-DICT-005 in [[17-dictionaries]]. Every selected path must establish th
 referenced binding; outer selector recovery cannot resurrect failed-scope locals.
 Reuse successful demanded derivations with unchanged inputs/dependencies in the
 same application/branch, retaining full footprints and ordinary invalidation.
+
+Structural selectors follow MUD-TYPE-054 and [[17-dictionaries#Structural selector patterns]].
+Their successful captures extend only that branch's definitely available result
+environment. Shape/cardinality mismatch is a branch nonmatch; computing faults
+remain faults. Literal true/false selectors compare expected Boolean values,
+including grouping, while computed Boolean expressions remain predicates.
+Collection/tuple literals in results or exact keys retain ordinary construction,
+and refutable selector matching does not change local/traversal binding patterns.
 No eager computation, cross-call sharing or mutation permission is introduced.
 
 > [!rule] MUD-TYPE-051 — Static whole-result composition
